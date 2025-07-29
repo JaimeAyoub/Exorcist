@@ -17,7 +17,7 @@ public class CameraRaycast : MonoBehaviour
 
     void DrawRayCast()
     {
-        RaycastHit hit;
+        //RaycastHit hit;
         Debug.DrawRay(virtualCamera.transform.position, virtualCamera.transform.forward , Color.red);
     }
 }

@@ -26,16 +26,18 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        Move();
+        if (!CombatManager.instance.isCombat)
+        {
+            Move();
 
-        Rotate();
+            Rotate();
+        }
     }
 
     void Move()
     {
         MoveX = Input.GetAxisRaw("Horizontal");
         MoveZ = Input.GetAxisRaw("Vertical");
-        Debug.Log(transform.forward);
         movement = transform.right * MoveX + transform.forward * MoveZ;
         controller.Move(movement.normalized * (speed * Time.deltaTime));
     }
