@@ -1,16 +1,17 @@
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class UIManager : MonoBehaviour
 {
-    public Canvas PauseCanvas;
-    public Canvas MainCanvas;
-    private bool isPaused = false;
+   public Canvas pauseCanvas;
+   public Canvas mainCanvas;
+    private bool _isPaused = false;
 
     void Start()
     {
-        PauseCanvas.enabled = false;
-        MainCanvas.enabled = true;
+        pauseCanvas.enabled = false;
+        mainCanvas.enabled = true;
     }
 
     // Update is called once per frame
@@ -23,20 +24,20 @@ public class UIManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            isPaused = !isPaused;
-            if (isPaused)
+            _isPaused = !_isPaused;
+            if (_isPaused)
             {
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
-                PauseCanvas.enabled = true;
-                MainCanvas.enabled = false;
+                pauseCanvas.enabled = true;
+                mainCanvas.enabled = false;
                 Time.timeScale = 0;
-            }else if (!isPaused)
+            }else if (!_isPaused)
             {
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
-                PauseCanvas.enabled = false;
-                MainCanvas.enabled = true;
+                pauseCanvas.enabled = false;
+                mainCanvas.enabled = true;
                 Time.timeScale = 1;
             }
         }

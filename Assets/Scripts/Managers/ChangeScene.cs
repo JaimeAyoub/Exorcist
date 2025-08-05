@@ -3,10 +3,11 @@ using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 public class ChangeScene : MonoBehaviour
 {
-    public float FadeTime;
+    public float fadeTime;
     public Image imageToFade;
 
 
@@ -29,7 +30,7 @@ public class ChangeScene : MonoBehaviour
 
     void FadeOut()
     {
-        imageToFade.DOFade(0, FadeTime);
+        imageToFade.DOFade(0, fadeTime);
     }
 
  
@@ -39,10 +40,10 @@ public class ChangeScene : MonoBehaviour
         {
             case SceneToChange.MainMenu:
                 Time.timeScale = 1;
-                imageToFade.DOFade(1, FadeTime).OnComplete (()=> SceneManager.LoadScene(0));
+                imageToFade.DOFade(1, fadeTime).OnComplete (()=> SceneManager.LoadScene(0));
                 break;
             case SceneToChange.GrayBox:
-                imageToFade.DOFade(1, FadeTime).OnComplete (()=> SceneManager.LoadScene(1));;
+                imageToFade.DOFade(1, fadeTime).OnComplete (()=> SceneManager.LoadScene(1));;
                 break;
         }
     }

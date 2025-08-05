@@ -281,6 +281,7 @@ GameObject:
   m_Component:
   - component: {fileID: 337807855}
   - component: {fileID: 337807857}
+  - component: {fileID: 337807858}
   - component: {fileID: 337807856}
   m_Layer: 5
   m_Name: Titulo
@@ -303,10 +304,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 6597453}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0.0000019073486, y: -91}
-  m_SizeDelta: {x: 218.9184, y: 53.179565}
+  m_AnchorMin: {x: 0.33, y: 0.80644363}
+  m_AnchorMax: {x: 0.6725209, y: 0.9582198}
+  m_AnchoredPosition: {x: -1.5, y: -2}
+  m_SizeDelta: {x: -440.0816, y: -110.820435}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &337807856
 MonoBehaviour:
@@ -407,6 +408,45 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 337807854}
   m_CullTransparentMesh: 1
+--- !u!114 &337807858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 337807854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22eb27b2d794cf844b78d59bea4f1ddf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  animationDuration: 0.5
+  Delay: 0
+  selectAnimationType: 0
 --- !u!1 &374956480
 GameObject:
   m_ObjectHideFlags: 0
@@ -424,7 +464,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &374956481
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -493,6 +533,7 @@ GameObject:
   - component: {fileID: 392833842}
   - component: {fileID: 392833845}
   - component: {fileID: 392833844}
+  - component: {fileID: 392833846}
   - component: {fileID: 392833843}
   m_Layer: 5
   m_Name: Start
@@ -615,6 +656,45 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 392833841}
   m_CullTransparentMesh: 1
+--- !u!114 &392833846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 392833841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22eb27b2d794cf844b78d59bea4f1ddf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  animationDuration: 0.4
+  Delay: 1
+  selectAnimationType: 1
 --- !u!1 &931940871
 GameObject:
   m_ObjectHideFlags: 0

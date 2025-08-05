@@ -6,9 +6,9 @@ public class PlayerMovement : MonoBehaviour
     private CharacterController controller;
     public CinemachineVirtualCameraBase camera;
 
-    [Header("Movement")] private float MoveX;
-    private float MoveZ;
-    private Vector3 movement;
+    [Header("Movement")] private float _moveX;
+    private float _moveZ;
+    private Vector3 _movement;
     public float speed;
 
 
@@ -36,10 +36,10 @@ public class PlayerMovement : MonoBehaviour
 
     void Move()
     {
-        MoveX = Input.GetAxisRaw("Horizontal");
-        MoveZ = Input.GetAxisRaw("Vertical");
-        movement = transform.right * MoveX + transform.forward * MoveZ;
-        controller.Move(movement.normalized * (speed * Time.deltaTime));
+        _moveX = Input.GetAxisRaw("Horizontal");
+        _moveZ = Input.GetAxisRaw("Vertical");
+        _movement = transform.right * _moveX + transform.forward * _moveZ;
+        controller.Move(_movement.normalized * (speed * Time.deltaTime));
     }
 
     void Rotate()
