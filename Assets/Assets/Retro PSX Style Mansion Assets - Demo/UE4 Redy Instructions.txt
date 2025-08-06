@@ -1,0 +1,14 @@
+Simply drag the "Retro_PSX_Style_Mansion_Assets_Demo" folder which is found at the following directory of this file "Retro PSX Style Mansion Assets - Demo\UE4 Ready\Content", into the "Content" folder of your chosen UE4 project's directory and your ready to go!
+
+
+Step by Step Guide:
+
+1. Locate the directory of the UE4 project in which you wish to import the PSX Style Mansion Assets.
+
+2. Once at the directory open the folder named "Content".
+
+3. Go to the following directory of in the Retro PSX Style Mansion Assets file: "Retro PSX Style Mansion Assets - Demo\UE4 Ready\Content".
+
+4. Drag and drop the "Retro_PSX_Style_Mansion_Assets_Demo" folder in the "Content" folder of the UE4 project.
+
+5. Enjoy!

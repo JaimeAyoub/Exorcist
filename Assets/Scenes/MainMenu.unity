@@ -253,7 +253,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd770adda5044264fa2267805eca0111, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FadeTime: 1
+  fadeTime: 0
   imageToFade: {fileID: 374956481}
   sceneToChange: 1
 --- !u!4 &248619867
@@ -445,8 +445,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   animationDuration: 0.5
-  Delay: 0
-  selectAnimationType: 0
+  delay: 0
+  selectAnimationType: 2
 --- !u!1 &374956480
 GameObject:
   m_ObjectHideFlags: 0
@@ -693,7 +693,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   animationDuration: 0.4
-  Delay: 1
+  delay: 1
   selectAnimationType: 1
 --- !u!1 &931940871
 GameObject:
