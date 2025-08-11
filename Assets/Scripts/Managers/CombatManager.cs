@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class CombatManager : MonoBehaviour
 {
@@ -13,23 +15,36 @@ public class CombatManager : MonoBehaviour
     public bool isenemyTurn;
     public bool isCombat = false;
 
+    //Variables para la logica del tiempo
+    public float currentTime;
+    public float MaxTime = 20;
+    public Slider _timeSlider;
+
     void Start()
     {
+        currentTime = MaxTime;
+        _timeSlider.maxValue = MaxTime;
     }
 
 
     void Update()
     {
+        if (isCombat)
+        {
+            currentTime -= Time.timeScale * Time.deltaTime * 2;
+            // Debug.Log(combatTime);
+            _timeSlider.value = currentTime;
+        }
     }
 
-    public enum combatturn
+    public enum Combatturn
     {
-        playerTurn,
-        enemyTurn,
-        none
+        PlayerTurn,
+        EnemyTurn,
+        None
     }
 
-    private combatturn currentturn;
+    private Combatturn _currentturn;
 
     void Awake()
     {
@@ -51,8 +66,9 @@ public class CombatManager : MonoBehaviour
         player.GetComponent<PlayerAttack>().target = enemy;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
-        currentturn = combatturn.playerTurn;
+        _currentturn = Combatturn.PlayerTurn;
         isCombat = true;
+        TextReader.instance.ActivarModoEscritura();
         StopAllCoroutines();
         StartCoroutine(CombatLoop());
     }
@@ -62,47 +78,58 @@ public class CombatManager : MonoBehaviour
         Debug.unityLogger.Log("CombatStart");
         while (isCombat)
         {
-            if (currentturn == combatturn.playerTurn)
+            if (_currentturn == Combatturn.PlayerTurn)
             {
                 combatgroup.interactable = true;
 
+
                 //Accion del jugador.
-                yield return new WaitUntil(() => isplayerTurn ==  false);
-                currentturn = combatturn.enemyTurn;
+                if (IsCombatEnd()) yield break;
+                yield return new WaitUntil(() => currentTime <= 0);
+                isplayerTurn = false;
+                _currentturn = Combatturn.EnemyTurn;
             }
-            else if (currentturn == combatturn.enemyTurn)
+            else if (_currentturn == Combatturn.EnemyTurn)
             {
                 enemy.GetComponent<EnemyAttack>().Attack(1);
+                if (IsCombatEnd()) yield break;
 
-                if (isCombatEnd()) yield break;
-                
+
                 isplayerTurn = true;
-                currentturn = combatturn.playerTurn;
+                ResetTime();
+                _currentturn = Combatturn.PlayerTurn;
             }
         }
 
         yield return null;
     }
 
-    private void endCombat()
+    private void EndCombat()
     {
         isCombat = false;
         combatgroup.alpha = 0;
         combatgroup.interactable = false;
 
-        currentturn = combatturn.none;
-
+        _currentturn = Combatturn.None;
+        TextReader.instance.DesactivarModoEscritura();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
 
 
-    private bool isCombatEnd()
+    public bool IsCombatEnd()
     {
-        if (player.GetComponent<PlayerHealth>().currentHealth <= 0 ||
-            enemy.GetComponent<EnemyHealth>().currentHealth <= 0)
+        if (player.GetComponent<PlayerHealth>().currentHealth <= 0)
         {
-            endCombat();
+            Debug.Log("Derrota");
+            EndCombat();
+            return true;
+        }
+        if (enemy.GetComponent<EnemyHealth>().currentHealth <= 0)
+        {
+            Debug.Log("Victoria");
+            EndCombat();
+            Destroy(enemy);
             return true;
         }
 
@@ -112,5 +139,20 @@ public class CombatManager : MonoBehaviour
     public void EndPlayerTurn()
     {
         isplayerTurn = false;
+    }
+
+    public void AddTime(float time)
+    {
+        currentTime += time;
+    }
+
+    public void SubstracTime(float time)
+    {
+        currentTime -= time;
+    }
+
+    void ResetTime()
+    {
+        currentTime = MaxTime;
     }
 }

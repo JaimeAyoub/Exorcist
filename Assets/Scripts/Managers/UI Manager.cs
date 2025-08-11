@@ -6,12 +6,17 @@ public class UIManager : MonoBehaviour
 {
    public Canvas pauseCanvas;
    public Canvas mainCanvas;
+   public Canvas combatCanvas;
     private bool _isPaused = false;
 
     void Start()
     {
         pauseCanvas.enabled = false;
         mainCanvas.enabled = true;
+        
+        pauseCanvas.GetComponent<CanvasGroup>().alpha = 0;
+        combatCanvas.GetComponent<CanvasGroup>().alpha = 0;
+        mainCanvas.GetComponent<CanvasGroup>().alpha = 1;
     }
 
     // Update is called once per frame

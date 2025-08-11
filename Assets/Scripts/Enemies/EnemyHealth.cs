@@ -21,14 +21,14 @@ public class EnemyHealth : MonoBehaviour
         if (currentHealth > 0)
         {
             currentHealth -= amount;
+            CombatManager.instance.IsCombatEnd();
             Debug.Log("Vida del enemigo: " + currentHealth);
         }
-        // else if (currentHealth <= 0)
-             //Death();
+    
     }
 
     private void Death()
     {
-        throw new System.NotImplementedException();
+        Destroy(this.gameObject);
     }
 }
