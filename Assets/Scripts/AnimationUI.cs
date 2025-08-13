@@ -12,6 +12,7 @@ public class AnimationUI : MonoBehaviour
     private RectTransform _rectTransform;
     private Vector3 _startPosObject;
     private Vector3 _endPosObject;
+    public bool animateOnStart = true;
     private float _offSetX;
     private float _offSetY;
 
@@ -32,7 +33,8 @@ public class AnimationUI : MonoBehaviour
         _objectToAnimate = this.gameObject;
         _rectTransform = _objectToAnimate.GetComponent<RectTransform>();
         _endPosObject = _rectTransform.anchoredPosition;
-        Animate();
+        if(animateOnStart)
+            Animate();
     }
 
 
