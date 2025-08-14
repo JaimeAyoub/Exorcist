@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <asset>
+    <contributor>
+      <author>Blender User</author>
+      <authoring_tool>Blender 3.0.1 commit date:2022-01-25, commit time:17:19, hash:dc2d18018171</authoring_tool>
+    </contributor>
+    <created>2022-08-23T11:29:47</created>
+    <modified>2022-08-23T11:29:47</modified>
+    <unit name="meter" meter="1"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_effects>
+    <effect id="cieling1_material-effect">
+      <profile_COMMON>
+        <newparam sid="ceiling1_texture_png-surface">
+          <surface type="2D">
+            <init_from>ceiling1_texture_png</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="ceiling1_texture_png-sampler">
+          <sampler2D>
+            <source>ceiling1_texture_png-surface</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <lambert>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <diffuse>
+              <texture texture="ceiling1_texture_png-sampler" texcoord="UVMap"/>
+            </diffuse>
+            <index_of_refraction>
+              <float sid="ior">1.45</float>
+            </index_of_refraction>
+          </lambert>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_images>
+    <image id="ceiling1_texture_png" name="ceiling1_texture_png">
+      <init_from>ceiling1_texture.png</init_from>
+    </image>
+  </library_images>
+  <library_materials>
+    <material id="cieling1_material-material" name="cieling1_material">
+      <instance_effect url="#cieling1_material-effect"/>
+    </material>
+  </library_materials>
+  <library_geometries>
+    <geometry id="Cube_001-mesh" name="Cube.001">
+      <mesh>
+        <source id="Cube_001-mesh-positions">
+          <float_array id="Cube_001-mesh-positions-array" count="72">-1 -1 -0.04999995 -1 -1 0 -1 1 -0.04999995 -1 1 0 1 -1 -0.04999995 1 -1 0 1 1 -0.04999995 1 1 0 1 0.4108936 0.04999977 1 0.4108936 -5.96046e-7 1 0.6 0.04999977 1 0.6 -5.96046e-7 -1 0.4108936 0.05000007 -1 0.4108936 -2.98023e-7 -1 0.6 0.05000007 -1 0.6 -2.98023e-7 1 -0.5891065 0.04999977 1 -0.5891065 -5.96046e-7 1 -0.4 0.04999977 1 -0.4 -5.96046e-7 -1 -0.5891065 0.05000007 -1 -0.5891065 -2.98023e-7 -1 -0.4 0.05000007 -1 -0.4 -2.98023e-7</float_array>
+          <technique_common>
+            <accessor source="#Cube_001-mesh-positions-array" count="24" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Cube_001-mesh-normals">
+          <float_array id="Cube_001-mesh-normals-array" count="36">-1 0 0 0 1 0 1 0 0 0 -1 0 0 0 1 1.47746e-7 0 1 -1.49012e-7 0 -1 1.47746e-7 0 1 -1.49012e-7 0 -1 1.47746e-7 0 1 -1.49012e-7 0 -1 -1.49012e-7 0 -1</float_array>
+          <technique_common>
+            <accessor source="#Cube_001-mesh-normals-array" count="12" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Cube_001-mesh-map-0">
+          <float_array id="Cube_001-mesh-map-0-array" count="204">0.5375 0.5 0.55 0 0.55 0.5 0.525 0.5 0.5375 0 0.5375 0.5 0.5125 0.5 0.525 0 0.525 0.5 0.5 0.5 0.5125 0 0.5125 0.5 1 0 0 1 0 0 0.5534531 0 0.5284529 0.09455323 0.5284529 0 0.3631469 1 0.3881469 0 0.388147 1 0.5284529 0.1891064 0.5034528 0.2836596 0.5034528 0.1891064 0.4131472 1 0.4381475 0 0.4381474 1 0.69137 1 0.5968168 0 0.69137 0 0.875 0.5 0.625 0.75 0.625 0.5 0.5284529 0.09455323 0.5034528 0.1891064 0.5034528 0.09455323 0.3881471 1 0.4131472 0 0.4131472 1 0.5284529 0 0.5034528 0.09455317 0.5034528 0 0.4381474 1 0.4631476 0 0.4631476 1 0.3441348 1 0.2495816 0 0.3441348 0 0.875 0.5 0.625 0.75 0.625 0.5 0.5375 0.5 0.5375 0 0.55 0 0.525 0.5 0.525 0 0.5375 0 0.5125 0.5 0.5125 0 0.525 0 0.5 0.5 0.5 0 0.5125 0 1 0 1 1 0 1 0.5534531 0 0.5534531 0.09455323 0.5284529 0.09455323 0.3631469 1 0.3631468 0 0.3881469 0 0.5284529 0.1891064 0.5284529 0.2836596 0.5034528 0.2836596 0.4131472 1 0.4131473 0 0.4381475 0 0.69137 1 0.5968168 1 0.5968168 0 0.875 0.5 0.875 0.75 0.625 0.75 0.5284529 0.09455323 0.5284529 0.1891064 0.5034528 0.1891064 0.3881471 1 0.388147 0 0.4131472 0 0.5284529 0 0.5284529 0.09455317 0.5034528 0.09455317 0.4381474 1 0.4381474 0 0.4631476 0 0.3441348 1 0.2495816 1 0.2495816 0 0.875 0.5 0.875 0.75 0.625 0.75</float_array>
+          <technique_common>
+            <accessor source="#Cube_001-mesh-map-0-array" count="102" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Cube_001-mesh-vertices">
+          <input semantic="POSITION" source="#Cube_001-mesh-positions"/>
+        </vertices>
+        <triangles material="cieling1_material-material" count="34">
+          <input semantic="VERTEX" source="#Cube_001-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Cube_001-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Cube_001-mesh-map-0" offset="2" set="0"/>
+          <p>1 0 0 2 0 1 0 0 2 3 1 3 6 1 4 2 1 5 7 2 6 4 2 7 6 2 8 5 3 9 0 3 10 4 3 11 3 4 12 5 4 13 7 4 14 9 2 15 10 2 16 8 2 17 11 1 18 14 1 19 10 1 20 15 0 21 12 0 22 14 0 23 13 3 24 8 3 25 12 3 26 14 5 27 8 5 28 10 5 29 11 6 30 13 6 31 15 6 32 17 2 33 18 2 34 16 2 35 19 1 36 22 1 37 18 1 38 23 0 39 20 0 40 22 0 41 21 3 42 16 3 43 20 3 44 22 7 45 16 7 46 18 7 47 19 8 48 21 8 49 23 8 50 1 0 51 3 0 52 2 0 53 3 1 54 7 1 55 6 1 56 7 2 57 5 2 58 4 2 59 5 3 60 1 3 61 0 3 62 3 4 63 1 4 64 5 4 65 9 2 66 11 2 67 10 2 68 11 1 69 15 1 70 14 1 71 15 0 72 13 0 73 12 0 74 13 3 75 9 3 76 8 3 77 14 9 78 12 9 79 8 9 80 11 10 81 9 10 82 13 10 83 17 2 84 19 2 85 18 2 86 19 1 87 23 1 88 22 1 89 23 0 90 21 0 91 20 0 92 21 3 93 17 3 94 16 3 95 22 7 96 20 7 97 16 7 98 19 11 99 17 11 100 21 11 101</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+      <node id="cieling1" name="cieling1" type="NODE">
+        <matrix sid="transform">-1 0 1.50996e-7 0 0 1 0 0 -1.50996e-7 0 -1 2.35 0 0 0 1</matrix>
+        <instance_geometry url="#Cube_001-mesh" name="cieling1">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="cieling1_material-material" target="#cieling1_material-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene"/>
+  </scene>
+</COLLADA>

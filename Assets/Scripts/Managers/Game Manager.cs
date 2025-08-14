@@ -23,7 +23,8 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
-        AudioManager.PlayBGM(SoundType.FONDO, 0.5f);
+        //audioManager.PlayBGM(SoundType.FONDO, 0.5f);
+        AudioManager.instance.PlayBGM(SoundType.FONDO, 0.5f);
     }
 
     // Update is called once per frame
@@ -51,7 +52,7 @@ public class GameManager : MonoBehaviour
     {
         isPlayerSound = true;
         yield return new WaitForSeconds(0.4f);
-        AudioManager.PlaySFXRandom(SoundType.PASOS, 0.40f, 0.55f);
+        AudioManager.instance.PlaySFXRandom(SoundType.PASOS, 0.40f, 0.55f);
         isPlayerSound = false;
     }
 

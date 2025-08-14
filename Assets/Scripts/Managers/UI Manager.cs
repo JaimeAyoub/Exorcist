@@ -6,12 +6,17 @@ public class UIManager : MonoBehaviour
 {
    public Canvas pauseCanvas;
    public Canvas mainCanvas;
+   public Canvas combatCanvas;
     private bool _isPaused = false;
 
     void Start()
     {
         pauseCanvas.enabled = false;
         mainCanvas.enabled = true;
+        
+        pauseCanvas.GetComponent<CanvasGroup>().alpha = 0;
+        combatCanvas.GetComponent<CanvasGroup>().alpha = 0;
+        mainCanvas.GetComponent<CanvasGroup>().alpha = 1;
     }
 
     // Update is called once per frame
@@ -30,6 +35,7 @@ public class UIManager : MonoBehaviour
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
                 pauseCanvas.enabled = true;
+                pauseCanvas.GetComponent<CanvasGroup>().alpha = 1;
                 mainCanvas.enabled = false;
                 Time.timeScale = 0;
             }else if (!_isPaused)
@@ -37,6 +43,7 @@ public class UIManager : MonoBehaviour
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
                 pauseCanvas.enabled = false;
+                pauseCanvas.GetComponent<CanvasGroup>().alpha = 0;
                 mainCanvas.enabled = true;
                 Time.timeScale = 1;
             }
