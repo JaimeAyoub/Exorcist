@@ -151,20 +151,6 @@ public class TextReader : MonoBehaviour
         }
         else
         {
-            //string displayedText = "";
-            //for (int i = 0; i < textoJugador.Length; i++)
-            //{
-            //    if (i < fraseActual.Length && textoJugador[i] == fraseActual[i])
-            //    {
-            //        displayedText += "<color=green>" + textoJugador[i] + "</color>";
-            //    }
-            //    else
-            //    {
-            //        displayedText += "<color=red>" + textoJugador[i] + "</color>";
-            //    }
-            //}
-            //campoDeEscritura.text = displayedText; // �Cuidado! Esto sobrescribe lo que escribe el jugador
-
             // Una forma m�s simple es solo comparar la longitud para dar una pista visual
             if (textoJugador.Length > _fraseActual.Length)
             {
