@@ -8,6 +8,7 @@ public class TextReader : MonoBehaviour
 {
     
     public static TextReader instance;
+    public AudioManager audioManager;
     [Header("Referencias UI")] public TextMeshProUGUI fraseObjetivoText;
     public TMP_InputField fieldDeEscritura;
     public TextMeshProUGUI retroalimentacionText;
@@ -83,6 +84,7 @@ public class TextReader : MonoBehaviour
         {
             if (Input.anyKeyDown)
             {
+                AudioManager.instance.PlaySFX(SoundType.TECLAS, 0.5f);
                 _canAddTime = true;
                 _canSubstracTime = true;
                 if (_correctWords == 1)

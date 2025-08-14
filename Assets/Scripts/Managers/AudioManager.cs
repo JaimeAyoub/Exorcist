@@ -27,7 +27,13 @@ public class AudioManager : MonoBehaviour
 
     private void Awake()
     {
-        instance = this;
+        if (instance == null) {
+            instance = this;
+        } 
+        else 
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void Start()
@@ -37,17 +43,17 @@ public class AudioManager : MonoBehaviour
 
 
 
-    public static void PlaySFX(SoundType clip, float volume = 1f)
+    public void PlaySFX(SoundType clip, float volume = 1f)
     {
         instance.audioSource.PlayOneShot(instance.soundList[(int)clip], volume);
     }
 
-    public static void PlayBGM(SoundType clip, float volume = 1f)
+    public void PlayBGM(SoundType clip, float volume = 1f)
     {
         instance.BGMSource.PlayOneShot(instance.soundList[(int)clip], volume);
     }
 
-    public static void PlaySFXRandom(SoundType clip, float minValue, float maxValue, float volume = 1f)
+    public void PlaySFXRandom(SoundType clip, float minValue, float maxValue, float volume = 1f)
     {
         instance.StartCoroutine(PlayRandomPitch(clip, minValue, maxValue));
     }
@@ -62,17 +68,17 @@ public class AudioManager : MonoBehaviour
         //DESTROY
     }
 
-    private static void ResetPitch()
+    private void ResetPitch()
     {
         instance.audioSource.pitch = 1;
     }
 
-    public static void StopSFX()
+    public void StopSFX()
     {
         instance.audioSource.Stop();
     }
 
-    private static IEnumerator PlayRandomPitch(SoundType clip, float minValue, float maxValue, float volume = 1f)
+    private IEnumerator PlayRandomPitch(SoundType clip, float minValue, float maxValue, float volume = 1f)
     {
         float random = Random.Range(minValue, maxValue);
         instance.audioSource.pitch = random;
