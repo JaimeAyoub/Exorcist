@@ -6744,6 +6744,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fea187ee15906504c92bd48c8c1f6f08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioManager: {fileID: 0}
   combatgroup: {fileID: 365421136}
   player: {fileID: 1168801362}
   enemy: {fileID: 934303383}
@@ -6765,6 +6766,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65d47f9885f282547a35b43aed0bff88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioManager: {fileID: 0}
   fraseObjetivoText: {fileID: 963216031}
   fieldDeEscritura: {fileID: 463610006}
   retroalimentacionText: {fileID: 1029993867}
@@ -18948,7 +18950,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -19756,8 +19758,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 4a1adc4335db32c479efa641694e31ff, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -30042,6 +30044,7 @@ GameObject:
   - component: {fileID: 2014862231}
   - component: {fileID: 2014862235}
   - component: {fileID: 2014862234}
+  - component: {fileID: 2014862237}
   - component: {fileID: 2014862233}
   - component: {fileID: 2014862236}
   m_Layer: 0
@@ -30214,6 +30217,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   virtualCamera: {fileID: 2014862231}
+--- !u!114 &2014862237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2014862230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 449ef5ebbe24720439ec31d15f7b6f3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Weight: 1
+  FocusTracking: 0
+  FocusTarget: {fileID: 0}
+  FocusOffset: 0
+  Profile: {fileID: 11400000, guid: cbea3553215783e40b933a560601f35d, type: 2}
 --- !u!1 &2020967255
 GameObject:
   m_ObjectHideFlags: 0
