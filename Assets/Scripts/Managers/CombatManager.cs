@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class CombatManager : MonoBehaviour
 {
     public static CombatManager instance;
+    public AudioManager audioManager;
 
     public CanvasGroup combatgroup;
     public GameObject player;
@@ -64,6 +65,8 @@ public class CombatManager : MonoBehaviour
             return;
         combatgroup.alpha = 1;
         player.GetComponent<PlayerAttack>().target = enemy;
+        AudioManager.instance.PlayBGM(SoundType.COMBATE, 0.5f);
+        AudioManager.instance.PlaySFX(SoundType.ENEMIGO, 0.5f);
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
         _currentturn = Combatturn.PlayerTurn;
