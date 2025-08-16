@@ -1,18 +1,30 @@
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
     private CharacterController controller;
     public CinemachineVirtualCameraBase camera;
+    private InputSystem_Actions inputActions;
+    private Rigidbody rb;
 
     [Header("Movement")] private float _moveX;
     private float _moveZ;
     private Vector3 _movement;
-    public float speed;
+    public float speed = 5f;
     private bool isMoving;
     private float X;
     private float Z;
+
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody>();
+        inputActions = new InputSystem_Actions();
+        inputActions.Player.Enable();
+        inputActions.Player.Movement.performed += Move;
+    }
+
     void Start()
     {
         if (!controller)
@@ -25,20 +37,23 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-    void Update()
+    void FixedUpdate()
     {
         if (!CombatManager.instance.isCombat)
         {
-            Move();
+            //Move();
 
             Rotate();
         }
+        Vector2 inputVector = inputActions.Player.Movement.ReadValue<Vector2>();
+        controller.Move(speed * Time.deltaTime * new Vector3(inputVector.x, 0, inputVector.y) );
     }
 
-    void Move()
+    void Move(InputAction.CallbackContext ctx)
     {
-        _moveX = Input.GetAxisRaw("Horizontal");
-        _moveZ = Input.GetAxisRaw("Vertical");
+        //Vector2 inputVector = ctx.ReadValue<Vector2>();
+        //controller.Move(speed * Time.deltaTime * new Vector3(inputVector.x, 0, inputVector.y));
+
         if (X == 0 && Z == 0)
         {
             isMoving = false;
@@ -47,9 +62,6 @@ public class PlayerMovement : MonoBehaviour
         {
             isMoving = true;
         }
-
-        _movement = transform.right * _moveX + transform.forward * _moveZ;
-        controller.Move(_movement.normalized * (speed * Time.deltaTime));
     }
 
     void Rotate()
