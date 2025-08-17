@@ -63,7 +63,7 @@ public class CombatManager : MonoBehaviour
     {
         if (isCombat)
             return;
-        combatgroup.alpha = 1;
+        UIManager.instance.ActivateCanvas(UIManager.instance._combatCanvas);
         player.GetComponent<PlayerAttack>().target = enemy;
         AudioManager.instance.PlayBGM(SoundType.COMBATE, 0.5f);
         AudioManager.instance.PlaySFX(SoundType.ENEMIGO, 0.5f);
@@ -110,9 +110,7 @@ public class CombatManager : MonoBehaviour
     private void EndCombat()
     {
         isCombat = false;
-        combatgroup.alpha = 0;
-        combatgroup.interactable = false;
-
+        UIManager.instance.ActivateCanvas(UIManager.instance._mainCanvas);
         _currentturn = Combatturn.None;
         TextReader.instance.DesactivarModoEscritura();
         Cursor.visible = false;
