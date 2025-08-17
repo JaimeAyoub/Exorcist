@@ -4,73 +4,110 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private CharacterController controller;
+    [Header("Movement Speeds")]
+    [SerializeField] private float walkSpeed = 3.0f;
+    [SerializeField] private float sprintMultiplier = 2.0f;
+
+
+    [Header("Jump Parameters")]
+    [SerializeField] private float jumpForce = 5.0f;
+    [SerializeField] private float gravityMultiplier = 1.0f;
+
+
+    [Header("Look Parameters")]
+    [SerializeField] private float mouseSensitivity = 0.1f;
+    [SerializeField] private float upDownLookRange = 80f;
+
+
+    [Header("References")]
+    [SerializeField] private CharacterController characterController;
+    [SerializeField] private Camera mainCamera;
+    [SerializeField] private PlayerInputHandler playerInputHandler;
+
+
+    private Vector3 currentMovement;
+    private float verticalRotation;
+    private float CurrentSpeed => walkSpeed * (playerInputHandler.SprintTriggered ? sprintMultiplier : 1);
+
+    //INTEGRAR CINEMACHINE
     public CinemachineVirtualCameraBase camera;
-    private InputSystem_Actions inputActions;
-    private Rigidbody rb;
-
-    [Header("Movement")] private float _moveX;
-    private float _moveZ;
-    private Vector3 _movement;
-    public float speed = 5f;
-    private bool isMoving;
-    private float X;
-    private float Z;
-
-    private void Awake()
-    {
-        rb = GetComponent<Rigidbody>();
-        inputActions = new InputSystem_Actions();
-        inputActions.Player.Enable();
-        inputActions.Player.Movement.performed += Move;
-    }
 
     void Start()
     {
-        if (!controller)
-            controller = GetComponent<CharacterController>();
-        if (!camera)
-            camera = FindAnyObjectByType<CinemachineVirtualCameraBase>();
-
-        Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    void Update()
+    {
+        HandleMovement();
+        HandleRotation();
+    }
+
+    private Vector3 CalculateWorldDirection()
+    {
+        Vector3 inputDirection = new Vector3(playerInputHandler.MovementInput.x, 0f, playerInputHandler.MovementInput.y);
+        Vector3 worldDirection = transform.TransformDirection(inputDirection);
+        return worldDirection.normalized;
     }
 
 
-    void FixedUpdate()
+    private void HandleJumping()
     {
-        if (!CombatManager.instance.isCombat)
+        if (characterController.isGrounded)
         {
-            //Move();
+            currentMovement.y = -0.5f;
 
-            Rotate();
-        }
-        Vector2 inputVector = inputActions.Player.Movement.ReadValue<Vector2>();
-        controller.Move(speed * Time.deltaTime * new Vector3(inputVector.x, 0, inputVector.y) );
-    }
 
-    void Move(InputAction.CallbackContext ctx)
-    {
-        //Vector2 inputVector = ctx.ReadValue<Vector2>();
-        //controller.Move(speed * Time.deltaTime * new Vector3(inputVector.x, 0, inputVector.y));
-
-        if (X == 0 && Z == 0)
-        {
-            isMoving = false;
+            if (playerInputHandler.JumpTriggered)
+            {
+                currentMovement.y = jumpForce;
+            }
         }
         else
         {
-            isMoving = true;
+            currentMovement.y += Physics.gravity.y * gravityMultiplier * Time.deltaTime;
         }
     }
 
-    void Rotate()
+
+    private void HandleMovement()
     {
-        transform.rotation = Quaternion.Euler(0f, camera.GetComponent<CinemachinePanTilt>().PanAxis.Value, 0f);
+        Vector3 worldDirection = CalculateWorldDirection();
+        currentMovement.x = worldDirection.x * CurrentSpeed;
+        currentMovement.z = worldDirection.z * CurrentSpeed;
+
+
+        HandleJumping();
+        characterController.Move(currentMovement * Time.deltaTime);
     }
+
+
+    private void ApplyHorizontalRotation(float rotationAmount)
+    {
+        transform.Rotate(0, rotationAmount, 0);
+    }
+
+
+    private void ApplyVerticalRotation(float rotationAmount)
+    {
+        verticalRotation = Mathf.Clamp(verticalRotation - rotationAmount, -upDownLookRange, upDownLookRange);
+        mainCamera.transform.localRotation = Quaternion.Euler(verticalRotation, 0, 0);
+    }
+
+
+    private void HandleRotation()
+    {
+        float mouseXRotation = playerInputHandler.RotationInput.x * mouseSensitivity;
+        float mouseYRotation = playerInputHandler.RotationInput.y * mouseSensitivity;
+
+        ApplyHorizontalRotation(mouseXRotation);
+        ApplyVerticalRotation(mouseYRotation);
+    }
+
     public bool IsMove()
     {
-        return isMoving;
+        return true;
     }
     
 }
