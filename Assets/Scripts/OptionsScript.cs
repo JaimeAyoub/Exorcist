@@ -1,5 +1,9 @@
 
+using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.InputSystem.Controls;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 public class OptionsScript : MonoBehaviour
@@ -10,10 +14,31 @@ public class OptionsScript : MonoBehaviour
     [Header("Opciones de sonido")]
     public Slider SonidoSlider;
     [Header("Opciones sobre los efectos de PostProcessing")]
-    private 
+    public VolumeProfile volumeProfile;
+    public Slider chromaticAberrationSlider;
+    private ChromaticAberration _chromaticAberration;
+    private FilmGrain _filmGrain;
+    public  Slider filmGrainSlider;
 
     void Start()
     {
+        if (volumeProfile.TryGet(out _chromaticAberration))
+        {
+            _chromaticAberration.intensity.value = chromaticAberrationSlider.value;
+        }
+
+        else
+        {
+            Debug.LogError("No chromatic aberration found");
+        }
+        if (volumeProfile.TryGet(out _filmGrain))
+        {
+            _filmGrain.intensity.value =  filmGrainSlider.value;
+        }
+        else
+        {
+            Debug.LogError("No Grain found");
+        }
         PixelationShaderSlider.maxValue = 8;
         PixelationShaderSlider.minValue = 3;
         PixelationShaderSlider.value = PixelationShaderMaterial.GetFloat("_PixelSize");
@@ -29,5 +54,15 @@ public class OptionsScript : MonoBehaviour
     public void ChangeSound()
     {
         AudioManager.instance.audioSource.volume = SonidoSlider.value;
+    }
+
+    public void ChangeChromaticAberration()
+    {
+        _chromaticAberration.intensity.value = chromaticAberrationSlider.value;
+    }
+
+    public void ChangeGrain()
+    {
+        _filmGrain.intensity.value = filmGrainSlider.value;
     }
 }
