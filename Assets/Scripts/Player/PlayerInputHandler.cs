@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,21 +12,31 @@ public class PlayerInputHandler : MonoBehaviour
 
 
     [Header("Action Map Name Reference")]
-    [SerializeField] private string actionMapName = "Player";
+    [SerializeField] private string playerActionMapName = "Player";
+    [SerializeField] private string uiActionMapName = "UI";
 
 
-    [Header("Action Name References")]
+    [Header("Player Action Name References")]
     [SerializeField] private string movement = "Movement";
     [SerializeField] private string rotation = "Rotation";
     [SerializeField] private string jump = "Jump";
     [SerializeField] private string sprint = "Sprint";
 
+    [Header("UI Action Name References")]
+    [SerializeField] private string pause = "Pause";
+    [SerializeField] private string resume = "Resume";
+    
 
     private InputAction movementAction;
     private InputAction rotationAction;
     private InputAction jumpAction;
     private InputAction sprintAction;
+    private InputAction pauseAction;
 
+    private InputAction resumeAction;
+
+    public event Action PauseEvent;
+    public event Action ResumeEvent;
 
     public Vector2 MovementInput { get; private set; }
     public Vector2 RotationInput { get; private set; }
@@ -35,14 +46,17 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void Awake()
     {
-        InputActionMap mapReference = playerControls.FindActionMap(actionMapName);
+        InputActionMap playerMapReference = playerControls.FindActionMap(playerActionMapName);
+        InputActionMap uiMapReference = playerControls.FindActionMap(uiActionMapName);
 
 
-        movementAction = mapReference.FindAction(movement);
-        rotationAction = mapReference.FindAction(rotation);
-        jumpAction = mapReference.FindAction(jump);
-        sprintAction = mapReference.FindAction(sprint);
+        movementAction = playerMapReference.FindAction(movement);
+        rotationAction = playerMapReference.FindAction(rotation);
+        jumpAction = playerMapReference.FindAction(jump);
+        sprintAction = playerMapReference.FindAction(sprint);
+        pauseAction = playerMapReference.FindAction(pause);
 
+        resumeAction = uiMapReference.FindAction(resume);
 
         SubscribeActionValuesToInputEvents();
     }
@@ -64,17 +78,45 @@ public class PlayerInputHandler : MonoBehaviour
 
         sprintAction.performed += inputInfo => SprintTriggered = true;
         sprintAction.canceled += inputInfo => SprintTriggered = false;
+
+
+        pauseAction.performed += inputInfo => OnPause(inputInfo);
+        resumeAction.performed += inputInfo => OnResume(inputInfo);
+
     }
 
+    public void OnPause(InputAction.CallbackContext ctx)
+    {
+        PauseEvent?.Invoke();
+        SetUI();   
+    }
+
+    public void OnResume(InputAction.CallbackContext ctx)
+    {
+        ResumeEvent?.Invoke();
+        SetGameplay();
+    }
 
     private void OnEnable()
     {
-        playerControls.FindActionMap(actionMapName).Enable();
+        SetGameplay();
     }
 
 
     private void OnDisable()
     {
-        playerControls.FindActionMap(actionMapName).Disable();
+        playerControls.FindActionMap(playerActionMapName).Disable();
     }
+
+    public void SetGameplay()
+    {
+        playerControls.FindActionMap(playerActionMapName).Enable();
+        playerControls.FindActionMap(uiActionMapName).Disable();
+    }
+    public void SetUI()
+    {
+        playerControls.FindActionMap(playerActionMapName).Disable();
+        playerControls.FindActionMap(uiActionMapName).Enable();
+    }
+
 }
