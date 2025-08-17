@@ -4,22 +4,30 @@ using UnityEngine.UI;
 
 public class OptionsScript : MonoBehaviour
 {
-    public Material blendMaterial;
-    
-    public Slider slider;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [Header("Opciones Shader para pixelear la pantalla")]
+    public Material PixelationShaderMaterial;
+    public Slider PixelationShaderSlider;
+    [Header("Opciones de sonido")]
+    public Slider SonidoSlider;
+    [Header("Opciones sobre los efectos de PostProcessing")]
+    private 
+
     void Start()
     {
-        slider.maxValue = 255;
-        slider.minValue = 1;
-        slider.value = blendMaterial.GetFloat("_PixelSize");
-        
-        blendMaterial.SetFloat("_PixelSize", 8.0f);
+        PixelationShaderSlider.maxValue = 8;
+        PixelationShaderSlider.minValue = 3;
+        PixelationShaderSlider.value = PixelationShaderMaterial.GetFloat("_PixelSize");
+
+    }
+    
+
+    public void ChangeShader()
+    {
+        PixelationShaderMaterial.SetFloat("_PixelSize", PixelationShaderSlider.value);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void ChangeSound()
     {
-        blendMaterial.SetFloat("_PixelSize", slider.value);
+        AudioManager.instance.audioSource.volume = SonidoSlider.value;
     }
 }
