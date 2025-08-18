@@ -37,6 +37,8 @@ public class PlayerInputHandler : MonoBehaviour
 
     public event Action PauseEvent;
     public event Action ResumeEvent;
+    public event Action MovementEvent;
+    public event Action StopMovementEvent;
 
     public Vector2 MovementInput { get; private set; }
     public Vector2 RotationInput { get; private set; }
@@ -64,8 +66,8 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void SubscribeActionValuesToInputEvents()
     {
-        movementAction.performed += inputInfo => MovementInput = inputInfo.ReadValue<Vector2>();
-        movementAction.canceled += inputInfo => MovementInput = Vector2.zero;
+        movementAction.performed += inputInfo => OnPlayerMove(inputInfo);
+        movementAction.canceled += inputInfo => OnStopPlayerMove(inputInfo);
 
 
         rotationAction.performed += inputInfo => RotationInput = inputInfo.ReadValue<Vector2>();
@@ -85,16 +87,28 @@ public class PlayerInputHandler : MonoBehaviour
 
     }
 
-    public void OnPause(InputAction.CallbackContext ctx)
+    private void OnPause(InputAction.CallbackContext ctx)
     {
         PauseEvent?.Invoke();
         SetUI();   
     }
 
-    public void OnResume(InputAction.CallbackContext ctx)
+    private void OnResume(InputAction.CallbackContext ctx)
     {
         ResumeEvent?.Invoke();
         SetGameplay();
+    }
+
+    private void OnPlayerMove(InputAction.CallbackContext ctx)
+    {
+        MovementEvent?.Invoke();
+        MovementInput = ctx.ReadValue<Vector2>();
+    }
+
+    private void OnStopPlayerMove(InputAction.CallbackContext ctx)
+    {
+        StopMovementEvent?.Invoke();
+        MovementInput = Vector2.zero;
     }
 
     private void OnEnable()

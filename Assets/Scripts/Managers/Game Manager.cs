@@ -5,9 +5,36 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     private static GameManager instance;
-    public AudioManager audioManager;
-    public PlayerMovement playerMovement;
+
     public bool isPlayerSound;
+    public PlayerInputHandler playerInputHandler;
+
+
+    private void OnEnable()
+    {
+        playerInputHandler.MovementEvent += PlayWalkSound;
+        playerInputHandler.StopMovementEvent += StopMoveSound;
+    }
+
+
+    private void OnDisable()
+    {
+        playerInputHandler.MovementEvent -= PlayWalkSound;
+        playerInputHandler.StopMovementEvent -= StopMoveSound;
+    }
+    private void StopMoveSound()
+    {
+        StopAllCoroutines();
+    }
+
+    private void PlayWalkSound()
+    {
+        if(!isPlayerSound)
+        {
+            StartCoroutine(PlayerWalkSound());
+        }
+    }
+
     void Awake()
     {
         if (instance == null)
@@ -18,35 +45,10 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
-        CheckComponents();
     }
     void Start()
     {
-        //audioManager.PlayBGM(SoundType.FONDO, 0.5f);
         AudioManager.instance.PlayBGM(SoundType.FONDO, 0.5f);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-    void CheckPlayerMoving()
-    {
-        if (playerMovement.IsMove())
-        {
-            if (isPlayerSound == false)
-            {
-                StartCoroutine(PlayerWalkSound());
-            }
-        }
-        else
-        {
-        
-            StopAllCoroutines();
-            isPlayerSound = false;
-        }
     }
     private IEnumerator PlayerWalkSound()
     {
@@ -55,36 +57,4 @@ public class GameManager : MonoBehaviour
         AudioManager.instance.PlaySFXRandom(SoundType.PASOS, 0.40f, 0.55f);
         isPlayerSound = false;
     }
-
-
-    void CheckComponents()
-    {
-        if (audioManager == null)
-        {
-            audioManager = FindAnyObjectByType<AudioManager>();
-        }
-        else
-        {
-            Debug.LogWarning("No se encontro el AudioManager");
-        }
-
-        if (playerMovement == null)
-        {
-            playerMovement = FindAnyObjectByType<PlayerMovement>();
-        }
-        else
-        {
-            Debug.LogWarning("No se encontro el PlayerMovement");
-        }
-
-        //if (enemyMovement == null)
-        //{
-        //    enemyMovement = FindAnyObjectByType<EnemyMovement>();
-        //}
-        //else
-        //{
-        //    Debug.LogWarning("No se encontro el EnemyMovement");
-        //}
-    }
-
 }

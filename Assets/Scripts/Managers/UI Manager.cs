@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 
 public class UIManager : MonoBehaviour
 {
-    //public static UIManager instance;
+    public static UIManager instance;
 
     [SerializeField] private PlayerInputHandler PlayerInputHandler;
     [SerializeField] public Canvas _mainCanvas;
@@ -22,9 +22,10 @@ public class UIManager : MonoBehaviour
     {
         PlayerInputHandler.PauseEvent += Pause;
         PlayerInputHandler.ResumeEvent += Pause;
+        
     }
 
-    
+
 
     private void OnDisable()
     {

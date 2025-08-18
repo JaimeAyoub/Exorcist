@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -18,8 +19,8 @@ public class AudioManager : MonoBehaviour
 {
     [Tooltip("Esta lista tiene que ser llenada en orden de acuerdo con el enum de arriba en la clase AudioManager")]
     [SerializeField]
-    private AudioClip[] soundList;
-
+    private List<AudioClip> soundList;
+   
     public static AudioManager instance;
     public AudioSource audioSource;
     public AudioSource BGMSource;
