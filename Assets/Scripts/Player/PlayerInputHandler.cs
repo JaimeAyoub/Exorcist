@@ -21,24 +21,32 @@ public class PlayerInputHandler : MonoBehaviour
     [SerializeField] private string rotation = "Rotation";
     [SerializeField] private string jump = "Jump";
     [SerializeField] private string sprint = "Sprint";
+    [SerializeField] private string typing = "Typing";
+
 
     [Header("UI Action Name References")]
     [SerializeField] private string pause = "Pause";
     [SerializeField] private string resume = "Resume";
     
-
+    // Player InputActions
     private InputAction movementAction;
     private InputAction rotationAction;
     private InputAction jumpAction;
     private InputAction sprintAction;
     private InputAction pauseAction;
+    private InputAction typingAction;
 
+    // Player InputActions
     private InputAction resumeAction;
 
+    // Player Events
     public event Action PauseEvent;
-    public event Action ResumeEvent;
     public event Action MovementEvent;
     public event Action StopMovementEvent;
+    public event Action<string> KeyTypedEvent;
+
+    // UI Events
+    public event Action ResumeEvent;
 
     public Vector2 MovementInput { get; private set; }
     public Vector2 RotationInput { get; private set; }
@@ -57,6 +65,7 @@ public class PlayerInputHandler : MonoBehaviour
         jumpAction = playerMapReference.FindAction(jump);
         sprintAction = playerMapReference.FindAction(sprint);
         pauseAction = playerMapReference.FindAction(pause);
+        typingAction = playerMapReference.FindAction(typing);
 
         resumeAction = uiMapReference.FindAction(resume);
 
@@ -85,6 +94,13 @@ public class PlayerInputHandler : MonoBehaviour
         pauseAction.performed += inputInfo => OnPause(inputInfo);
         resumeAction.performed += inputInfo => OnResume(inputInfo);
 
+        typingAction.performed += inputInfo => OnKeyTyped(inputInfo);
+
+    }
+
+    private void OnKeyTyped(InputAction.CallbackContext ctx)
+    {
+        KeyTypedEvent?.Invoke(ctx.control.name);
     }
 
     private void OnPause(InputAction.CallbackContext ctx)

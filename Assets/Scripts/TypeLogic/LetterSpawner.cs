@@ -7,9 +7,7 @@ using UnityEngine.InputSystem;
 
 public class LetterSpawner : MonoBehaviour
 {
-    private InputSystem_Actions inputActions;
-
-
+    [SerializeField] private PlayerInputHandler playerInputHandler;
     private int numberOfCharsInScreen = 7;
 
     public TextAsset _textAsset;
@@ -18,27 +16,39 @@ public class LetterSpawner : MonoBehaviour
     public TextMeshProUGUI text;
     private int iteratorText = 1;
 
+    private string TypedKey { get; set; }
+
+    private void OnEnable()
+    {
+        playerInputHandler.KeyTypedEvent += (key) => PrintLetter(key);
+    }
+
     private void Awake()
     {
-      inputActions = new InputSystem_Actions();
       charedText = new List<char>();
       textToScreen = new Queue<char> ();
     }
 
     void Start()
     {
-        inputActions.Enable();
+
       foreach(char cha in _textAsset.text.ToCharArray().Where(c => c!= '\r' || c != '\n'))
       {
         charedText.Add(cha);
       }
         FillCharQueue();
-        inputActions.Player.Typing.performed += (InputAction.CallbackContext context) => Debug.Log(context.control.name);
+        
         
     }
     void Update()
     {
         //UpdateTextFromQueue();
+    }
+
+    void PrintLetter(string str)
+    {
+        TypedKey = str;
+        Debug.Log(TypedKey);
     }
 
     void FillCharQueue()
