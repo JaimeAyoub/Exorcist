@@ -20279,6 +20279,7 @@ GameObject:
   - component: {fileID: 1168801371}
   - component: {fileID: 1168801370}
   - component: {fileID: 1168801366}
+  - component: {fileID: 1168801372}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -20384,6 +20385,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentHealth: 0
   maxHealth: 10
+--- !u!114 &1168801372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1168801362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 465b60efce97f3d4f8a229960d395a44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerInputHandler: {fileID: 1437453744}
+  _textAsset: {fileID: 4900000, guid: 35ec0315f34bca04a9e41e0b3c1d648e, type: 3}
+  charedText: 
+  text: {fileID: 0}
 --- !u!1001 &1171970322
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25003,6 +25020,7 @@ MonoBehaviour:
   rotation: Rotation
   jump: Jump
   sprint: Sprint
+  typing: Typing
   pause: Pause
   resume: Resume
 --- !u!4 &1437668044 stripped
