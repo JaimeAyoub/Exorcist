@@ -11,73 +11,73 @@ public class LetterSpawner : MonoBehaviour
     private int numberOfCharsInScreen = 7;
 
     public TextAsset _textAsset;
-    public Queue<char> textToScreen;
-    public List<char> charedText;
+    public List<char> listTextToScreen;
+    public List<char> listCharedText;
     public TextMeshProUGUI text;
-    private int iteratorText = 1;
+    private int iteratorText = 0;
 
     private string TypedKey { get; set; }
 
     private void OnEnable()
     {
-        playerInputHandler.KeyTypedEvent += (key) => PrintLetter(key);
+        playerInputHandler.KeyTypedEvent += (key) => UpdateScreenText(key);
     }
 
     private void Awake()
     {
-      charedText = new List<char>();
-      textToScreen = new Queue<char> ();
+      listCharedText = new List<char>();
+      listTextToScreen = new List<char> ();
     }
 
     void Start()
     {
-
       foreach(char cha in _textAsset.text.ToCharArray().Where(c => c!= '\r' || c != '\n'))
       {
-        charedText.Add(cha);
+        listCharedText.Add(cha);
       }
         FillCharQueue();
-        
-        
     }
     void Update()
     {
-        //UpdateTextFromQueue();
+ 
     }
 
     void PrintLetter(string str)
     {
         TypedKey = str;
-        Debug.Log(TypedKey);
     }
 
     void FillCharQueue()
     {
-        for(int i = 0; i < numberOfCharsInScreen; i++)
+        for(int i = 0; i <= numberOfCharsInScreen; i++)
         {
-            textToScreen.Enqueue(charedText[i]);
+            // SHADER PARA LETRAS EN GRIS
+            listTextToScreen.Add(listCharedText[i]);
         }
+        StartUpdateText();
     }
 
-    void UpdateQueue(char chara, bool isCorrect)
+    void UpdateScreenText(char keyTyped)
     {
-
-        if(isCorrect)
+        if(keyTyped == listTextToScreen[iteratorText])
         {
-            textToScreen.Dequeue();
-            textToScreen.Enqueue(charedText[numberOfCharsInScreen + iteratorText]);
+            // Efecto de tecla correcta
             iteratorText++;
+            Debug.Log(keyTyped + " Es la tecla correcta!!");
         }
         else
         {
-            return;
+            // Efecto de tecla incorrecta
+            Debug.Log(keyTyped + " No es la tecla correcta!!");
         }
-              
     }
 
-    void UpdateTextFromQueue()
+    void StartUpdateText()
     {
-        text.text += textToScreen.Dequeue().ToString();
+        for(int i = 0; i <= listTextToScreen.Count; i++)
+        {
+            text.text += listTextToScreen[i];
+        }
     }
 
 }

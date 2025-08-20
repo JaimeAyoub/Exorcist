@@ -43,7 +43,7 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action PauseEvent;
     public event Action MovementEvent;
     public event Action StopMovementEvent;
-    public event Action<string> KeyTypedEvent;
+    public event Action<char> KeyTypedEvent;
 
     // UI Events
     public event Action ResumeEvent;
@@ -100,7 +100,7 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void OnKeyTyped(InputAction.CallbackContext ctx)
     {
-        KeyTypedEvent?.Invoke(ctx.control.name);
+        KeyTypedEvent?.Invoke(ctx.control.name.ToCharArray()[0]);
     }
 
     private void OnPause(InputAction.CallbackContext ctx)
