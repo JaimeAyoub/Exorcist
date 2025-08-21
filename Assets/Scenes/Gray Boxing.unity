@@ -5631,7 +5631,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8cbd533cc93d37448086f14d901d976, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerInputHandler: {fileID: 0}
+  PlayerInputHandler: {fileID: 1437453744}
   _mainCanvas: {fileID: 1735096037}
   _combatCanvas: {fileID: 365421139}
   _pauseCanvas: {fileID: 316228349}
@@ -31457,6 +31457,7 @@ MonoBehaviour:
   playerControls: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   playerActionMapName: Player
   uiActionMapName: UI
+  typingActionMapName: Typing
   movement: Movement
   rotation: Rotation
   jump: Jump

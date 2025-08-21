@@ -1,6 +1,9 @@
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -21,7 +24,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private CharacterController characterController;
-    [SerializeField] private Camera mainCamera;
+    //[SerializeField] private Camera mainCamera;
     [SerializeField] private PlayerInputHandler playerInputHandler;
 
 
@@ -30,9 +33,9 @@ public class PlayerMovement : MonoBehaviour
     private float CurrentSpeed => walkSpeed * (playerInputHandler.SprintTriggered ? sprintMultiplier : 1);
 
     //INTEGRAR CINEMACHINE
-    public CinemachineVirtualCameraBase camera;
+    public CinemachineVirtualCameraBase mainCamera;
 
-    void Start()
+    void Awake()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -109,5 +112,4 @@ public class PlayerMovement : MonoBehaviour
     {
         return true;
     }
-    
 }

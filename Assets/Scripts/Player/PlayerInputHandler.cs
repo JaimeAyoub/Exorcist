@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.InputSystem;
-
+using UnityEngine.SceneManagement;
 
 public class PlayerInputHandler : MonoBehaviour
 {
@@ -14,15 +16,16 @@ public class PlayerInputHandler : MonoBehaviour
     [Header("Action Map Name Reference")]
     [SerializeField] private string playerActionMapName = "Player";
     [SerializeField] private string uiActionMapName = "UI";
-
+    [SerializeField] private string typingActionMapName = "Typing";
 
     [Header("Player Action Name References")]
     [SerializeField] private string movement = "Movement";
     [SerializeField] private string rotation = "Rotation";
     [SerializeField] private string jump = "Jump";
     [SerializeField] private string sprint = "Sprint";
-    [SerializeField] private string typing = "Typing";
 
+    [Header("Type Action Name References")]
+    [SerializeField] private string typing = "Typing";
 
     [Header("UI Action Name References")]
     [SerializeField] private string pause = "Pause";
@@ -34,6 +37,8 @@ public class PlayerInputHandler : MonoBehaviour
     private InputAction jumpAction;
     private InputAction sprintAction;
     private InputAction pauseAction;
+
+    // Typing InputActions
     private InputAction typingAction;
 
     // Player InputActions
@@ -51,10 +56,9 @@ public class PlayerInputHandler : MonoBehaviour
     public Vector2 MovementInput { get; private set; }
     public Vector2 RotationInput { get; private set; }
     public bool JumpTriggered { get; private set; }
-    public bool SprintTriggered { get; private set; }
+    public bool SprintTriggered { get; private set; }   
 
-
-    private void Awake()
+    private void EnablePlayerInput()
     {
         InputActionMap playerMapReference = playerControls.FindActionMap(playerActionMapName);
         InputActionMap uiMapReference = playerControls.FindActionMap(uiActionMapName);
@@ -71,7 +75,6 @@ public class PlayerInputHandler : MonoBehaviour
 
         SubscribeActionValuesToInputEvents();
     }
-
 
     private void SubscribeActionValuesToInputEvents()
     {
@@ -129,13 +132,27 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void OnEnable()
     {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        SceneManager.activeSceneChanged += OnActiveSceneChanged;
         SetGameplay();
     }
 
 
     private void OnDisable()
     {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.activeSceneChanged -= OnActiveSceneChanged;
         playerControls.FindActionMap(playerActionMapName).Disable();
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        EnablePlayerInput();
+    }
+
+    private void OnActiveSceneChanged(Scene previousScene, Scene newScene)
+    {
+        EnablePlayerInput();
     }
 
     public void SetGameplay()
