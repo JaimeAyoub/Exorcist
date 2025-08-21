@@ -9054,7 +9054,6 @@ GameObject:
   - component: {fileID: 365421137}
   - component: {fileID: 365421136}
   - component: {fileID: 365421141}
-  - component: {fileID: 365421142}
   m_Layer: 5
   m_Name: CombatHUD
   m_TagString: Untagged
@@ -9185,24 +9184,6 @@ MonoBehaviour:
   currentTime: 0
   MaxTime: 20
   _timeSlider: {fileID: 1561269892}
---- !u!114 &365421142
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 365421135}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 65d47f9885f282547a35b43aed0bff88, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  audioManager: {fileID: 0}
-  fraseObjetivoText: {fileID: 963216031}
-  fieldDeEscritura: {fileID: 463610006}
-  retroalimentacionText: {fileID: 1029993867}
-  paginasBibliaText: {fileID: 4900000, guid: 35ec0315f34bca04a9e41e0b3c1d648e, type: 3}
-  teclaActivarModo: 116
 --- !u!1 &366359546
 GameObject:
   m_ObjectHideFlags: 0
@@ -26415,7 +26396,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isPlayerSound: 0
-  playerInputHandler: {fileID: 0}
+  playerInputHandler: {fileID: 1437453744}
 --- !u!4 &1196914404
 Transform:
   m_ObjectHideFlags: 0

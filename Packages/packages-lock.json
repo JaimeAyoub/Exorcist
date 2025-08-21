@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.gitamend.unityutils": {
+      "version": "https://github.com/adammyhre/Unity-Utils.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "abce380167a02eff74cfeb1b64a33e31efa1441e"
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
