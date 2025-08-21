@@ -43,7 +43,11 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
+<<<<<<< Updated upstream
   spriteMode: 1
+=======
+  spriteMode: 2
+>>>>>>> Stashed changes
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
