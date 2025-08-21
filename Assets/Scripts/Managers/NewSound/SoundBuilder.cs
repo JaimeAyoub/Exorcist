@@ -45,7 +45,10 @@ public class SoundBuilder
             soundEmitter.WithRandomPitch();
         }
 
-        soundManager.Counts[soundData] = soundManager.Counts.TryGetValue(soundData, out var count) ? count + 1 : 1;
+        if(soundData.frequentSound)
+        {
+            soundManager.frequentSoundEmitters.Enqueue(soundEmitter);
+        }
         soundEmitter.Play();
     }
 }
