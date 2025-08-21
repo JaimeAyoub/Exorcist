@@ -5631,7 +5631,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8cbd533cc93d37448086f14d901d976, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerInputHandler: {fileID: 0}
+  PlayerInputHandler: {fileID: 1437453744}
   _mainCanvas: {fileID: 1735096037}
   _combatCanvas: {fileID: 365421139}
   _pauseCanvas: {fileID: 316228349}
