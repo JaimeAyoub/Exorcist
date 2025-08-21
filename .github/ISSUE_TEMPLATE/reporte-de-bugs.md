@@ -12,7 +12,7 @@ assignees: ''
 
 
 ### 🔬 ¿Dónde se encontró el bug?
-- [ ] **En el Editor de Unreal (In-Engine)**
+- [ ] **En el Editor de Unity (In-Engine)**
 - [ ] **En una Build del Juego (Build)**
   - *Si fue en build, especifica cuál (ej: Build v0.8.2-alpha):* `[versión]`
 
@@ -34,4 +34,3 @@ assignees: ''
 - **CPU:** *Ej: Ryzen 5 5600x*
 
 ---
-/label ~"Bug" ~"Por Revisar"
