@@ -30,7 +30,8 @@ public class PlayerInputHandler : MonoBehaviour
     [Header("UI Action Name References")]
     [SerializeField] private string pause = "Pause";
     [SerializeField] private string resume = "Resume";
-    
+    [SerializeField] private string click = "Click";
+
     // Player InputActions
     private InputAction movementAction;
     private InputAction rotationAction;

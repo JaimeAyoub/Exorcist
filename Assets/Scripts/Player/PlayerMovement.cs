@@ -24,25 +24,26 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private CharacterController characterController;
-    //[SerializeField] private Camera mainCamera;
     [SerializeField] private PlayerInputHandler playerInputHandler;
 
+    private Vector2 alignedRotation;
 
     private Vector3 currentMovement;
     private float verticalRotation;
     private float CurrentSpeed => walkSpeed * (playerInputHandler.SprintTriggered ? sprintMultiplier : 1);
 
     //INTEGRAR CINEMACHINE
-    public CinemachineVirtualCameraBase mainCamera;
-
+    public CinemachineCamera mainCamera;
     void Awake()
     {
+        alignedRotation = new Vector2(mainCamera.transform.position.x, mainCamera.transform.position.y);
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
     void Update()
     {
+        if (!Application.isPlaying) return;
         HandleMovement();
         HandleRotation();
     }
@@ -107,6 +108,7 @@ public class PlayerMovement : MonoBehaviour
         ApplyHorizontalRotation(mouseXRotation);
         ApplyVerticalRotation(mouseYRotation);
     }
+
 
     public bool IsMove()
     {
