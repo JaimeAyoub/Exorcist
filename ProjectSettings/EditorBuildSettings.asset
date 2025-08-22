@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 36dbf4571c2e677459beba0fe121138a
   - enabled: 1
-    path: Assets/Scenes/Gray Boxing.unity
+    path: Assets/Scenes/Level.unity
     guid: 3f8656c63f12ca64693bd972bf1a0d99
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

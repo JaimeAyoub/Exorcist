@@ -112,6 +112,8 @@ public class PlayerMovement : MonoBehaviour
 
     public bool IsMove()
     {
-        return true;
+        if(currentMovement.magnitude > 0)
+            return true;
+        return false;
     }
 }
