@@ -1,13 +1,15 @@
 using System;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 
+
 public class UIManager : MonoBehaviour
 {
     public static UIManager instance;
-
+    
     [SerializeField] private PlayerInputHandler PlayerInputHandler;
     [SerializeField] public Canvas _mainCanvas;
     [SerializeField] public Canvas _combatCanvas;
@@ -17,14 +19,13 @@ public class UIManager : MonoBehaviour
     private bool _isInSettings = false;
 
     public Canvas[] canvases;
+    public AnimationUI[] animationsPauseMenu;
 
     private void OnEnable()
     {
         PlayerInputHandler.PauseEvent += Pause;
         PlayerInputHandler.ResumeEvent += Pause;
-        
     }
-
 
 
     private void OnDisable()
@@ -46,6 +47,8 @@ public class UIManager : MonoBehaviour
 
     void Pause()
     {
+        foreach (AnimationUI animation in animationsPauseMenu)
+            animation.StartAnimationAction();
         if (!_isInSettings)
         {
             _isPaused = !_isPaused;
