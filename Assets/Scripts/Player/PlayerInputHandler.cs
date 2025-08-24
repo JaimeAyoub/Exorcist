@@ -44,8 +44,8 @@ public class PlayerInputHandler : MonoBehaviour
 
     // Player Events
     public event Action PauseEvent;
-    public event Action MovementEvent;
-    public event Action StopMovementEvent;
+    public static event Action MovementEvent;
+    public static event Action StopMovementEvent;
     public event Action<char> KeyTypedEvent;
 
     // UI Events
