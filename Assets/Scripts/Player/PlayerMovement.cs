@@ -18,15 +18,18 @@ public class PlayerMovement : MonoBehaviour
 
 
     [Header("Look Parameters")]
-    [SerializeField] private float mouseSensitivity = 0.1f;
+    [SerializeField] private float xMouseSensitivity = 0.1f;
+    [SerializeField] private float yMouseSensitivity = 1.0f;
     [SerializeField] private float upDownLookRange = 80f;
 
 
     [Header("References")]
     [SerializeField] private CharacterController characterController;
     [SerializeField] private PlayerInputHandler playerInputHandler;
-
+    [SerializeField] private GameObject cameraHolder;
+    
     private Vector2 alignedRotation;
+
 
     private Vector3 currentMovement;
     private float verticalRotation;
@@ -96,15 +99,15 @@ public class PlayerMovement : MonoBehaviour
     private void ApplyVerticalRotation(float rotationAmount)
     {
         verticalRotation = Mathf.Clamp(verticalRotation - rotationAmount, -upDownLookRange, upDownLookRange);
-        mainCamera.transform.localRotation = Quaternion.Euler(verticalRotation, 0, 0);
+        cameraHolder.transform.localRotation = Quaternion.Euler(verticalRotation, 0, 0);
     }
 
 
     private void HandleRotation()
     {
-        float mouseXRotation = playerInputHandler.RotationInput.x * mouseSensitivity;
-        float mouseYRotation = playerInputHandler.RotationInput.y * mouseSensitivity;
-
+        float mouseXRotation = playerInputHandler.RotationInput.x * xMouseSensitivity * Time.deltaTime;
+        float mouseYRotation = playerInputHandler.RotationInput.y * yMouseSensitivity * Time.deltaTime;
+        
         ApplyHorizontalRotation(mouseXRotation);
         ApplyVerticalRotation(mouseYRotation);
     }
