@@ -6,18 +6,14 @@ using UnityEngine.Events;
 
 public class AnimationUI : MonoBehaviour
 {
-
-    public AnimationCurve animationCurve;
-    public float animationDuration;
-    [FormerlySerializedAs("Delay")] public float delay;
-    private GameObject _objectToAnimate;
-    private RectTransform _rectTransform;
-    private Vector3 _startPosObject;
-    private Vector3 _endPosObject;
-    private Vector2 currrentPosition;
+    [Header("Animation Settings")] public AnimationCurve animationCurve;
+    public float animationDuration = 0.5f;
+    [FormerlySerializedAs("Delay")] public float delay = 0f;
     public bool animateOnStart = true;
-    private float _offSetX;
-    private float _offSetY;
+
+    private RectTransform _rectTransform;
+    private Vector2 _endPosObject;
+    private Tween _currentTween;
 
     public UnityAction StartAnimationAction;
 
@@ -29,51 +25,54 @@ public class AnimationUI : MonoBehaviour
         DownToTop
     }
 
+    public AnimationType selectAnimationType;
+
     private void Awake()
     {
+        _rectTransform = GetComponent<RectTransform>();
+        _endPosObject = _rectTransform.anchoredPosition;
         StartAnimationAction += Animate;
     }
 
-    public AnimationType selectAnimationType;
-
-    void Start()
+    private void Start()
     {
-        _offSetX = 1920;
-        _offSetY = 1080;
-        _objectToAnimate = this.gameObject;
-        _rectTransform = _objectToAnimate.GetComponent<RectTransform>();
-        _endPosObject = _rectTransform.anchoredPosition;
-        currrentPosition = _rectTransform.anchoredPosition;
+        if (animateOnStart)
+            Animate();
     }
 
-
-    void Animate()
+    public void Animate()
     {
+        float offSetX = 1920;
+        float offSetY = 1080;
+
+        Vector2 startPos = _endPosObject;
+
         switch (selectAnimationType)
         {
             case AnimationType.LeftToRight:
-                _startPosObject = new Vector2(currrentPosition.x - _offSetX,
-                    _rectTransform.anchoredPosition.y);
+                startPos = new Vector2(_endPosObject.x - offSetX, _endPosObject.y);
                 break;
             case AnimationType.RightToLeft:
-                _startPosObject = new Vector2(currrentPosition.x + _offSetX,
-                    currrentPosition.y);
+                startPos = new Vector2(_endPosObject.x + offSetX, _endPosObject.y);
                 break;
             case AnimationType.DownToTop:
-                _startPosObject = _startPosObject = new Vector2(currrentPosition.x,
-                    currrentPosition.y - _offSetY);
+                startPos = new Vector2(_endPosObject.x, _endPosObject.y - offSetY);
                 break;
             case AnimationType.TopToDown:
-                _startPosObject = _startPosObject = new Vector2(currrentPosition.x,
-                    currrentPosition.y + _offSetY);
+                startPos = new Vector2(_endPosObject.x, _endPosObject.y + offSetY);
                 break;
             default:
-                Debug.Log("No se eligio ningun animacion");
+                Debug.LogWarning("No se eligió ninguna animación");
                 break;
         }
 
-        _rectTransform.anchoredPosition = _startPosObject;
-        _rectTransform.DOAnchorPos(_endPosObject, animationDuration).SetEase(animationCurve)
-            .SetDelay(delay).SetUpdate(true);
+        _rectTransform.anchoredPosition = startPos;
+
+        _currentTween?.Kill();
+
+        _currentTween = _rectTransform.DOAnchorPos(_endPosObject, animationDuration)
+            .SetEase(animationCurve)
+            .SetDelay(delay)
+            .SetUpdate(true); // Importante para que siga funcionando aunque Time.timeScale = 0
     }
 }

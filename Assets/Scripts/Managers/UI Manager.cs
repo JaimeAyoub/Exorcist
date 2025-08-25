@@ -25,6 +25,8 @@ public class UIManager : MonoBehaviour
     {
         PlayerInputHandler.PauseEvent += Pause;
         PlayerInputHandler.ResumeEvent += Pause;
+        
+        
     }
 
 
@@ -32,11 +34,11 @@ public class UIManager : MonoBehaviour
     {
         PlayerInputHandler.PauseEvent -= Pause;
         PlayerInputHandler.ResumeEvent -= Pause;
+
     }
 
     private void Awake()
     {
-        canvases = FindObjectsByType<CanvasGroup>(FindObjectsSortMode.None);
         if (instance == null)
         {
             instance = this;
@@ -55,8 +57,6 @@ public class UIManager : MonoBehaviour
 
     void Pause()
     {
-        foreach (AnimationUI animation in animationsPauseMenu)
-            animation.StartAnimationAction();
         if (!_isInSettings)
         {
             _isPaused = !_isPaused;
@@ -65,6 +65,8 @@ public class UIManager : MonoBehaviour
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
                 ActivateCanvas(_pauseCanvas);
+                foreach (AnimationUI animation in animationsPauseMenu)
+                    animation.StartAnimationAction();
                 Time.timeScale = 0;
             }
             else if (_isPaused == false)
@@ -96,18 +98,20 @@ public class UIManager : MonoBehaviour
 
     public void ActivateCanvas(CanvasGroup canvasToActivate)
     {
-        canvasToActivate.enabled = true;
-        canvasToActivate.alpha = 1;
-        canvasToActivate.blocksRaycasts = true;
-        canvasToActivate.interactable = true;
         foreach (CanvasGroup canvas in canvases)
         {
             if (canvas == canvasToActivate)
-                continue;
-            canvasToActivate.enabled = false;
-            canvasToActivate.alpha = 0;
-            canvasToActivate.blocksRaycasts = false;
-            canvasToActivate.interactable = false;
+            {
+                canvas.alpha = 1;
+                canvas.blocksRaycasts = true;
+                canvas.interactable = true;
+            }
+            else
+            {
+                canvas.alpha = 0;
+                canvas.blocksRaycasts = false;
+                canvas.interactable = false;
+            }
         }
     }
 }
