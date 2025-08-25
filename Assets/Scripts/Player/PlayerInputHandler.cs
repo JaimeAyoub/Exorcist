@@ -121,6 +121,7 @@ public class PlayerInputHandler : MonoBehaviour
     private void OnPause(InputAction.CallbackContext ctx)
     {
         PauseEvent?.Invoke();
+        
         SetUI();   
     }
 
