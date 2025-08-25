@@ -7,20 +7,20 @@ public class GameManager : MonoBehaviour
     private static GameManager instance;
 
     public bool isPlayerSound;
-    public PlayerInputHandler playerInputHandler;
 
 
     private void OnEnable()
     {
-        playerInputHandler.MovementEvent += PlayWalkSound;
-        playerInputHandler.StopMovementEvent += StopMoveSound;
+        PlayerInputHandler.MovementEvent += PlayWalkSound;
+        PlayerInputHandler.StopMovementEvent += StopMoveSound;
     }
 
 
     private void OnDisable()
     {
-        playerInputHandler.MovementEvent -= PlayWalkSound;
-        playerInputHandler.StopMovementEvent -= StopMoveSound;
+        
+        PlayerInputHandler.MovementEvent -= PlayWalkSound;
+        PlayerInputHandler.StopMovementEvent -= StopMoveSound;
     }
     private void StopMoveSound()
     {

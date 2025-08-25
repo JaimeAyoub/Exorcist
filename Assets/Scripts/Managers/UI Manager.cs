@@ -22,7 +22,6 @@ public class UIManager : MonoBehaviour
     {
         PlayerInputHandler.PauseEvent += Pause;
         PlayerInputHandler.ResumeEvent += Pause;
-        
     }
 
 
