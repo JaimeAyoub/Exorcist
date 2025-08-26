@@ -48,10 +48,6 @@ public class GameManager : Singleton<GameManager>
     }
     void Start()
     {
-<<<<<<< Updated upstream
-=======
-        //AudioManager.instance.PlayBGM(SoundType.FONDO, 0.5f);
->>>>>>> Stashed changes
         SoundManager.Instance.CreateSound().WithSoundData(walkSoundData).Play();
     }
     private IEnumerator PlayerWalkSound()
