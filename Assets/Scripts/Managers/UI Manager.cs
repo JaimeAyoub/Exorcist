@@ -6,10 +6,15 @@ using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 using UnityUtils;
 using System.Reflection;
+<<<<<<< Updated upstream
 
 
 public class UIManager : Singleton<UIManager>
 
+=======
+
+public class UIManager : Singleton<UIManager>
+>>>>>>> Stashed changes
 {
     [SerializeField] private PlayerInputHandler PlayerInputHandler;
     [SerializeField] public CanvasGroup _mainCanvas;
@@ -18,6 +23,7 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private CanvasGroup _settingsCanvas;
     private bool _isPaused = false;
     private bool _isInSettings = false;
+<<<<<<< Updated upstream
 
     
 
@@ -25,6 +31,10 @@ public class UIManager : Singleton<UIManager>
     public CanvasGroup[] canvases;
     public AnimationUI[] animationsPauseMenu;
 
+=======
+    
+    public Canvas[] canvases;
+>>>>>>> Stashed changes
 
     private void OnEnable()
     { 
@@ -39,7 +49,10 @@ public class UIManager : Singleton<UIManager>
 
     private new void Awake()
     {
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
         Instance.PlayerInputHandler.PauseEvent += Pause;
         Instance.PlayerInputHandler.ResumeEvent += Pause;
         base.Awake();
