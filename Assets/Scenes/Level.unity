@@ -5593,7 +5593,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
 <<<<<<< Updated upstream
-<<<<<<< Updated upstream
   m_IsActive: 0
 --- !u!114 &200784908
 MonoBehaviour:
@@ -5613,9 +5612,6 @@ MonoBehaviour:
   _pauseCanvas: {fileID: 316228349}
   _settingsCanvas: {fileID: 1783231464}
   canvases: []
-=======
-  m_IsActive: 1
->>>>>>> Stashed changes
 =======
   m_IsActive: 1
 >>>>>>> Stashed changes
