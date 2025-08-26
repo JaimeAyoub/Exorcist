@@ -3,11 +3,11 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
+using UnityUtils;
+using System.Reflection;
 
-public class UIManager : MonoBehaviour
+public class UIManager : Singleton<UIManager>
 {
-    public static UIManager instance;
-
     [SerializeField] private PlayerInputHandler PlayerInputHandler;
     [SerializeField] public Canvas _mainCanvas;
     [SerializeField] public Canvas _combatCanvas;
@@ -15,35 +15,35 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Canvas _settingsCanvas;
     private bool _isPaused = false;
     private bool _isInSettings = false;
-
+    
     public Canvas[] canvases;
 
     private void OnEnable()
-    {
-        PlayerInputHandler.PauseEvent += Pause;
-        PlayerInputHandler.ResumeEvent += Pause;
+    { 
+        
     }
-
-
 
     private void OnDisable()
     {
-        PlayerInputHandler.PauseEvent -= Pause;
-        PlayerInputHandler.ResumeEvent -= Pause;
+        Instance.PlayerInputHandler.PauseEvent -= Pause;
+        Instance.PlayerInputHandler.ResumeEvent -= Pause;
     }
 
-    private void Awake()
+    private new void Awake()
     {
+        Instance.PlayerInputHandler.PauseEvent += Pause;
+        Instance.PlayerInputHandler.ResumeEvent += Pause;
+        base.Awake();
         canvases = FindObjectsByType<Canvas>(FindObjectsSortMode.None);
     }
 
-    void Start()
+    private void Start()
     {
         StartSceneCanvas();
     }
 
 
-    void Pause()
+    private void Pause()
     {
         if (!_isInSettings)
         {
@@ -69,12 +69,11 @@ public class UIManager : MonoBehaviour
             ActivateCanvas(_pauseCanvas);
         }
     }
-
+    
     void StartSceneCanvas()
     {
         ActivateCanvas(_mainCanvas);
     }
-
 
     public void ActivateSettingsCanvas()
     {

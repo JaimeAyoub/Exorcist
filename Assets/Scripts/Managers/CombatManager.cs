@@ -38,7 +38,7 @@ public class CombatManager : MonoBehaviour
         }
     }
 
-    public enum Combatturn
+    private enum Combatturn
     {
         PlayerTurn,
         EnemyTurn,
@@ -47,7 +47,7 @@ public class CombatManager : MonoBehaviour
 
     private Combatturn _currentturn;
 
-    void Awake()
+    private void Awake()
     {
         if (instance == null)
         {
@@ -63,7 +63,7 @@ public class CombatManager : MonoBehaviour
     {
         if (isCombat)
             return;
-        UIManager.instance.ActivateCanvas(UIManager.instance._combatCanvas);
+        UIManager.Instance.ActivateCanvas(UIManager.Instance._combatCanvas);
         player.GetComponent<PlayerAttack>().target = enemy;
         AudioManager.instance.PlayBGM(SoundType.COMBATE, 0.5f);
         AudioManager.instance.PlaySFX(SoundType.ENEMIGO, 0.5f);
@@ -76,7 +76,7 @@ public class CombatManager : MonoBehaviour
         StartCoroutine(CombatLoop());
     }
 
-    public IEnumerator CombatLoop()
+    private IEnumerator CombatLoop()
     {
         Debug.unityLogger.Log("CombatStart");
         while (isCombat)
@@ -110,7 +110,7 @@ public class CombatManager : MonoBehaviour
     private void EndCombat()
     {
         isCombat = false;
-        UIManager.instance.ActivateCanvas(UIManager.instance._mainCanvas);
+        UIManager.Instance.ActivateCanvas(UIManager.Instance._mainCanvas);
         _currentturn = Combatturn.None;
         TextReader.instance.DesactivarModoEscritura();
         Cursor.visible = false;
