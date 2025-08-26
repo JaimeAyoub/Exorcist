@@ -1,12 +1,7 @@
-using System;
-using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 
-
-public class UIManager : MonoBehaviour
+public class UIManager : UnityUtils.Singleton<UIManager>
 {
     public static UIManager instance;
 
