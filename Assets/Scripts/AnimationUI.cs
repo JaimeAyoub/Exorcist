@@ -1,12 +1,10 @@
-using System;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.Serialization;
-using UnityEngine.Events;
+
 
 public class AnimationUI : MonoBehaviour
 {
-
     public AnimationCurve animationCurve;
     public float animationDuration;
     [FormerlySerializedAs("Delay")] public float delay;
@@ -14,12 +12,9 @@ public class AnimationUI : MonoBehaviour
     private RectTransform _rectTransform;
     private Vector3 _startPosObject;
     private Vector3 _endPosObject;
-    private Vector2 currrentPosition;
     public bool animateOnStart = true;
     private float _offSetX;
     private float _offSetY;
-
-    public UnityAction StartAnimationAction;
 
     public enum AnimationType
     {
@@ -27,11 +22,6 @@ public class AnimationUI : MonoBehaviour
         RightToLeft,
         TopToDown,
         DownToTop
-    }
-
-    private void Awake()
-    {
-        StartAnimationAction += Animate;
     }
 
     public AnimationType selectAnimationType;
@@ -43,12 +33,14 @@ public class AnimationUI : MonoBehaviour
         _objectToAnimate = this.gameObject;
         _rectTransform = _objectToAnimate.GetComponent<RectTransform>();
         _endPosObject = _rectTransform.anchoredPosition;
-        currrentPosition = _rectTransform.anchoredPosition;
+        if(animateOnStart)
+            Animate();
     }
 
 
     void Animate()
     {
+        Vector2 currrentPosition = _rectTransform.anchoredPosition;
         switch (selectAnimationType)
         {
             case AnimationType.LeftToRight:
@@ -73,7 +65,6 @@ public class AnimationUI : MonoBehaviour
         }
 
         _rectTransform.anchoredPosition = _startPosObject;
-        _rectTransform.DOAnchorPos(_endPosObject, animationDuration).SetEase(animationCurve)
-            .SetDelay(delay).SetUpdate(true);
+        _rectTransform.DOAnchorPos(_endPosObject, animationDuration).SetEase(animationCurve).SetDelay(delay);
     }
 }

@@ -1,30 +1,22 @@
 using System;
 using System.Runtime.CompilerServices;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 using UnityUtils;
 using System.Reflection;
 
-
 public class UIManager : Singleton<UIManager>
-
 {
     [SerializeField] private PlayerInputHandler PlayerInputHandler;
-    [SerializeField] public CanvasGroup _mainCanvas;
-    [SerializeField] public CanvasGroup _combatCanvas;
-    [SerializeField] private CanvasGroup _pauseCanvas;
-    [SerializeField] private CanvasGroup _settingsCanvas;
+    [SerializeField] public Canvas _mainCanvas;
+    [SerializeField] public Canvas _combatCanvas;
+    [SerializeField] private Canvas _pauseCanvas;
+    [SerializeField] private Canvas _settingsCanvas;
     private bool _isPaused = false;
     private bool _isInSettings = false;
-
     
-
-
-    public CanvasGroup[] canvases;
-    public AnimationUI[] animationsPauseMenu;
-
+    public Canvas[] canvases;
 
     private void OnEnable()
     { 
@@ -39,22 +31,10 @@ public class UIManager : Singleton<UIManager>
 
     private new void Awake()
     {
-
         Instance.PlayerInputHandler.PauseEvent += Pause;
         Instance.PlayerInputHandler.ResumeEvent += Pause;
         base.Awake();
         canvases = FindObjectsByType<Canvas>(FindObjectsSortMode.None);
-
-        canvases = FindObjectsByType<CanvasGroup>(FindObjectsSortMode.None);
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else if (instance != this)
-        {
-            Destroy(gameObject);
-        }
-
     }
 
     private void Start()
@@ -65,8 +45,6 @@ public class UIManager : Singleton<UIManager>
 
     private void Pause()
     {
-        foreach (AnimationUI animation in animationsPauseMenu)
-            animation.StartAnimationAction();
         if (!_isInSettings)
         {
             _isPaused = !_isPaused;
@@ -103,20 +81,14 @@ public class UIManager : Singleton<UIManager>
         _isInSettings = true;
     }
 
-    public void ActivateCanvas(CanvasGroup canvasToActivate)
+    public void ActivateCanvas(Canvas canvasToActivate)
     {
         canvasToActivate.enabled = true;
-        canvasToActivate.alpha = 1;
-        canvasToActivate.blocksRaycasts = true;
-        canvasToActivate.interactable = true;
-        foreach (CanvasGroup canvas in canvases)
+        foreach (Canvas canvas in canvases)
         {
             if (canvas == canvasToActivate)
                 continue;
-            canvasToActivate.enabled = false;
-            canvasToActivate.alpha = 0;
-            canvasToActivate.blocksRaycasts = false;
-            canvasToActivate.interactable = false;
+            canvas.enabled = false;
         }
     }
 }
