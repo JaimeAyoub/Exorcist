@@ -27,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private CharacterController characterController;
     [SerializeField] private PlayerInputHandler playerInputHandler;
     [SerializeField] private GameObject cameraHolder;
-    
+
     private Vector2 alignedRotation;
 
 
