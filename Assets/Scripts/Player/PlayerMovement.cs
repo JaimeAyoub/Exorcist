@@ -28,12 +28,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private PlayerInputHandler playerInputHandler;
     [SerializeField] private GameObject cameraHolder;
 
-<<<<<<< HEAD
-    
-=======
     private Vector2 alignedRotation;
 
->>>>>>> main
+
     private Vector3 currentMovement;
     private float verticalRotation;
     private float CurrentSpeed => walkSpeed * (playerInputHandler.SprintTriggered ? sprintMultiplier : 1);
