@@ -23,7 +23,7 @@ public class UIManager : MonoBehaviour
     private void OnEnable()
     {
         PlayerInputHandler.PauseEvent += Pause;
-        PlayerInputHandler.ResumeEvent += Pause;
+       PlayerInputHandler.ResumeEvent += Pause;
         
         
     }
@@ -46,6 +46,8 @@ public class UIManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        canvases = new CanvasGroup[] { _mainCanvas, _combatCanvas, _pauseCanvas, _settingsCanvas };
+    
     }
 
     void Start()
@@ -56,7 +58,6 @@ public class UIManager : MonoBehaviour
 
     void Pause()
     {
-       
             _isPaused = !_isPaused;
             if (_isPaused == true)
             {
@@ -74,8 +75,6 @@ public class UIManager : MonoBehaviour
                 Time.timeScale = 1;
                 ActivateCanvas(_mainCanvas);
             }
-       
-        
     }
 
     void StartSceneCanvas()

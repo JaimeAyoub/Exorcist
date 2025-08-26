@@ -20,6 +20,8 @@ public class OptionsScript : MonoBehaviour
     private FilmGrain _filmGrain;
     public  Slider filmGrainSlider;
 
+    [SerializeField] private Image panelToFade;
+
     void Start()
     {
         if (volumeProfile.TryGet(out _chromaticAberration))
@@ -64,5 +66,12 @@ public class OptionsScript : MonoBehaviour
     public void ChangeGrain()
     {
         _filmGrain.intensity.value = filmGrainSlider.value;
+    }
+
+    public void ChangeAlphaPanel()
+    {
+        Color currentColor = panelToFade.color;
+        currentColor.a = 0.0f;
+        panelToFade.color = currentColor;;
     }
 }

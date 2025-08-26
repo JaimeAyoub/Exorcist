@@ -20,7 +20,7 @@ public class ChangeScene : MonoBehaviour
     public SceneToChange sceneToChange;
     void Start()
     {
-        //imageToFade.color = Color.clear;
+        imageToFade.enabled = true;
         FadeOut();
     }
 
