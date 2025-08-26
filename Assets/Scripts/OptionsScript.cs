@@ -74,4 +74,6 @@ public class OptionsScript : MonoBehaviour
         currentColor.a = 0.0f;
         panelToFade.color = currentColor;;
     }
+    
+    
 }
