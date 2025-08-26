@@ -48,7 +48,6 @@ public class GameManager : Singleton<GameManager>
     }
     void Start()
     {
-        //AudioManager.instance.PlayBGM(SoundType.FONDO, 0.5f);
         SoundManager.Instance.CreateSound().WithSoundData(walkSoundData).Play();
     }
     private IEnumerator PlayerWalkSound()
