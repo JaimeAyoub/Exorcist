@@ -3,51 +3,51 @@ using UnityEngine;
 
 public class SoundBuilder 
 {
-    readonly SoundManager soundManager;
-    SoundData soundData;
-    Vector3 position = Vector3.zero;
-    bool randomPitch;
+    readonly SoundManager _soundManager;
+    private SoundData _soundData;
+    private Vector3 _position = Vector3.zero;
+    private bool _randomPitch;
 
     public SoundBuilder(SoundManager soundManager)
     {
-        this.soundManager = soundManager;
+        this._soundManager = soundManager;
     }
 
     public SoundBuilder WithSoundData(SoundData soundData)
     {
-        this.soundData = soundData;
+        this._soundData = soundData;
         return this;
     }
 
     public SoundBuilder WithPosition(Vector3 position)
     {
-        this.position = position;
+        this._position = position;
         return this;
     }
 
     public SoundBuilder WithRandomPitch()
     {
-        this.randomPitch = true;
+        this._randomPitch = true;
         return this;
     }
 
     public void Play()
     {
-        if (!soundManager.CanPlaySound(soundData)) return;
+        if (!_soundManager.CanPlaySound(_soundData)) return;
 
-        SoundEmitter soundEmitter = soundManager.Get();
-        soundEmitter.Initialize(soundData);
-        soundEmitter.transform.position = position;
+        var soundEmitter = _soundManager.Get();
+        soundEmitter.Initialize(_soundData);
+        soundEmitter.transform.position = _position;
         soundEmitter.transform.parent = SoundManager.Instance.transform;
 
-        if(randomPitch)
+        if(_randomPitch)
         {
             soundEmitter.WithRandomPitch();
         }
 
-        if(soundData.frequentSound)
+        if(_soundData.frequentSound)
         {
-            soundManager.FrequentSoundEmitters.Enqueue(soundEmitter);
+            _soundManager.FrequentSoundEmitters.Enqueue(soundEmitter);
         }
         soundEmitter.Play();
     }

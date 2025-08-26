@@ -10,10 +10,10 @@ public class SoundManager : PersistentSingleton<SoundManager>
     public readonly Queue<SoundEmitter> FrequentSoundEmitters = new();
 
     [SerializeField] SoundEmitter soundEmitterPrefab;
-    [SerializeField] bool collectionCheck = true;
-    [SerializeField] int defaultCapacity = 10;
-    [SerializeField] int maxPoolSize = 100;
-    [SerializeField] int maxSoundInstances = 30;
+    [SerializeField] private bool collectionCheck = true;
+    [SerializeField] private int defaultCapacity = 10;
+    [SerializeField] private int maxPoolSize = 100;
+    [SerializeField] private int maxSoundInstances = 30;
 
     private void Start()
     {
