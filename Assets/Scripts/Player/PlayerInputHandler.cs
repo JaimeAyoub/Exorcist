@@ -1,7 +1,8 @@
 using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Reflection;
+using UnityEngine.SceneManagement;
 
 public class PlayerInputHandler : MonoBehaviour
 {
@@ -43,10 +44,10 @@ public class PlayerInputHandler : MonoBehaviour
     private InputAction _resumeAction;
 
     // Player Events
+    public event Action PauseEvent;
     public static event Action MovementEvent;
     public static event Action StopMovementEvent;
     public event Action<char> KeyTypedEvent;
-    public event Action PauseEvent;
 
     // UI Events
     public event Action ResumeEvent;
@@ -57,7 +58,7 @@ public class PlayerInputHandler : MonoBehaviour
     public bool SprintTriggered { get; private set; }   
     public bool IsInMayus { get; private set; }    
     
-    private void Awake()
+    private void EnablePlayerInput()
     {
         var playerMapReference = playerControls.FindActionMap(playerActionMapName);
         var uiMapReference = playerControls.FindActionMap(uiActionMapName);
@@ -120,7 +121,7 @@ public class PlayerInputHandler : MonoBehaviour
     private void OnPause(InputAction.CallbackContext ctx)
     {
         PauseEvent?.Invoke();
-        SetUI();
+        SetUI();   
     }
 
     private void OnResume(InputAction.CallbackContext ctx)
@@ -143,28 +144,40 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void OnEnable()
     {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        SceneManager.activeSceneChanged += OnActiveSceneChanged;
         SetGameplay();
     }
 
 
     private void OnDisable()
     {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.activeSceneChanged -= OnActiveSceneChanged;
         playerControls.FindActionMap(playerActionMapName).Disable();
-        playerControls.FindActionMap(uiActionMapName).Disable();
-        playerControls.FindActionMap(typingActionMapName).Disable();
     }
-    
 
-    private void SetGameplay()
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        playerControls.FindActionMap(uiActionMapName).Disable();
+        EnablePlayerInput();
+    }
+
+    private void OnActiveSceneChanged(Scene previousScene, Scene newScene)
+    {
+        EnablePlayerInput();
+    }
+
+    public void SetGameplay()
+    {
         playerControls.FindActionMap(playerActionMapName).Enable();
         playerControls.FindActionMap(typingActionMapName).Enable();
+        playerControls.FindActionMap(uiActionMapName).Disable();
     }
-    private void SetUI()
+    public void SetUI()
     {
         playerControls.FindActionMap(playerActionMapName).Disable();
         playerControls.FindActionMap(typingActionMapName).Disable();
         playerControls.FindActionMap(uiActionMapName).Enable();
     }
+
 }

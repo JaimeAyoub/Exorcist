@@ -47,7 +47,7 @@ public class SoundBuilder
 
         if(soundData.frequentSound)
         {
-            soundManager.FrequentSoundEmitters.Enqueue(soundEmitter);
+            soundManager.frequentSoundEmitters.Enqueue(soundEmitter);
         }
         soundEmitter.Play();
     }

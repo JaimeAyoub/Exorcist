@@ -5,9 +5,9 @@ using UnityEngine.Pool;
 using UnityUtils;
 public class SoundManager : PersistentSingleton<SoundManager>
 {
-    IObjectPool<SoundEmitter> _soundEmitterPool;
-    private readonly List<SoundEmitter> _activeSoundEmitters = new();
-    public readonly Queue<SoundEmitter> FrequentSoundEmitters = new();
+    IObjectPool<SoundEmitter> soundEmitterPool;
+    readonly List<SoundEmitter> activeSoundEmitters = new();
+    public readonly Queue<SoundEmitter> frequentSoundEmitters = new();
 
     [SerializeField] SoundEmitter soundEmitterPrefab;
     [SerializeField] bool collectionCheck = true;
@@ -26,7 +26,7 @@ public class SoundManager : PersistentSingleton<SoundManager>
     {
         if (!sData.frequentSound) return true;
 
-        if (FrequentSoundEmitters.Count >= maxSoundInstances && FrequentSoundEmitters.TryDequeue(out var soundEmitter))
+        if (frequentSoundEmitters.Count >= maxSoundInstances && frequentSoundEmitters.TryDequeue(out var soundEmitter))
         {
             try
             {
@@ -44,17 +44,17 @@ public class SoundManager : PersistentSingleton<SoundManager>
 
     public SoundEmitter Get()
     {
-        return _soundEmitterPool.Get();
+        return soundEmitterPool.Get();
     }
 
     public void ReturnToPool(SoundEmitter soundEmitter)
     {
-        _soundEmitterPool.Release(soundEmitter);
+        soundEmitterPool.Release(soundEmitter);
     }
 
     private void InitializePool()
     {
-        _soundEmitterPool = new ObjectPool<SoundEmitter>(
+        soundEmitterPool = new ObjectPool<SoundEmitter>(
             CreateSoundEmitter,
             OnTakeFromPool,
             OnReturnedToPool,
@@ -74,12 +74,12 @@ public class SoundManager : PersistentSingleton<SoundManager>
     private void OnTakeFromPool(SoundEmitter emitter)
     {
         emitter.gameObject.SetActive(true);
-        _activeSoundEmitters.Add(emitter);
+        activeSoundEmitters.Add(emitter);
     }
     private void OnReturnedToPool(SoundEmitter emitter)
     {
         emitter.gameObject.SetActive(false);
-        _activeSoundEmitters.Remove(emitter);
+        activeSoundEmitters.Remove(emitter);
     }
 
     private void OnDestroyObjectPool(SoundEmitter emitter)

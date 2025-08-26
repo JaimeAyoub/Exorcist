@@ -1,12 +1,13 @@
-
+using System;
 using System.Collections;
 using UnityEngine;
-using UnityUtils;
 
-public class GameManager : Singleton<GameManager>
+public class GameManager : MonoBehaviour
 {
+    private static GameManager instance;
+
     public bool isPlayerSound;
-    public SoundData walkSoundData;
+
 
     private void OnEnable()
     {
@@ -36,7 +37,6 @@ public class GameManager : Singleton<GameManager>
 
     void Awake()
     {
-        base.Awake();
         if (instance == null)
         {
             instance = this;
@@ -48,8 +48,7 @@ public class GameManager : Singleton<GameManager>
     }
     void Start()
     {
-        //AudioManager.instance.PlayBGM(SoundType.FONDO, 0.5f);
-        SoundManager.Instance.CreateSound().WithSoundData(walkSoundData).Play();
+        AudioManager.instance.PlayBGM(SoundType.FONDO, 0.5f);
     }
     private IEnumerator PlayerWalkSound()
     {
