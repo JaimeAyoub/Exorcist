@@ -16,7 +16,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] private CanvasGroup _pauseCanvas;
     [SerializeField] private CanvasGroup _settingsCanvas;
     private bool _isPaused = false;
-    private bool _isInSettings = false;
 
     public CanvasGroup[] canvases;
     public AnimationUI[] animationsPauseMenu;
@@ -57,8 +56,7 @@ public class UIManager : MonoBehaviour
 
     void Pause()
     {
-        if (!_isInSettings)
-        {
+       
             _isPaused = !_isPaused;
             if (_isPaused == true)
             {
@@ -76,12 +74,8 @@ public class UIManager : MonoBehaviour
                 Time.timeScale = 1;
                 ActivateCanvas(_mainCanvas);
             }
-        }
-        else
-        {
-            _isInSettings = false;
-            ActivateCanvas(_pauseCanvas);
-        }
+       
+        
     }
 
     void StartSceneCanvas()
@@ -90,11 +84,7 @@ public class UIManager : MonoBehaviour
     }
 
 
-    public void ActivateSettingsCanvas()
-    {
-        ActivateCanvas(_settingsCanvas);
-        _isInSettings = true;
-    }
+  
 
     public void ActivateCanvas(CanvasGroup canvasToActivate)
     {
