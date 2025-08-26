@@ -1,25 +1,45 @@
-using System.Collections.Specialized;
+using System;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class AnimationController : MonoBehaviour
 {
-    public Animation animation;
+    [SerializeField] private PlayerInputHandler playerInputHandler;
+    [SerializeField] private Animator animator;
 
-    public GameObject objectToAnimate;
-    void Start()
+
+    private void OnEnable()
     {
-        
+        PlayerInputHandler.MovementEvent += OnMove;
+        PlayerInputHandler.StopMovementEvent += OnStop;
     }
 
-    
-    void Update()
+    private void OnDisable()
     {
-        
+        PlayerInputHandler.MovementEvent -= OnMove;
+        PlayerInputHandler.StopMovementEvent -= OnStop;
     }
 
-    void ChangeAnimation()
+    private void Awake()
     {
-        
+        animator = GetComponent<Animator>();
+    }
+
+    private void OnMove()
+    {
+        // aquí decides si caminar o correr
+        if (playerInputHandler.SprintTriggered)
+        {
+            animator.SetBool("isRunning", true);
+        }
+        else
+        {
+            animator.SetBool("isWalking", true);
+        }
+    }
+
+    private void OnStop()
+    {
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isRunning", false);
     }
 }
