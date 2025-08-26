@@ -5585,13 +5585,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 200784909}
-  - component: {fileID: 200784908}
+  - component: {fileID: 200784910}
   m_Layer: 0
   m_Name: UI manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
+<<<<<<< Updated upstream
   m_IsActive: 0
 --- !u!114 &200784908
 MonoBehaviour:
@@ -5611,6 +5612,9 @@ MonoBehaviour:
   _pauseCanvas: {fileID: 316228349}
   _settingsCanvas: {fileID: 1783231464}
   canvases: []
+=======
+  m_IsActive: 1
+>>>>>>> Stashed changes
 --- !u!4 &200784909
 Transform:
   m_ObjectHideFlags: 0
@@ -5630,6 +5634,24 @@ Transform:
   - {fileID: 365421140}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &200784910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 200784907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8cbd533cc93d37448086f14d901d976, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerInputHandler: {fileID: 1437453744}
+  _mainCanvas: {fileID: 1735096037}
+  _combatCanvas: {fileID: 365421139}
+  _pauseCanvas: {fileID: 316228349}
+  _settingsCanvas: {fileID: 1783231464}
+  canvases: []
 --- !u!1001 &201065958
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14212,7 +14234,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 200784908}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: ActivateSettingsCanvas
         m_Mode: 1
