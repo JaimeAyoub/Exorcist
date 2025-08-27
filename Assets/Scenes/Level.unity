@@ -1947,6 +1947,56 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f991987c4a6f4624a83ba7fe4155db18, type: 3}
   m_PrefabInstance: {fileID: 74544510}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &75640690
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 75640692}
+  - component: {fileID: 75640691}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &75640691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 75640690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cc75ba25c913424cbd3cf4585ff8e40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AutoUnparentOnAwake: 1
+  soundEmitterPrefab: {fileID: 4757077105493572898, guid: f8c7b6079c6fb52439e908caa77c87bf, type: 3}
+  collectionCheck: 1
+  defaultCapacity: 10
+  maxPoolSize: 100
+  maxSoundInstances: 30
+--- !u!4 &75640692
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 75640690}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -6.5621653, y: 4.534623, z: 11.811385}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &76390267
 GameObject:
   m_ObjectHideFlags: 0
@@ -5668,12 +5718,7 @@ MonoBehaviour:
   - {fileID: 1783231466}
   - {fileID: 365421136}
   - {fileID: 316228346}
-  animationsPauseMenu:
-  - {fileID: 177249978}
-  - {fileID: 462845203}
-  - {fileID: 625783389}
-  - {fileID: 1284121667}
-  - {fileID: 1662066266}
+  animationsPauseMenu: []
 --- !u!4 &200784909
 Transform:
   m_ObjectHideFlags: 0
@@ -11830,7 +11875,7 @@ VisualEffect:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 487355482}
   m_Enabled: 1
-  m_Asset: {fileID: 8926484042661614526, guid: cacf5356b12810843a369fbf9f5c6d9a, type: 3}
+  m_Asset: {fileID: 0}
   m_InitialEventName: OnPlay
   m_InitialEventNameOverriden: 0
   m_StartSeed: 0
@@ -26771,6 +26816,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isPlayerSound: 0
+  walkSoundData:
+    clip: {fileID: 8300000, guid: be32319995b56de47a786fa3b38f0231, type: 3}
+    mixerGroup: {fileID: 0}
+    loop: 0
+    playOnAwake: 0
+    frequentSound: 1
 --- !u!4 &1196914404
 Transform:
   m_ObjectHideFlags: 0
@@ -29491,7 +29542,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1324555230}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8fa421d8713b7e4b98bad0b0c2a4f64, type: 3}
   m_Name: 
@@ -29512,7 +29563,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1324555230}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
@@ -38753,7 +38804,7 @@ MonoBehaviour:
   volumeProfile: {fileID: 11400000, guid: cbea3553215783e40b933a560601f35d, type: 2}
   chromaticAberrationSlider: {fileID: 754843839}
   filmGrainSlider: {fileID: 915359826}
-  panelToFade: {fileID: 1899416577}
+  panelToFade: {fileID: 0}
 --- !u!1 &1787027718
 GameObject:
   m_ObjectHideFlags: 0
@@ -45722,3 +45773,4 @@ SceneRoots:
   - {fileID: 791764136}
   - {fileID: 404753903}
   - {fileID: 487355485}
+  - {fileID: 75640692}
