@@ -7,7 +7,7 @@ public class GameManager : Singleton<GameManager>
 {
     public bool isPlayerSound;
     public SoundData walkSoundData;
-
+    
     private void OnEnable()
     {
         PlayerInputHandler.MovementEvent += PlayWalkSound;
@@ -28,10 +28,7 @@ public class GameManager : Singleton<GameManager>
 
     private void PlayWalkSound()
     {
-        if(!isPlayerSound)
-        {
-            StartCoroutine(PlayerWalkSound());
-        }
+        SoundManager.Instance.CreateSound().WithSoundData(walkSoundData).WithRandomPitch().StepSound().Play();
     }
 
     void Awake()
@@ -43,11 +40,6 @@ public class GameManager : Singleton<GameManager>
         AudioManager.instance.PlayBGM(SoundType.FONDO, 0.5f);
     }
     
-    private IEnumerator PlayerWalkSound()
-    {
-        isPlayerSound = true;
-        SoundManager.Instance.CreateSound().WithSoundData(walkSoundData).WithRandomPitch().Play();
-        yield return new WaitForSeconds(walkSoundData.clip.length);
-        isPlayerSound = false;
-    }
+    
+    
 }

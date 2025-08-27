@@ -43,7 +43,6 @@ public class SoundEmitter : MonoBehaviour
         SoundManager.Instance.ReturnToPool(this);
     }
 
-
     public void Initialize(SoundData sData)
     {
         Data = sData;
@@ -57,4 +56,11 @@ public class SoundEmitter : MonoBehaviour
     {
         _audioSource.pitch += Random.Range(min, max);
     }
+
+    public void WalkSound()
+    {
+        var index = Random.Range(0, Data.walkClips.Count);
+        _audioSource.clip = Data.walkClips[index];
+    }
+    
 }

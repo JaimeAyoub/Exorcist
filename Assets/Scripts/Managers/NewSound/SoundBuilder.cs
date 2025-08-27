@@ -1,4 +1,5 @@
 
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SoundBuilder 
@@ -7,7 +8,9 @@ public class SoundBuilder
     private SoundData _soundData;
     private Vector3 _position = Vector3.zero;
     private bool _randomPitch;
-
+    private bool _isWalking;
+    
+    
     public SoundBuilder(SoundManager soundManager)
     {
         this._soundManager = soundManager;
@@ -31,6 +34,12 @@ public class SoundBuilder
         return this;
     }
 
+    public SoundBuilder StepSound()
+    {
+        this._isWalking = true;
+        return this;
+    }
+    
     public void Play()
     {
         if (!_soundManager.CanPlaySound(_soundData)) return;
@@ -48,6 +57,11 @@ public class SoundBuilder
         if(_soundData.frequentSound)
         {
             _soundManager.FrequentSoundEmitters.Enqueue(soundEmitter);
+        }
+
+        if (_isWalking)
+        {
+            soundEmitter.WalkSound();
         }
         soundEmitter.Play();
     }
