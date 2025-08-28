@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.gitamend.unityutils": "https://github.com/adammyhre/Unity-Utils.git",
+    "com.gitamend.unityutils": "file:C:/Users/ALUMNOS/Desktop/Unity-Utils-master",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.ai.navigation": "2.0.6",
     "com.unity.cinemachine": "3.1.4",
