@@ -34,18 +34,6 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    void Awake()
-    {
-        base.Awake();
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
     void Start()
     {
         //AudioManager.instance.PlayBGM(SoundType.FONDO, 0.5f);
