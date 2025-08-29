@@ -24,11 +24,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _LetterTexture:
-        m_Texture: {fileID: 2800000, guid: 0ee87c84b82cf0a4aa864fcca8d645f3, type: 3}
+        m_Texture: {fileID: 2800000, guid: 07d434a005de7f141869bf91b38848fb, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_1c094bd1c9c7432ebb340f9d0b18dfcc_Texture_1_Texture2D:
-        m_Texture: {fileID: 2800000, guid: 8bf77f42536e40040824df2bf0744c0c, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6f0c5e9f958bb6a4d900d915a5d0cad2, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_5399189f0ff44fe0a6a3ead602285f30_Texture_1_Texture2D:
@@ -52,6 +52,7 @@ Material:
     - _ShideWidth: 0.4
     - _ShineIntensity: 0.5
     - _ShineSpeed: 1
+    - _delay: 1673.6
     m_Colors: []
   m_BuildTextureStacks: []
   m_AllowLocking: 1
