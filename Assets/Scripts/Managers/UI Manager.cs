@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class UIManager : UnityUtils.Singleton<UIManager>
 {
-    public static UIManager instance;
-
     [SerializeField] private PlayerInputHandler PlayerInputHandler;
     [SerializeField] public CanvasGroup _mainCanvas;
     [SerializeField] public CanvasGroup _combatCanvas;
@@ -33,16 +31,8 @@ public class UIManager : UnityUtils.Singleton<UIManager>
 
     private void Awake()
     {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else if (instance != this)
-        {
-            Destroy(gameObject);
-        }
+        base.Awake();
         canvases = new CanvasGroup[] { _mainCanvas, _combatCanvas, _pauseCanvas, _settingsCanvas };
-    
     }
 
     void Start()
