@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8861053696897699088}
   - component: {fileID: 1388610619814314635}
   - component: {fileID: 6132645714130148522}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PlayerHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -107,7 +107,7 @@ GameObject:
   - component: {fileID: 3886618390477455228}
   - component: {fileID: 857757659493838570}
   - component: {fileID: 4617091415027507212}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: AudioManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -257,7 +257,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7238999168762852321}
   - component: {fileID: 7287273172424694452}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PlayerInputHandler
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -303,7 +303,6 @@ MonoBehaviour:
   mayus: Mayus
   pause: Pause
   resume: Resume
-  click: Click
 --- !u!1 &6472073514178018805
 GameObject:
   m_ObjectHideFlags: 0
@@ -313,7 +312,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3280832996174256475}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CameraHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -349,7 +348,7 @@ GameObject:
   - component: {fileID: 4929770871129126834}
   - component: {fileID: 3467034323999259250}
   - component: {fileID: 3346988984533996388}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}

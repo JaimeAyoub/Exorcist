@@ -1,5 +1,7 @@
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class UIManager : UnityUtils.Singleton<UIManager>
 {
@@ -8,6 +10,7 @@ public class UIManager : UnityUtils.Singleton<UIManager>
     [SerializeField] public CanvasGroup _combatCanvas;
     [SerializeField] private CanvasGroup _pauseCanvas;
     [SerializeField] private CanvasGroup _settingsCanvas;
+    public TextMeshProUGUI toogleDoorText;
     private bool _isPaused = false;
 
     public CanvasGroup[] canvases;
@@ -16,9 +19,7 @@ public class UIManager : UnityUtils.Singleton<UIManager>
     private void OnEnable()
     {
         PlayerInputHandler.PauseEvent += Pause;
-       PlayerInputHandler.ResumeEvent += Pause;
-        
-        
+        PlayerInputHandler.ResumeEvent += Pause;
     }
 
 
@@ -26,7 +27,6 @@ public class UIManager : UnityUtils.Singleton<UIManager>
     {
         PlayerInputHandler.PauseEvent -= Pause;
         PlayerInputHandler.ResumeEvent -= Pause;
-
     }
 
     private void Awake()
@@ -43,23 +43,23 @@ public class UIManager : UnityUtils.Singleton<UIManager>
 
     void Pause()
     {
-            _isPaused = !_isPaused;
-            if (_isPaused == true)
-            {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-                ActivateCanvas(_pauseCanvas);
-                foreach (AnimationUI animation in animationsPauseMenu)
-                    animation.StartAnimationAction();
-                Time.timeScale = 0;
-            }
-            else if (_isPaused == false)
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-                Time.timeScale = 1;
-                ActivateCanvas(_mainCanvas);
-            }
+        _isPaused = !_isPaused;
+        if (_isPaused == true)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            ActivateCanvas(_pauseCanvas);
+            foreach (AnimationUI animation in animationsPauseMenu)
+                animation.StartAnimationAction();
+            Time.timeScale = 0;
+        }
+        else if (_isPaused == false)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            Time.timeScale = 1;
+            ActivateCanvas(_mainCanvas);
+        }
     }
 
     void StartSceneCanvas()
@@ -67,8 +67,6 @@ public class UIManager : UnityUtils.Singleton<UIManager>
         ActivateCanvas(_mainCanvas);
     }
 
-
-  
 
     public void ActivateCanvas(CanvasGroup canvasToActivate)
     {
@@ -87,5 +85,15 @@ public class UIManager : UnityUtils.Singleton<UIManager>
                 canvas.interactable = false;
             }
         }
+    }
+
+    public void ShowTextDoor()
+    {
+        toogleDoorText.enabled = true;
+    }
+
+    public void HideTextDoor()
+    {
+        toogleDoorText.enabled = false;
     }
 }
