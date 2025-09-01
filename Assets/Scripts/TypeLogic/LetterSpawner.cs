@@ -83,6 +83,15 @@ public class LetterSpawner : MonoBehaviour
 
     private void UpdateScreenText(char keyTyped)
     {
+        while (QueueTextToScreen.Count > 0 && !char.IsLetterOrDigit(QueueTextToScreen.Peek())&& QueueTextToScreen.Peek() != ' ')
+        {
+            // Auto-avanza en espacios o comas sin que el jugador escriba nada
+            QueueTextToScreen.Dequeue();
+            Destroy(letterObjects[0]);
+            letterObjects.RemoveAt(0);
+            _iteratorText++;
+            AddQueueIfAvailable();
+        }
         if (QueueTextToScreen.Count == 0) return;
 
         char currentChar = QueueTextToScreen.Peek();
