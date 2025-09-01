@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class LetterSpawner : MonoBehaviour
 {
@@ -17,6 +19,7 @@ public class LetterSpawner : MonoBehaviour
     public Dictionary<char, Sprite> LetterSpritesMap; // Diccionario de sprites
     private List<GameObject> letterObjects; // Prefabs en pantalla
     public float spaceBetweenLetters;
+    public VisualEffect  visualEffect;
 
     private void OnEnable()
     {
@@ -68,6 +71,7 @@ public class LetterSpawner : MonoBehaviour
     {
         GameObject letterObj = Instantiate(prefabLetter, transform);
         letterObj.transform.localPosition = new Vector3(index * spaceBetweenLetters, 0, 0);
+       
 
         var sr = letterObj.GetComponent<SpriteRenderer>();
         sr.material = new Material(sr.material); 
@@ -75,7 +79,7 @@ public class LetterSpawner : MonoBehaviour
         if (LetterSpritesMap.TryGetValue(char.ToUpper(c), out Sprite sprite))
         {
             sr.sprite = sprite;
-            sr.material.SetTexture("_LetterTexture", sprite.texture);
+            sr.material.SetTexture("_LetterText", sprite.texture);
         }
 
         letterObjects.Add(letterObj);
@@ -85,7 +89,7 @@ public class LetterSpawner : MonoBehaviour
     {
         while (QueueTextToScreen.Count > 0 && !char.IsLetterOrDigit(QueueTextToScreen.Peek())&& QueueTextToScreen.Peek() != ' ')
         {
-            // Auto-avanza en espacios o comas sin que el jugador escriba nada
+            // Auto-avanza en punutaciones
             QueueTextToScreen.Dequeue();
             Destroy(letterObjects[0]);
             letterObjects.RemoveAt(0);
@@ -98,9 +102,15 @@ public class LetterSpawner : MonoBehaviour
 
         if (char.ToUpper(keyTyped) == char.ToUpper(currentChar))
         {
-            // Tecla correcta: quitar de la cola y destruir prefab
+            // Quitar de la cola y destruir prefab
+            if (visualEffect != null)
+            {
+                VisualEffect vfxInstance = Instantiate(visualEffect, letterObjects[0].transform.position, Quaternion.identity);
+                vfxInstance.SendEvent("Play");
+                Destroy(vfxInstance.gameObject, 2f);
+            }
             QueueTextToScreen.Dequeue();
-            Destroy(letterObjects[0]);
+            AnimateText(letterObjects[0]);
             letterObjects.RemoveAt(0);
 
             _iteratorText++; 
@@ -134,5 +144,10 @@ public class LetterSpawner : MonoBehaviour
             SpawnLetter(nextChar, letterObjects.Count); 
             Debug.Log($"Se agregó la letra: {nextChar}");
         }
+    }
+
+    private void AnimateText(GameObject letterObj)
+    {
+        letterObj.transform.DOMove(letterObj.transform.localPosition + Vector3.up * 0.2f, 0.5f);
     }
 }
