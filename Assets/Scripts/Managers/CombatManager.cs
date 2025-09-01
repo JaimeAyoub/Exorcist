@@ -71,7 +71,6 @@ public class CombatManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         _currentturn = Combatturn.PlayerTurn;
         isCombat = true;
-        TextReader.instance.ActivarModoEscritura();
         StopAllCoroutines();
         StartCoroutine(CombatLoop());
     }
@@ -112,7 +111,6 @@ public class CombatManager : MonoBehaviour
         isCombat = false;
         UIManager.Instance.ActivateCanvas(UIManager.Instance._mainCanvas);
         _currentturn = Combatturn.None;
-        TextReader.instance.DesactivarModoEscritura();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -126,6 +124,7 @@ public class CombatManager : MonoBehaviour
             EndCombat();
             return true;
         }
+
         if (enemy.GetComponent<EnemyHealth>().currentHealth <= 0)
         {
             Debug.Log("Victoria");

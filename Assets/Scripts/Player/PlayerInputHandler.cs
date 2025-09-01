@@ -105,9 +105,9 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void OnKeyTyped(InputAction.CallbackContext ctx)
     {
-        Debug.Log(ctx.control.name);
+//        Debug.Log(ctx.control.name);
         var endChar = ctx.control.name; 
-        Debug.Log(endChar);
+  //      Debug.Log(endChar);
         if (endChar == "space")
         {
             KeyTypedEvent?.Invoke(' ');

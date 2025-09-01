@@ -1,22 +1,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using TMPro;
-using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 
 public class LetterSpawner : MonoBehaviour
 {
     [SerializeField] private PlayerInputHandler playerInputHandler;
     private const int NumberOfCharsInScreen = 7;
 
-    [FormerlySerializedAs("_textAsset")] public TextAsset textAsset;
-    public List<char> listTextToScreen;
-    public List<char> listCharedText;
-    public TextMeshProUGUI text;
-    private int _iteratorText = 0;
+    public TextAsset textAsset; // Texto que se leerá
+    public List<char> textToCharList; // Lista de caracteres del texto
+    public Queue<char> QueueTextToScreen; // Letras en pantalla
+    private int _iteratorText; // Posición actual en el texto
 
-    private string TypedKey { get; set; }
+    public GameObject prefabLetter; // Prefab de letra
+    public Sprite[] letterSpriteArray; // Sprites de letras
+    public Dictionary<char, Sprite> LetterSpritesMap; // Diccionario de sprites
+    private List<GameObject> letterObjects; // Prefabs en pantalla
+    public float spaceBetweenLetters;
 
     private void OnEnable()
     {
@@ -25,57 +25,105 @@ public class LetterSpawner : MonoBehaviour
 
     private void Awake()
     {
-      listCharedText = new List<char>();
-      listTextToScreen = new List<char> ();
+        textToCharList = textAsset.text.ToList();
+        QueueTextToScreen = new Queue<char>();
+        letterObjects = new List<GameObject>();
+
+        LetterSpritesMap = new Dictionary<char, Sprite>();
+        foreach (Sprite sprite in letterSpriteArray)
+        {
+            char key = char.ToUpper(sprite.name[0]); 
+            LetterSpritesMap[key] = sprite;
+        }
     }
 
     void Start()
     {
-      foreach(var cha in textAsset.text.Where(c => true))
-      {
-        listCharedText.Add(cha);
-      }
-      FillCharQueue();
+        FillCharQueue();
     }
 
     private void FillCharQueue()
     {
-        for(var i = 0; i < NumberOfCharsInScreen; i++)
-        {
-            // SHADER PARA LETRAS EN GRIS
-            listTextToScreen.Add(listCharedText[i]);
-        }
-        StartUpdateText();
-    }
+        int initialCount = Mathf.Min(NumberOfCharsInScreen, textToCharList.Count);
 
-    private void UpdateScreenText(char keyTyped)
-    {
-        Debug.Log(keyTyped + " letter spawner");
-        if( keyTyped == listTextToScreen[_iteratorText])
+        for (int i = 0; i < initialCount; i++)
         {
-            // Efecto de tecla correcta
-            _iteratorText++;
-            Debug.Log(keyTyped + " Es la tecla correcta!! primer if");
+            QueueTextToScreen.Enqueue(textToCharList[i]);
         }
-        else if(keyTyped == listTextToScreen[_iteratorText])
-        {
-            // Efecto de tecla incorrecta
-            _iteratorText++;
-            Debug.Log(keyTyped + " Es la tecla correcta!! segundo if");
-        }
-        else
-        {
-            // Efecto de tecla incorrecta
-            Debug.Log(keyTyped + " No es la tecla correcta!! tercer if");
-        }
+
+        StartUpdateText();
     }
 
     private void StartUpdateText()
     {
-        for(var i = 0; i < listTextToScreen.Count; i++)
+        int index = 0;
+        foreach (var c in QueueTextToScreen)
         {
-            text.text += listTextToScreen[i];
+            SpawnLetter(c, index);
+            index++;
         }
     }
 
+    private void SpawnLetter(char c, int index)
+    {
+        GameObject letterObj = Instantiate(prefabLetter, transform);
+        letterObj.transform.localPosition = new Vector3(index * spaceBetweenLetters, 0, 0);
+
+        var sr = letterObj.GetComponent<SpriteRenderer>();
+        sr.material = new Material(sr.material); 
+
+        if (LetterSpritesMap.TryGetValue(char.ToUpper(c), out Sprite sprite))
+        {
+            sr.sprite = sprite;
+            sr.material.SetTexture("_LetterTexture", sprite.texture);
+        }
+
+        letterObjects.Add(letterObj);
+    }
+
+    private void UpdateScreenText(char keyTyped)
+    {
+        if (QueueTextToScreen.Count == 0) return;
+
+        char currentChar = QueueTextToScreen.Peek();
+
+        if (char.ToUpper(keyTyped) == char.ToUpper(currentChar))
+        {
+            // Tecla correcta: quitar de la cola y destruir prefab
+            QueueTextToScreen.Dequeue();
+            Destroy(letterObjects[0]);
+            letterObjects.RemoveAt(0);
+
+            _iteratorText++; 
+
+            AddQueueIfAvailable();
+            
+            for (int i = 0; i < letterObjects.Count; i++)
+            {
+                letterObjects[i].transform.localPosition = new Vector3(i * spaceBetweenLetters, 0, 0);
+            }
+
+            if (QueueTextToScreen.Count > 0)
+                Debug.Log($"{keyTyped} correcto, siguiente letra: {QueueTextToScreen.Peek()}");
+            else
+                Debug.Log($"{keyTyped} correcto, fin del texto");
+        }
+        else
+        {
+            Debug.Log($"{keyTyped} NO es correcto, se esperaba: {currentChar}");
+        }
+    }
+
+    private void AddQueueIfAvailable()
+    {
+        int nextIndex = _iteratorText + NumberOfCharsInScreen - 1;
+
+        if (nextIndex < textToCharList.Count)
+        {
+            char nextChar = textToCharList[nextIndex];
+            QueueTextToScreen.Enqueue(nextChar);
+            SpawnLetter(nextChar, letterObjects.Count); 
+            Debug.Log($"Se agregó la letra: {nextChar}");
+        }
+    }
 }
