@@ -11953,14 +11953,11 @@ MonoBehaviour:
   - {fileID: 21300000, guid: d3303f3823bb7a14bb651c9861bd1876, type: 3}
   - {fileID: 21300000, guid: fde2e60d258167b439ccc0d3590ca7de, type: 3}
   - {fileID: 21300000, guid: 02bcad154d98bba489ecd4755202f52f, type: 3}
-  spaceBetweenLetters: 0.5
+  spaceBetweenLetters: 0.25
   visualEffect: {fileID: 487355484}
-  lettersInBook: []
   bookLocation: {fileID: 1292577981}
   prefabLetterInBook: {fileID: 668570733}
-  _seperatorInY: 0
   lettersInParagraph: 10
-  _letterCount: 0
 --- !u!4 &441899056
 Transform:
   m_ObjectHideFlags: 0

@@ -12,24 +12,29 @@ public class LetterSpawner : MonoBehaviour
     [SerializeField] private PlayerInputHandler playerInputHandler;
     private const int NumberOfCharsInScreen = 7;
 
-    public TextAsset textAsset; // Texto que se leerá
+    [Header("Variables para el texto")] public TextAsset textAsset; // Texto que se leerá
     public List<char> textToCharList; // Lista de caracteres del texto
     public Queue<char> QueueTextToScreen; // Letras en pantalla
     private int _iteratorText; // Posición actual en el texto
 
+
+    [Header("Variables para el la aparicion de las letras")]
     public GameObject prefabLetter; // Prefab de letra
+
     public Sprite[] letterSpriteArray; // Sprites de letras
     public Dictionary<char, Sprite> LetterSpritesMap; // Diccionario de sprites
     private List<GameObject> _letterObjects; // Prefabs en pantalla
-    public float spaceBetweenLetters;
-    public VisualEffect visualEffect;
+    public float spaceBetweenLetters; //Variable para la separacion entre letras
+    public VisualEffect visualEffect; //El efecto que quieres que aparezca
 
-    public List<GameObject> lettersInBook;
-    public GameObject bookLocation;
-    public GameObject prefabLetterInBook;
-    [SerializeField] private float _seperatorInY = 0;
-    [SerializeField] private int lettersInParagraph = 5;
-    [SerializeField] private int _letterCount;
+    [Header("Variables para la aparicion de las letras doradas en el libro")]
+    public GameObject bookLocation; //Donde apareceran las letras doradas
+
+    public GameObject prefabLetterInBook; //GameObject con el sprite renderer y shader dorado
+    private List<GameObject> _lettersInBook; //Lista donde guardamos las letras que hay en el libro
+    private float _seperatorInY = 0; //Variable para pasar parrafo
+    [SerializeField] private int lettersInParagraph; //Variable para poner cuantas letras quieres por parrafo
+    private int _letterCount; //Variable para saber cuantas letras hemos escrito.
 
     private void OnEnable()
     {
@@ -41,7 +46,7 @@ public class LetterSpawner : MonoBehaviour
         textToCharList = textAsset.text.ToList();
         QueueTextToScreen = new Queue<char>();
         _letterObjects = new List<GameObject>();
-        lettersInBook = new List<GameObject>();
+        _lettersInBook = new List<GameObject>();
 
         LetterSpritesMap = new Dictionary<char, Sprite>();
         foreach (Sprite sprite in letterSpriteArray)
@@ -199,12 +204,12 @@ public class LetterSpawner : MonoBehaviour
         letterToAdd.transform.DOMove(letter.transform.position, 0.5f)
             .OnComplete(() =>
             {
-                SpawnVFX(letter.transform.position); 
-                letter.SetActive(true); 
-                Destroy(letterToAdd); 
+                SpawnVFX(letter.transform.position);
+                letter.SetActive(true);
+                Destroy(letterToAdd);
             });
 
-        lettersInBook.Add(letter);
+        _lettersInBook.Add(letter);
     }
 
     private void SpawnVFX(Vector3 postion)
