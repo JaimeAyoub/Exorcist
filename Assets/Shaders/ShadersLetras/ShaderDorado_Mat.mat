@@ -52,7 +52,7 @@ Material:
     - _ShideWidth: 0.4
     - _ShineIntensity: 0.5
     - _ShineSpeed: 1
-    - _delay: 1673.6
+    - _delay: 100
     m_Colors: []
   m_BuildTextureStacks: []
   m_AllowLocking: 1
