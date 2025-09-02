@@ -38,7 +38,7 @@ public class LetterSpawner : MonoBehaviour
 
     private void OnEnable()
     {
-        playerInputHandler.KeyTypedEvent += UpdateScreenText;
+       // playerInputHandler.KeyTypedEvent += UpdateScreenText;
     }
 
     private void Awake()
@@ -58,10 +58,10 @@ public class LetterSpawner : MonoBehaviour
 
     void Start()
     {
-        FillCharQueue();
+       // FillCharQueue();
     }
 
-    private void FillCharQueue()
+    public void FillCharQueue()
     {
         int initialCount = Mathf.Min(NumberOfCharsInScreen, textToCharList.Count);
 
@@ -78,12 +78,12 @@ public class LetterSpawner : MonoBehaviour
         int index = 0;
         foreach (var c in QueueTextToScreen)
         {
-            SpawnLetter(c, index);
+            SpawnLetter(c, index,prefabLetter.transform.position);
             index++;
         }
     }
 
-    private void SpawnLetter(char c, int index)
+    private void SpawnLetter(char c, int index, Vector3 position)
     {
         GameObject letterObj = Instantiate(prefabLetter, transform);
         letterObj.transform.localPosition = new Vector3(index * spaceBetweenLetters, 0, 0);
@@ -101,7 +101,7 @@ public class LetterSpawner : MonoBehaviour
         _letterObjects.Add(letterObj);
     }
 
-    private void UpdateScreenText(char keyTyped)
+    public void UpdateScreenText(char keyTyped)
     {
         while (QueueTextToScreen.Count > 0 && !char.IsLetterOrDigit(QueueTextToScreen.Peek()) &&
                QueueTextToScreen.Peek() != ' ')
@@ -154,7 +154,7 @@ public class LetterSpawner : MonoBehaviour
         {
             char nextChar = textToCharList[nextIndex];
             QueueTextToScreen.Enqueue(nextChar);
-            SpawnLetter(nextChar, _letterObjects.Count);
+            SpawnLetter(nextChar, _letterObjects.Count,prefabLetter.transform.position);
             Debug.Log($"Se agregó la letra: {nextChar}");
         }
     }

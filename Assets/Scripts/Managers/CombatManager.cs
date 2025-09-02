@@ -9,6 +9,8 @@ public class CombatManager : MonoBehaviour
     public static CombatManager instance;
     public AudioManager audioManager;
 
+    public PlayerInputHandler inputHandler;
+    public LetterSpawner letterSpawner;
     public CanvasGroup combatgroup;
     public GameObject player;
     public GameObject enemy;
@@ -63,7 +65,8 @@ public class CombatManager : MonoBehaviour
     {
         if (isCombat)
             return;
-        UIManager.Instance.ActivateCanvas(UIManager.Instance._combatCanvas);
+        
+        //UIManager.Instance.ActivateCanvas(UIManager.Instance._combatCanvas);
         player.GetComponent<PlayerAttack>().target = enemy;
         AudioManager.instance.PlayBGM(SoundType.COMBATE, 0.5f);
         AudioManager.instance.PlaySFX(SoundType.ENEMIGO, 0.5f);
@@ -71,6 +74,9 @@ public class CombatManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         _currentturn = Combatturn.PlayerTurn;
         isCombat = true;
+        letterSpawner.FillCharQueue();
+        inputHandler -= inputHandler.MovementInput;
+        inputHandler.KeyTypedEvent += letterSpawner.UpdateScreenText;
         StopAllCoroutines();
         StartCoroutine(CombatLoop());
     }
@@ -109,6 +115,7 @@ public class CombatManager : MonoBehaviour
     private void EndCombat()
     {
         isCombat = false;
+        inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
         UIManager.Instance.ActivateCanvas(UIManager.Instance._mainCanvas);
         _currentturn = Combatturn.None;
         Cursor.visible = false;
