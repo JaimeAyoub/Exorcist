@@ -1,8 +1,7 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class CombatManager : MonoBehaviour
 {
@@ -14,14 +13,24 @@ public class CombatManager : MonoBehaviour
     public CanvasGroup combatgroup;
     public GameObject player;
     public GameObject enemy;
-    public bool isplayerTurn = true;
-    public bool isenemyTurn;
-    public bool isCombat = false;
+    private bool isplayerTurn = true;
+    private bool isenemyTurn;
+    private bool isCombat = false;
 
     //Variables para la logica del tiempo
     public float currentTime;
     public float MaxTime = 20;
     public Slider _timeSlider;
+
+
+    public GameObject playerSpawner;
+    public GameObject enemySpawner;
+
+    public Image imageToFade;
+
+    private Vector3 _currentPositionPlayer;
+    private bool isTransitioning;
+
 
     void Start()
     {
@@ -32,12 +41,10 @@ public class CombatManager : MonoBehaviour
 
     void Update()
     {
-        if (isCombat)
-        {
-            currentTime -= Time.timeScale * Time.deltaTime * 2;
-            // Debug.Log(combatTime);
-            _timeSlider.value = currentTime;
-        }
+        if (!isCombat) return;
+        currentTime -= Time.timeScale * Time.deltaTime * 2;
+        // Debug.Log(combatTime);
+        _timeSlider.value = currentTime;
     }
 
     private enum Combatturn
@@ -63,35 +70,52 @@ public class CombatManager : MonoBehaviour
 
     public void StartCombat()
     {
-        if (isCombat)
-            return;
-        
-        //UIManager.Instance.ActivateCanvas(UIManager.Instance._combatCanvas);
-        player.GetComponent<PlayerAttack>().target = enemy;
-        AudioManager.instance.PlayBGM(SoundType.COMBATE, 0.5f);
-        AudioManager.instance.PlaySFX(SoundType.ENEMIGO, 0.5f);
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
-        _currentturn = Combatturn.PlayerTurn;
-        isCombat = true;
-        letterSpawner.FillCharQueue();
-        inputHandler -= inputHandler.MovementInput;
-        inputHandler.KeyTypedEvent += letterSpawner.UpdateScreenText;
-        StopAllCoroutines();
-        StartCoroutine(CombatLoop());
+        if (isCombat || isTransitioning) return;
+        isTransitioning = true;
+
+
+        Sequence seq = DOTween.Sequence().SetUpdate(true);
+
+
+        seq.Join(imageToFade.DOFade(1f, 0.5f));
+
+        seq.AppendCallback(() =>
+        {
+            _currentPositionPlayer = player.transform.position;
+            player.GetComponentInChildren<PlayerAttack>().target = enemy;
+            player.transform.position = playerSpawner.transform.position;
+
+            enemy.transform.position = enemySpawner.transform.position;
+            AudioManager.instance.PlayBGM(SoundType.COMBATE, 0.5f);
+            AudioManager.instance.PlaySFX(SoundType.ENEMIGO, 0.5f);
+            _currentturn = Combatturn.PlayerTurn;
+            isCombat = true;
+
+            letterSpawner.FillCharQueue();
+            UIManager.Instance.ActivateCanvas(UIManager.Instance._combatCanvas);
+            inputHandler.SetCombat();
+            inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
+            inputHandler.KeyTypedEvent += letterSpawner.UpdateScreenText;
+            StopAllCoroutines();
+            StartCoroutine(CombatLoop());
+        });
+
+        seq.Append(imageToFade.DOFade(0f, 0.5f));
+
+        seq.OnComplete(() => { isTransitioning = false; });
     }
 
     private IEnumerator CombatLoop()
     {
         Debug.unityLogger.Log("CombatStart");
+        Debug.Log(_currentturn);
+        Debug.Log(isCombat);
         while (isCombat)
         {
             if (_currentturn == Combatturn.PlayerTurn)
             {
-                combatgroup.interactable = true;
-
-
-                //Accion del jugador.
+                inputHandler.EnableTyping();
+                Debug.Log("Turno player");
                 if (IsCombatEnd()) yield break;
                 yield return new WaitUntil(() => currentTime <= 0);
                 isplayerTurn = false;
@@ -99,7 +123,9 @@ public class CombatManager : MonoBehaviour
             }
             else if (_currentturn == Combatturn.EnemyTurn)
             {
+                inputHandler.DesactivateTyping();
                 enemy.GetComponent<EnemyAttack>().Attack(1);
+                Debug.Log("Enemigo hace damage");
                 if (IsCombatEnd()) yield break;
 
 
@@ -115,17 +141,19 @@ public class CombatManager : MonoBehaviour
     private void EndCombat()
     {
         isCombat = false;
+        player.transform.position = _currentPositionPlayer;
         inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
         UIManager.Instance.ActivateCanvas(UIManager.Instance._mainCanvas);
         _currentturn = Combatturn.None;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        ResetTime();
     }
 
 
     public bool IsCombatEnd()
     {
-        if (player.GetComponent<PlayerHealth>().currentHealth <= 0)
+        if (player.GetComponentInChildren<PlayerHealth>().currentHealth <= 0)
         {
             Debug.Log("Derrota");
             EndCombat();

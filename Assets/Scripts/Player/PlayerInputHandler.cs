@@ -6,26 +6,30 @@ using UnityEngine.SceneManagement;
 
 public class PlayerInputHandler : MonoBehaviour
 {
-    [Header("Input Action Asset")]
-    [SerializeField] private InputActionAsset playerControls;
-    
-    [Header("Action Map Name Reference")]
-    [SerializeField] private string playerActionMapName = "Player";
+    [Header("Input Action Asset")] [SerializeField]
+    private InputActionAsset playerControls;
+
+    [Header("Action Map Name Reference")] [SerializeField]
+    private string playerActionMapName = "Player";
+
     [SerializeField] private string uiActionMapName = "UI";
     [SerializeField] private string typingActionMapName = "Typing";
 
-    [Header("Player Action Name References")]
-    [SerializeField] private string movement = "Movement";
+    [Header("Player Action Name References")] [SerializeField]
+    private string movement = "Movement";
+
     [SerializeField] private string rotation = "Rotation";
     [SerializeField] private string jump = "Jump";
     [SerializeField] private string sprint = "Sprint";
 
-    [Header("Type Action Name References")]
-    [SerializeField] private string typing = "Type";
+    [Header("Type Action Name References")] [SerializeField]
+    private string typing = "Type";
+
     [SerializeField] private string mayus = "Mayus";
 
-    [Header("UI Action Name References")]
-    [SerializeField] private string pause = "Pause";
+    [Header("UI Action Name References")] [SerializeField]
+    private string pause = "Pause";
+
     [SerializeField] private string resume = "Resume";
 
     // Player InputActions
@@ -35,7 +39,7 @@ public class PlayerInputHandler : MonoBehaviour
     private InputAction _sprintAction;
     private InputAction _pauseAction;
     private InputAction _mayusAction;
-    
+
     // Typing InputActions
     private InputAction _typingAction;
 
@@ -54,9 +58,9 @@ public class PlayerInputHandler : MonoBehaviour
     public Vector2 MovementInput { get; private set; }
     public Vector2 RotationInput { get; private set; }
     public bool JumpTriggered { get; private set; }
-    public bool SprintTriggered { get; private set; }   
-    public bool IsInMayus { get; private set; }    
-    
+    public bool SprintTriggered { get; private set; }
+    public bool IsInMayus { get; private set; }
+
     private void EnablePlayerInput()
     {
         var playerMapReference = playerControls.FindActionMap(playerActionMapName);
@@ -73,7 +77,7 @@ public class PlayerInputHandler : MonoBehaviour
 
         _typingAction = typingMapReference.FindAction(typing);
         _mayusAction = typingMapReference.FindAction(mayus);
-        
+
         SubscribeActionValuesToInputEvents();
     }
 
@@ -106,13 +110,14 @@ public class PlayerInputHandler : MonoBehaviour
     private void OnKeyTyped(InputAction.CallbackContext ctx)
     {
 //        Debug.Log(ctx.control.name);
-        var endChar = ctx.control.name; 
-  //      Debug.Log(endChar);
+        var endChar = ctx.control.name;
+        //      Debug.Log(endChar);
         if (endChar == "space")
         {
             KeyTypedEvent?.Invoke(' ');
             Debug.Log(endChar);
         }
+
         KeyTypedEvent?.Invoke(endChar[0]);
         Debug.Log(endChar);
     }
@@ -120,7 +125,7 @@ public class PlayerInputHandler : MonoBehaviour
     private void OnPause(InputAction.CallbackContext ctx)
     {
         PauseEvent?.Invoke();
-        SetUI();   
+        SetUI();
     }
 
     private void OnResume(InputAction.CallbackContext ctx)
@@ -172,11 +177,29 @@ public class PlayerInputHandler : MonoBehaviour
         playerControls.FindActionMap(typingActionMapName).Enable();
         playerControls.FindActionMap(uiActionMapName).Disable();
     }
+
     public void SetUI()
     {
         playerControls.FindActionMap(playerActionMapName).Disable();
         playerControls.FindActionMap(typingActionMapName).Disable();
         playerControls.FindActionMap(uiActionMapName).Enable();
+    }
+
+    public void SetCombat()
+    {
+        playerControls.FindActionMap(playerActionMapName).Disable();
+        playerControls.FindActionMap(typingActionMapName).Enable();
+        playerControls.FindActionMap(uiActionMapName).Disable();
+    }
+
+    public void DesactivateTyping()
+    {
+        playerControls.FindActionMap(typingActionMapName).Disable();
+    }
+
+    public void EnableTyping()
+    {
+        playerControls.FindActionMap(typingActionMapName).Enable();
     }
 
 }

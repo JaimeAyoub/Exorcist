@@ -38,7 +38,7 @@ public class LetterSpawner : MonoBehaviour
 
     private void OnEnable()
     {
-       // playerInputHandler.KeyTypedEvent += UpdateScreenText;
+        // playerInputHandler.KeyTypedEvent += UpdateScreenText;
     }
 
     private void Awake()
@@ -58,7 +58,7 @@ public class LetterSpawner : MonoBehaviour
 
     void Start()
     {
-       // FillCharQueue();
+        // FillCharQueue();
     }
 
     public void FillCharQueue()
@@ -78,7 +78,7 @@ public class LetterSpawner : MonoBehaviour
         int index = 0;
         foreach (var c in QueueTextToScreen)
         {
-            SpawnLetter(c, index,prefabLetter.transform.position);
+            SpawnLetter(c, index, prefabLetter.transform.position);
             index++;
         }
     }
@@ -119,11 +119,11 @@ public class LetterSpawner : MonoBehaviour
 
         char currentChar = QueueTextToScreen.Peek();
 
-        if (char.ToUpper(keyTyped) == char.ToUpper(currentChar))
+        if (char.ToUpper(keyTyped) == char.ToUpper(currentChar)) //Tecla correcta
         {
             QueueTextToScreen.Dequeue();
             AddTextInBook(_letterObjects[0]);
-
+            CombatManager.instance.AddTime(1.0f);
             _letterObjects.RemoveAt(0);
             _letterCount++;
             _iteratorText++;
@@ -140,9 +140,10 @@ public class LetterSpawner : MonoBehaviour
             else
                 Debug.Log($"{keyTyped} correcto, fin del texto");
         }
-        else
+        else //Tecla incorrecta
         {
             Debug.Log($"{keyTyped} NO es correcto, se esperaba: {currentChar}");
+            CombatManager.instance.SubstracTime(1.0f);
         }
     }
 
@@ -154,7 +155,7 @@ public class LetterSpawner : MonoBehaviour
         {
             char nextChar = textToCharList[nextIndex];
             QueueTextToScreen.Enqueue(nextChar);
-            SpawnLetter(nextChar, _letterObjects.Count,prefabLetter.transform.position);
+            SpawnLetter(nextChar, _letterObjects.Count, prefabLetter.transform.position);
             Debug.Log($"Se agregó la letra: {nextChar}");
         }
     }
@@ -175,8 +176,14 @@ public class LetterSpawner : MonoBehaviour
 
         if (_letterCount >= lettersInParagraph)
         {
-            _seperatorInY -= 0.75f;
+            _seperatorInY -= 0.25f;
             _letterCount = 0;
+            foreach (var letters in _lettersInBook)
+            {
+                float newY = letters.transform.localPosition.y + 0.25f;
+                letters.transform.DOLocalMoveY(newY, 0.25f) 
+                    .SetEase(Ease.OutCubic); 
+            }
         }
 
         char currentChar = textToCharList[_iteratorText];
