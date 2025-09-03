@@ -15,7 +15,7 @@ public class CombatManager : MonoBehaviour
     public GameObject enemy;
     private bool isplayerTurn = true;
     private bool isenemyTurn;
-    private bool isCombat = false;
+    public bool isCombat = false;
 
     //Variables para la logica del tiempo
     public float currentTime;
@@ -117,6 +117,8 @@ public class CombatManager : MonoBehaviour
                 inputHandler.EnableTyping();
                 Debug.Log("Turno player");
                 if (IsCombatEnd()) yield break;
+
+
                 yield return new WaitUntil(() => currentTime <= 0);
                 isplayerTurn = false;
                 _currentturn = Combatturn.EnemyTurn;
@@ -124,7 +126,8 @@ public class CombatManager : MonoBehaviour
             else if (_currentturn == Combatturn.EnemyTurn)
             {
                 inputHandler.DesactivateTyping();
-                enemy.GetComponent<EnemyAttack>().Attack(1);
+                if (enemy != null)
+                    enemy.GetComponent<EnemyAttack>().Attack(1);
                 Debug.Log("Enemigo hace damage");
                 if (IsCombatEnd()) yield break;
 
@@ -138,9 +141,11 @@ public class CombatManager : MonoBehaviour
         yield return null;
     }
 
-    private void EndCombat()
+    public void EndCombat()
     {
         isCombat = false;
+        Destroy(enemy);
+        inputHandler.SetGameplay();
         player.transform.position = _currentPositionPlayer;
         inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
         UIManager.Instance.ActivateCanvas(UIManager.Instance._mainCanvas);
@@ -148,6 +153,7 @@ public class CombatManager : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         ResetTime();
+        letterSpawner.EmptyAll();
     }
 
 
@@ -164,7 +170,6 @@ public class CombatManager : MonoBehaviour
         {
             Debug.Log("Victoria");
             EndCombat();
-            Destroy(enemy);
             return true;
         }
 
@@ -178,7 +183,8 @@ public class CombatManager : MonoBehaviour
 
     public void AddTime(float time)
     {
-        currentTime += time;
+        if (currentTime <= MaxTime)
+            currentTime += time;
     }
 
     public void SubstracTime(float time)

@@ -33,8 +33,8 @@ public class LetterSpawner : MonoBehaviour
     public GameObject prefabLetterInBook; //GameObject con el sprite renderer y shader dorado
     private List<GameObject> _lettersInBook; //Lista donde guardamos las letras que hay en el libro
     private float _seperatorInY = 0; //Variable para pasar parrafo
-    [SerializeField] private int lettersInParagraph; //Variable para poner cuantas letras quieres por parrafo
-    private int _letterCount; //Variable para saber cuantas letras hemos escrito.
+    [SerializeField] public int lettersInParagraph; //Variable para poner cuantas letras quieres por parrafo
+    public int _letterCount; //Variable para saber cuantas letras hemos escrito.
 
     private void OnEnable()
     {
@@ -103,49 +103,62 @@ public class LetterSpawner : MonoBehaviour
 
     public void UpdateScreenText(char keyTyped)
     {
+        if (!CombatManager.instance.isCombat) return;
+
+        // Avanzar punteaciones
         while (QueueTextToScreen.Count > 0 && !char.IsLetterOrDigit(QueueTextToScreen.Peek()) &&
                QueueTextToScreen.Peek() != ' ')
         {
-            // Auto-avanza en punutaciones
-            QueueTextToScreen.Dequeue();
-            Destroy(_letterObjects[0]);
-            _letterObjects.RemoveAt(0);
+            if (_letterObjects.Count > 0)
+            {
+                Destroy(_letterObjects[0]);
+                _letterObjects.RemoveAt(0);
+            }
+
+            if (QueueTextToScreen.Count > 0)
+                QueueTextToScreen.Dequeue();
 
             _iteratorText++;
             AddQueueIfAvailable();
         }
 
-        if (QueueTextToScreen.Count == 0) return;
+        if (QueueTextToScreen.Count == 0 || _letterObjects.Count == 0) return;
 
         char currentChar = QueueTextToScreen.Peek();
 
-        if (char.ToUpper(keyTyped) == char.ToUpper(currentChar)) //Tecla correcta
+        if (char.ToUpper(keyTyped) == char.ToUpper(currentChar)) // tecla correcta
         {
-            QueueTextToScreen.Dequeue();
-            AddTextInBook(_letterObjects[0]);
-            CombatManager.instance.AddTime(1.0f);
-            _letterObjects.RemoveAt(0);
+            int indexForBook = _iteratorText;
+            GameObject letterObj = _letterObjects[0];
+
+            AddTextInBook(letterObj, indexForBook);
+
+            if (QueueTextToScreen.Count > 0)
+                QueueTextToScreen.Dequeue();
+
+            if (_letterObjects.Count > 0)
+                _letterObjects.RemoveAt(0);
+
             _letterCount++;
             _iteratorText++;
+            CombatManager.instance.AddTime(1.0f);
 
             AddQueueIfAvailable();
 
             for (int i = 0; i < _letterObjects.Count; i++)
-            {
                 _letterObjects[i].transform.localPosition = new Vector3(i * spaceBetweenLetters, 0, 0);
-            }
-
-            if (QueueTextToScreen.Count > 0)
-                Debug.Log($"{keyTyped} correcto, siguiente letra: {QueueTextToScreen.Peek()}");
-            else
-                Debug.Log($"{keyTyped} correcto, fin del texto");
         }
-        else //Tecla incorrecta
+        else // tecla incorrecta
         {
-            Debug.Log($"{keyTyped} NO es correcto, se esperaba: {currentChar}");
-            CombatManager.instance.SubstracTime(1.0f);
+            if (_letterObjects.Count > 0 && keyTyped != ' ')
+            {
+                SpriteRenderer sp = _letterObjects[0].GetComponent<SpriteRenderer>();
+                sp.DOColor(Color.red, 0.125f).SetLoops(2, LoopType.Yoyo);
+                CombatManager.instance.SubstracTime(1.0f);
+            }
         }
     }
+
 
     private void AddQueueIfAvailable()
     {
@@ -170,23 +183,31 @@ public class LetterSpawner : MonoBehaviour
             });
     }
 
-    private void AddTextInBook(GameObject letterToAdd)
+    private void AddTextInBook(GameObject letterToAdd, int index)
     {
-        if (_iteratorText >= textToCharList.Count) return;
+        if (!CombatManager.instance.isCombat || index >= textToCharList.Count || _letterObjects.Count == 0)
+        {
+            Destroy(letterToAdd);
+            return;
+        }
+
+        char currentChar = textToCharList[index];
+
 
         if (_letterCount >= lettersInParagraph)
         {
             _seperatorInY -= 0.25f;
             _letterCount = 0;
+            CombatManager.instance.player.GetComponentInChildren<PlayerAttack>().Attack(1);
+
             foreach (var letters in _lettersInBook)
             {
                 float newY = letters.transform.localPosition.y + 0.25f;
-                letters.transform.DOLocalMoveY(newY, 0.25f) 
-                    .SetEase(Ease.OutCubic); 
+                letters.transform.DOLocalMoveY(newY, 0.25f)
+                    .SetEase(Ease.OutCubic);
             }
         }
 
-        char currentChar = textToCharList[_iteratorText];
         GameObject letter = Instantiate(prefabLetterInBook, bookLocation.transform);
 
         letter.transform.localPosition = new Vector3(
@@ -208,13 +229,16 @@ public class LetterSpawner : MonoBehaviour
             }
         }
 
-        letterToAdd.transform.DOMove(letter.transform.position, 0.5f)
-            .OnComplete(() =>
-            {
-                SpawnVFX(letter.transform.position);
-                letter.SetActive(true);
-                Destroy(letterToAdd);
-            });
+        if (letterToAdd != null)
+        {
+            letterToAdd.transform.DOMove(letter.transform.position, 0.5f)
+                .OnComplete(() =>
+                {
+                    if (letterToAdd != null) Destroy(letterToAdd);
+                    if (letter != null) letter.SetActive(true);
+                    SpawnVFX(letter.transform.position);
+                });
+        }
 
         _lettersInBook.Add(letter);
     }
@@ -225,5 +249,17 @@ public class LetterSpawner : MonoBehaviour
         var vfxInstance = Instantiate(visualEffect, postion, Quaternion.identity);
         vfxInstance.SendEvent("Play");
         Destroy(vfxInstance.gameObject, 2f);
+    }
+
+    public void EmptyAll()
+    {
+        foreach (var go in _letterObjects) Destroy(go);
+        foreach (var go in _lettersInBook) Destroy(go);
+
+        QueueTextToScreen.Clear();
+        _letterObjects.Clear();
+        _lettersInBook.Clear();
+        _iteratorText = 0;
+        textToCharList.Clear();
     }
 }
