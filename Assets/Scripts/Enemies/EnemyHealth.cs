@@ -34,7 +34,8 @@ public class EnemyHealth : MonoBehaviour
             damageTween.Kill();
 
         transform.DOScale(Vector3.zero, 0.5f)
-            .OnComplete(() => CombatManager.instance.EndCombat());;
+            .OnComplete(() => CombatManager.instance.EndCombat());
+        ;
     }
 
     void DamageFlash()

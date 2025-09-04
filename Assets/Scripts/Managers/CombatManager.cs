@@ -108,12 +108,12 @@ public class CombatManager : MonoBehaviour
             
             enemy.transform.rotation = enemySpawner.transform.rotation;
 
-
             AudioManager.instance.PlayBGM(SoundType.COMBATE, 0.5f);
             AudioManager.instance.PlaySFX(SoundType.ENEMIGO, 0.5f);
             _currentturn = Combatturn.PlayerTurn;
             isCombat = true;
 
+            letterSpawner.EmptyAll();
             letterSpawner.FillCharQueue();
             UIManager.Instance.ActivateCanvas(UIManager.Instance._combatCanvas);
             inputHandler.SetCombat();
@@ -200,7 +200,6 @@ public class CombatManager : MonoBehaviour
 
         seq.OnComplete(() => { isTransitioning = false; });
     }
-
 
     public bool IsCombatEnd()
     {

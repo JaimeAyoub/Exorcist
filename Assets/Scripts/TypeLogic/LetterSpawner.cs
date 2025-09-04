@@ -253,13 +253,30 @@ public class LetterSpawner : MonoBehaviour
 
     public void EmptyAll()
     {
-        foreach (var go in _letterObjects) Destroy(go);
-        foreach (var go in _lettersInBook) Destroy(go);
+        foreach (var go in _letterObjects)
+        {
+            if (go != null)
+            {
+                go.transform.DOKill();
+                Destroy(go);
+            }
+        }
+
+
+        foreach (var go in _lettersInBook)
+        {
+            if (go != null)
+            {
+                go.transform.DOKill();
+                Destroy(go);
+            }
+        }
 
         QueueTextToScreen.Clear();
         _letterObjects.Clear();
         _lettersInBook.Clear();
         _iteratorText = 0;
-        textToCharList.Clear();
+        _letterCount = 0;      
+        _seperatorInY = 0f;  
     }
 }
