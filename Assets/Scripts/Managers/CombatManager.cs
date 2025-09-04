@@ -32,12 +32,12 @@ public class CombatManager : MonoBehaviour
 
     private Vector3 _currentPositionPlayer;
     private bool isTransitioning;
-    
+
     private float _currentAberration;
     public GameObject bookSprite;
     public GameObject book;
     public GameObject candle;
-    public Image DamageVignette; 
+    public Image DamageVignette;
 
 
     void Start()
@@ -45,9 +45,9 @@ public class CombatManager : MonoBehaviour
         bookSprite.SetActive(false);
         currentTime = MaxTime;
         _timeSlider.maxValue = MaxTime;
-        Color c = DamageVignette.color; 
-        c.a = 0f;                       
-        DamageVignette.color = c; 
+        Color c = DamageVignette.color;
+        c.a = 0f;
+        DamageVignette.color = c;
     }
 
 
@@ -57,7 +57,6 @@ public class CombatManager : MonoBehaviour
         currentTime -= Time.timeScale * Time.deltaTime * 2;
         // Debug.Log(combatTime);
         _timeSlider.value = currentTime;
-        
     }
 
     private enum Combatturn
@@ -85,24 +84,28 @@ public class CombatManager : MonoBehaviour
     {
         if (isCombat || isTransitioning) return;
         isTransitioning = true;
-        
-       if ( OptionsScript.Instance.volumeProfile.TryGet(out OptionsScript.Instance._chromaticAberration))
-       {
-           _currentAberration = OptionsScript.Instance._chromaticAberration.intensity.value;
+
+
+        if (OptionsScript.Instance.volumeProfile.TryGet(out OptionsScript.Instance._chromaticAberration))
+        {
+            _currentAberration = OptionsScript.Instance._chromaticAberration.intensity.value;
             OptionsScript.Instance._chromaticAberration.intensity.value = 0;
         }
+
         Sequence seq = DOTween.Sequence().SetUpdate(true);
 
         _currentPositionPlayer = player.transform.position;
 
         seq.Join(imageToFade.DOFade(1f, 0.5f));
+        enemy = player.GetComponentInChildren<PlayerCollision>().collisionEnemy;
+        enemy.transform.position = enemySpawner.transform.position;
 
+        player.GetComponentInChildren<PlayerAttack>().target = enemy;
         seq.AppendCallback(() =>
         {
-            player.GetComponentInChildren<PlayerAttack>().target = enemy;
             player.transform.position = playerSpawner.transform.position;
 
-            enemy.transform.position = enemySpawner.transform.position;
+
             AudioManager.instance.PlayBGM(SoundType.COMBATE, 0.5f);
             AudioManager.instance.PlaySFX(SoundType.ENEMIGO, 0.5f);
             _currentturn = Combatturn.PlayerTurn;
@@ -167,11 +170,11 @@ public class CombatManager : MonoBehaviour
     public void EndCombat()
     {
         Sequence seq = DOTween.Sequence().SetUpdate(true);
-        if ( OptionsScript.Instance.volumeProfile.TryGet(out OptionsScript.Instance._chromaticAberration))
+        if (OptionsScript.Instance.volumeProfile.TryGet(out OptionsScript.Instance._chromaticAberration))
         {
             OptionsScript.Instance._chromaticAberration.intensity.value = _currentAberration;
-
         }
+
         seq.Join(imageToFade.DOFade(1f, 0.5f));
         seq.AppendCallback(() =>
         {

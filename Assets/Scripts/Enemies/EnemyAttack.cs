@@ -16,6 +16,7 @@ public class EnemyAttack : MonoBehaviour
 
    public void Attack(int amount)
     {
+        player = GameObject.FindGameObjectWithTag("Player");
         player.GetComponent<PlayerHealth>().TakeDamage(amount);
         
     }
