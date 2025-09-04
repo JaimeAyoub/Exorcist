@@ -1,4 +1,3 @@
-
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem.Controls;
@@ -10,16 +9,20 @@ public class OptionsScript : MonoBehaviour
 {
     [Header("Opciones Shader para pixelear la pantalla")]
     public Material PixelationShaderMaterial;
+
     public Slider PixelationShaderSlider;
-    [Header("Opciones de sonido")]
-    public Slider SonidoSlider;
+    [Header("Opciones de sonido")] public Slider SonidoSlider;
+
     [Header("Opciones sobre los efectos de PostProcessing")]
     public VolumeProfile volumeProfile;
+
     public Slider chromaticAberrationSlider;
     private ChromaticAberration _chromaticAberration;
     private FilmGrain _filmGrain;
-    public  Slider filmGrainSlider;
-
+    public Slider filmGrainSlider;
+    [Header("Opcion para sensibilidad ")] public PlayerMovement playerMovement;
+    public Slider sensitivitySliderX;
+    public Slider sensitivitySliderY;
     [SerializeField] private Image panelToFade;
 
     void Start()
@@ -29,24 +32,31 @@ public class OptionsScript : MonoBehaviour
             _chromaticAberration.intensity.value = chromaticAberrationSlider.value;
         }
 
+        if (playerMovement != null)
+        {
+            sensitivitySliderX.value = playerMovement.xMouseSensitivity;
+            sensitivitySliderY.value = playerMovement.yMouseSensitivity;
+        }
+
         else
         {
             Debug.LogError("No chromatic aberration found");
         }
+
         if (volumeProfile.TryGet(out _filmGrain))
         {
-            _filmGrain.intensity.value =  filmGrainSlider.value;
+            _filmGrain.intensity.value = filmGrainSlider.value;
         }
         else
         {
             Debug.LogError("No Grain found");
         }
+
         PixelationShaderSlider.maxValue = 8;
         PixelationShaderSlider.minValue = 3;
         PixelationShaderSlider.value = PixelationShaderMaterial.GetFloat("_PixelSize");
-
     }
-    
+
 
     public void ChangeShader()
     {
@@ -72,8 +82,18 @@ public class OptionsScript : MonoBehaviour
     {
         Color currentColor = panelToFade.color;
         currentColor.a = 0.0f;
-        panelToFade.color = currentColor;;
+        panelToFade.color = currentColor;
+        ;
     }
-    
-    
+
+    public void ChangeSensitivityinX()
+    {
+        playerMovement.xMouseSensitivity = sensitivitySliderX.value;
+      
+    }
+
+    public void changeSensitivityinY()
+    {
+        playerMovement.yMouseSensitivity = sensitivitySliderY.value;
+    }
 }

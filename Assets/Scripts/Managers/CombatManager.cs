@@ -143,17 +143,27 @@ public class CombatManager : MonoBehaviour
 
     public void EndCombat()
     {
-        isCombat = false;
-        Destroy(enemy);
-        inputHandler.SetGameplay();
-        player.transform.position = _currentPositionPlayer;
-        inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
-        UIManager.Instance.ActivateCanvas(UIManager.Instance._mainCanvas);
-        _currentturn = Combatturn.None;
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-        ResetTime();
-        letterSpawner.EmptyAll();
+
+		Sequence seq = DOTween.Sequence().SetUpdate(true);
+
+        seq.Join(imageToFade.DOFade(1f, 0.5f));
+        seq.AppendCallback(() =>
+        {
+            isCombat = false;
+            Destroy(enemy);
+            inputHandler.SetGameplay();
+            player.transform.position = _currentPositionPlayer;
+            inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
+            UIManager.Instance.ActivateCanvas(UIManager.Instance._mainCanvas);
+            _currentturn = Combatturn.None;
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            ResetTime();
+            letterSpawner.EmptyAll();
+        });
+        seq.Append(imageToFade.DOFade(0f, 0.5f));
+
+        seq.OnComplete(() => { isTransitioning = false; });
     }
 
 
