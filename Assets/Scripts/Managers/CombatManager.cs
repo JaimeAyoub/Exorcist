@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.Rendering.Universal;
 
 public class CombatManager : MonoBehaviour
 {
@@ -30,10 +31,16 @@ public class CombatManager : MonoBehaviour
 
     private Vector3 _currentPositionPlayer;
     private bool isTransitioning;
+    
+    private float _currentAberration;
+    public GameObject bookSprite;
+    public GameObject book;
+    public GameObject candle;
 
 
     void Start()
     {
+        bookSprite.SetActive(false);
         currentTime = MaxTime;
         _timeSlider.maxValue = MaxTime;
     }
@@ -45,6 +52,7 @@ public class CombatManager : MonoBehaviour
         currentTime -= Time.timeScale * Time.deltaTime * 2;
         // Debug.Log(combatTime);
         _timeSlider.value = currentTime;
+        
     }
 
     private enum Combatturn
@@ -72,16 +80,20 @@ public class CombatManager : MonoBehaviour
     {
         if (isCombat || isTransitioning) return;
         isTransitioning = true;
-
-
+        
+       if ( OptionsScript.Instance.volumeProfile.TryGet(out OptionsScript.Instance._chromaticAberration))
+       {
+           _currentAberration = OptionsScript.Instance._chromaticAberration.intensity.value;
+            OptionsScript.Instance._chromaticAberration.intensity.value = 0;
+        }
         Sequence seq = DOTween.Sequence().SetUpdate(true);
 
+        _currentPositionPlayer = player.transform.position;
 
         seq.Join(imageToFade.DOFade(1f, 0.5f));
 
         seq.AppendCallback(() =>
         {
-            _currentPositionPlayer = player.transform.position;
             player.GetComponentInChildren<PlayerAttack>().target = enemy;
             player.transform.position = playerSpawner.transform.position;
 
@@ -97,6 +109,10 @@ public class CombatManager : MonoBehaviour
             inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
             inputHandler.KeyTypedEvent += letterSpawner.UpdateScreenText;
             StopAllCoroutines();
+            bookSprite.SetActive(true);
+            book.SetActive(false);
+            candle.SetActive(false);
+
             StartCoroutine(CombatLoop());
         });
 
@@ -143,9 +159,12 @@ public class CombatManager : MonoBehaviour
 
     public void EndCombat()
     {
+        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        if ( OptionsScript.Instance.volumeProfile.TryGet(out OptionsScript.Instance._chromaticAberration))
+        {
+            OptionsScript.Instance._chromaticAberration.intensity.value = _currentAberration;
 
-		Sequence seq = DOTween.Sequence().SetUpdate(true);
-
+        }
         seq.Join(imageToFade.DOFade(1f, 0.5f));
         seq.AppendCallback(() =>
         {
@@ -158,6 +177,9 @@ public class CombatManager : MonoBehaviour
             _currentturn = Combatturn.None;
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
+            bookSprite.SetActive(false);
+            book.SetActive(true);
+            candle.SetActive(true);
             ResetTime();
             letterSpawner.EmptyAll();
         });

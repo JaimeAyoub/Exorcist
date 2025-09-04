@@ -5,7 +5,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
-public class OptionsScript : MonoBehaviour
+public class OptionsScript : UnityUtils.Singleton<OptionsScript>
 {
     [Header("Opciones Shader para pixelear la pantalla")]
     public Material PixelationShaderMaterial;
@@ -17,7 +17,7 @@ public class OptionsScript : MonoBehaviour
     public VolumeProfile volumeProfile;
 
     public Slider chromaticAberrationSlider;
-    private ChromaticAberration _chromaticAberration;
+    public ChromaticAberration _chromaticAberration;
     private FilmGrain _filmGrain;
     public Slider filmGrainSlider;
     [Header("Opcion para sensibilidad ")] public PlayerMovement playerMovement;
