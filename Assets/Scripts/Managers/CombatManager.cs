@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using UnityEngine.Rendering.Universal;
+using UnityUtils;
 
 public class CombatManager : MonoBehaviour
 {
@@ -36,6 +37,7 @@ public class CombatManager : MonoBehaviour
     public GameObject bookSprite;
     public GameObject book;
     public GameObject candle;
+    public Image DamageVignette; 
 
 
     void Start()
@@ -43,6 +45,9 @@ public class CombatManager : MonoBehaviour
         bookSprite.SetActive(false);
         currentTime = MaxTime;
         _timeSlider.maxValue = MaxTime;
+        Color c = DamageVignette.color; 
+        c.a = 0f;                       
+        DamageVignette.color = c; 
     }
 
 
@@ -142,6 +147,8 @@ public class CombatManager : MonoBehaviour
             else if (_currentturn == Combatturn.EnemyTurn)
             {
                 inputHandler.DesactivateTyping();
+                DamageVignette.DOFade(1, 0.125f)
+                    .SetLoops(2, LoopType.Yoyo);
                 if (enemy != null)
                     enemy.GetComponent<EnemyAttack>().Attack(1);
                 Debug.Log("Enemigo hace damage");
