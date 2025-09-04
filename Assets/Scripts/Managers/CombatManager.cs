@@ -104,6 +104,9 @@ public class CombatManager : MonoBehaviour
         seq.AppendCallback(() =>
         {
             player.transform.position = playerSpawner.transform.position;
+            player.transform.rotation = playerSpawner.transform.rotation;
+            
+            enemy.transform.rotation = enemySpawner.transform.rotation;
 
 
             AudioManager.instance.PlayBGM(SoundType.COMBATE, 0.5f);
