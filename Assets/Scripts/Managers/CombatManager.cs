@@ -27,10 +27,12 @@ public class CombatManager : MonoBehaviour
 
     public GameObject playerSpawner;
     public GameObject enemySpawner;
+    private static Vector3 toPlayerSpawn;
+    private static Vector3 toEnemySpanwe;
 
     public Image imageToFade;
 
-    private Vector3 _currentPositionPlayer;
+    public GameObject _currentPositionPlayer;
     private bool isTransitioning;
 
     private float _currentAberration;
@@ -48,6 +50,8 @@ public class CombatManager : MonoBehaviour
         Color c = DamageVignette.color;
         c.a = 0f;
         DamageVignette.color = c;
+       toPlayerSpawn = playerSpawner.transform.position;
+       toEnemySpanwe = enemySpawner.transform.position;
     }
 
 
@@ -94,18 +98,18 @@ public class CombatManager : MonoBehaviour
 
         Sequence seq = DOTween.Sequence().SetUpdate(true);
 
-        _currentPositionPlayer = player.transform.position;
+        _currentPositionPlayer.transform.position = player.transform.position;
 
-        seq.Join(imageToFade.DOFade(1f, 0.5f));
         enemy = player.GetComponentInChildren<PlayerCollision>().collisionEnemy;
-        enemy.transform.position = enemySpawner.transform.position;
+        enemy.transform.position = toEnemySpanwe;
+        seq.Join(imageToFade.DOFade(1f, 0.5f));
 
         player.GetComponentInChildren<PlayerAttack>().target = enemy;
         seq.AppendCallback(() =>
         {
-            player.transform.position = playerSpawner.transform.position;
+            player.transform.position = toPlayerSpawn;
             player.transform.rotation = playerSpawner.transform.rotation;
-            
+
             enemy.transform.rotation = enemySpawner.transform.rotation;
 
             AudioManager.instance.PlayBGM(SoundType.COMBATE, 0.5f);
@@ -172,6 +176,7 @@ public class CombatManager : MonoBehaviour
 
     public void EndCombat()
     {
+        player.transform.position = _currentPositionPlayer.transform.position;
         Sequence seq = DOTween.Sequence().SetUpdate(true);
         if (OptionsScript.Instance.volumeProfile.TryGet(out OptionsScript.Instance._chromaticAberration))
         {
@@ -184,7 +189,6 @@ public class CombatManager : MonoBehaviour
             isCombat = false;
             Destroy(enemy);
             inputHandler.SetGameplay();
-            player.transform.position = _currentPositionPlayer;
             inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
             UIManager.Instance.ActivateCanvas(UIManager.Instance._mainCanvas);
             _currentturn = Combatturn.None;
