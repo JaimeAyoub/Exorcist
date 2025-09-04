@@ -1,61 +1,66 @@
 using UnityEngine;
 using System.Collections;
-using System;
 using Random = UnityEngine.Random;
 using UnityUtils;
 
 public class SoundEmitter : MonoBehaviour
 {
     public SoundData Data {  get; private set; }
-    AudioSource audioSource;
-    Coroutine playingCoroutine;
+    private AudioSource _audioSource;
+    private Coroutine _playingCoroutine;
 
     private void Awake()
     {
-        audioSource = gameObject.GetOrAdd<AudioSource>();
+        _audioSource = gameObject.GetOrAdd<AudioSource>();
     }
 
     public void Play()
     {
-        if(playingCoroutine != null)
+        if(_playingCoroutine != null)
         {
-            StopCoroutine(playingCoroutine);
+            StopCoroutine(_playingCoroutine);
         }
 
-        audioSource.Play();
-        playingCoroutine = StartCoroutine(WaitForSoundToEnd());
+        _audioSource.Play();
+        _playingCoroutine = StartCoroutine(WaitForSoundToEnd());
     }
 
-    IEnumerator WaitForSoundToEnd()
+    private IEnumerator WaitForSoundToEnd()
     {
-        yield return new WaitWhile(() => audioSource.isPlaying);
+        yield return new WaitWhile(() => _audioSource.isPlaying);
         SoundManager.Instance.ReturnToPool(this);
     }
 
     public void Stop()
     {
-        if(playingCoroutine != null)
+        if(_playingCoroutine != null)
         {
-            StopCoroutine(playingCoroutine);
-            playingCoroutine = null;
+            StopCoroutine(_playingCoroutine);
+            _playingCoroutine = null;
         }
 
-        audioSource.Stop();
+        _audioSource.Stop();
         SoundManager.Instance.ReturnToPool(this);
     }
-
 
     public void Initialize(SoundData sData)
     {
         Data = sData;
-        audioSource.clip = sData.clip;
-        audioSource.outputAudioMixerGroup = sData.mixerGroup;
-        audioSource.loop = sData.loop;
-        audioSource.playOnAwake = sData.playOnAwake;
+        _audioSource.clip = sData.clip;
+        _audioSource.outputAudioMixerGroup = sData.mixerGroup;
+        _audioSource.loop = sData.loop;
+        _audioSource.playOnAwake = sData.playOnAwake;
     }
 
     public void WithRandomPitch(float min = -0.05f, float max = 0.05f)
     {
-        audioSource.pitch += Random.Range(min, max);
+        _audioSource.pitch += Random.Range(min, max);
     }
+
+    public void WalkSound()
+    {
+        var index = Random.Range(0, Data.walkClips.Count);
+        _audioSource.clip = Data.walkClips[index];
+    }
+    
 }
