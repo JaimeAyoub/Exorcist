@@ -32,7 +32,8 @@ public class CombatManager : MonoBehaviour
 
     public Image imageToFade;
 
-    public GameObject _currentPositionPlayer;
+    public Vector3 _currentPositionPlayer;
+    private Quaternion _currentRotationPlayer;
     private bool isTransitioning;
 
     private float _currentAberration;
@@ -50,8 +51,8 @@ public class CombatManager : MonoBehaviour
         Color c = DamageVignette.color;
         c.a = 0f;
         DamageVignette.color = c;
-       toPlayerSpawn = playerSpawner.transform.position;
-       toEnemySpanwe = enemySpawner.transform.position;
+        toPlayerSpawn = playerSpawner.transform.position;
+        toEnemySpanwe = enemySpawner.transform.position;
     }
 
 
@@ -90,33 +91,38 @@ public class CombatManager : MonoBehaviour
         isTransitioning = true;
 
 
-        if (OptionsScript.Instance.volumeProfile.TryGet(out OptionsScript.Instance._chromaticAberration))
-        {
-            _currentAberration = OptionsScript.Instance._chromaticAberration.intensity.value;
-            OptionsScript.Instance._chromaticAberration.intensity.value = 0;
-        }
-
         Sequence seq = DOTween.Sequence().SetUpdate(true);
 
-        _currentPositionPlayer.transform.position = player.transform.position;
 
         enemy = player.GetComponentInChildren<PlayerCollision>().collisionEnemy;
-        enemy.transform.position = toEnemySpanwe;
+        if (enemy == null)
+        {
+            Debug.LogWarning("Enemy not found, teleport skipped.");
+            return;
+        }
+
         seq.Join(imageToFade.DOFade(1f, 0.5f));
 
         player.GetComponentInChildren<PlayerAttack>().target = enemy;
         seq.AppendCallback(() =>
         {
-            player.transform.position = toPlayerSpawn;
-            player.transform.rotation = playerSpawner.transform.rotation;
+            _currentPositionPlayer = player.transform.position;
+            _currentRotationPlayer = player.transform.rotation;
+            if (OptionsScript.Instance.volumeProfile.TryGet(out OptionsScript.Instance._chromaticAberration))
+            {
+                _currentAberration = OptionsScript.Instance._chromaticAberration.intensity.value;
+                OptionsScript.Instance._chromaticAberration.intensity.value = 0;
+            }
 
-            enemy.transform.rotation = enemySpawner.transform.rotation;
-
+            OptionsScript.Instance.PixelationShaderMaterial.SetFloat("_PixelSize", 0.1f);
             AudioManager.instance.PlayBGM(SoundType.COMBATE, 0.5f);
             AudioManager.instance.PlaySFX(SoundType.ENEMIGO, 0.5f);
             _currentturn = Combatturn.PlayerTurn;
             isCombat = true;
-
+            TeleportPlayer(toPlayerSpawn);
+            TeleportEnemy(toEnemySpanwe);
+            enemy.transform.LookAt(player.transform.position);
+            player.transform.LookAt(enemy.transform.position);
             letterSpawner.EmptyAll();
             letterSpawner.FillCharQueue();
             UIManager.Instance.ActivateCanvas(UIManager.Instance._combatCanvas);
@@ -174,9 +180,9 @@ public class CombatManager : MonoBehaviour
         yield return null;
     }
 
+    // ReSharper disable Unity.PerformanceAnalysis
     public void EndCombat()
     {
-        player.transform.position = _currentPositionPlayer.transform.position;
         Sequence seq = DOTween.Sequence().SetUpdate(true);
         if (OptionsScript.Instance.volumeProfile.TryGet(out OptionsScript.Instance._chromaticAberration))
         {
@@ -190,6 +196,8 @@ public class CombatManager : MonoBehaviour
             Destroy(enemy);
             inputHandler.SetGameplay();
             inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
+            TeleportPlayer(_currentPositionPlayer);
+            player.transform.rotation = _currentRotationPlayer;
             UIManager.Instance.ActivateCanvas(UIManager.Instance._mainCanvas);
             _currentturn = Combatturn.None;
             Cursor.visible = false;
@@ -200,6 +208,7 @@ public class CombatManager : MonoBehaviour
             ResetTime();
             letterSpawner.EmptyAll();
         });
+        OptionsScript.Instance.PixelationShaderMaterial.SetFloat("_PixelSize", 4.0f);
         seq.Append(imageToFade.DOFade(0f, 0.5f));
 
         seq.OnComplete(() => { isTransitioning = false; });
@@ -243,5 +252,27 @@ public class CombatManager : MonoBehaviour
     void ResetTime()
     {
         currentTime = MaxTime;
+    }
+
+    private void TeleportPlayer(Vector3 playerToTeleport)
+    {
+        if (player != null)
+        {
+            player.transform.position = playerToTeleport;
+        }
+        else
+        {
+            Debug.LogWarning("No player or enemy");
+        }
+    }
+
+    private void TeleportEnemy(Vector3 enemyPosTeleport)
+    {
+        if (enemy != null)
+        {
+            enemy.transform.position = enemyPosTeleport;
+        }
+        else
+            Debug.LogWarning("Enemy not found");
     }
 }
