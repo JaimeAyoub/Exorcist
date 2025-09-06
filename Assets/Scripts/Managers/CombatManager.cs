@@ -203,7 +203,6 @@ public class CombatManager : MonoBehaviour
         seq.Join(imageToFade.DOFade(1f, 0.5f));
         seq.AppendCallback(() =>
         {
-            camera.Follow = CameraHolder.transform;
             isCombat = false;
             Destroy(enemy);
             inputHandler.SetGameplay();
@@ -294,7 +293,7 @@ public class CombatManager : MonoBehaviour
     {
         if (enemy != null)
         {
-            enemy.transform.DOKill();
+             enemy.transform.DOKill();
             enemy.transform.position = enemyPosTeleport;
             Debug.Log("Enemigo tepeado");
         }

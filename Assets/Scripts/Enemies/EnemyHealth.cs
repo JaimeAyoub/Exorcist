@@ -31,6 +31,7 @@ public class EnemyHealth : MonoBehaviour
 
     private void Death()
     {
+        UIManager.Instance.CheckEnd();
         if (damageTween != null && damageTween.IsActive())
             damageTween.Kill();
 

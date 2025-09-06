@@ -10,8 +10,10 @@ public class UIManager : UnityUtils.Singleton<UIManager>
     [SerializeField] public CanvasGroup _combatCanvas;
     [SerializeField] private CanvasGroup _pauseCanvas;
     [SerializeField] private CanvasGroup _settingsCanvas;
+    [SerializeField] private CanvasGroup _GameOverCanvas;
     public TextMeshProUGUI toogleDoorText;
     private bool _isPaused = false;
+    public float _numberOfEnemies;
 
     public CanvasGroup[] canvases;
     public AnimationUI[] animationsPauseMenu;
@@ -31,6 +33,7 @@ public class UIManager : UnityUtils.Singleton<UIManager>
 
     private void Awake()
     {
+        _numberOfEnemies = 2; 
         base.Awake();
         canvases = new CanvasGroup[] { _mainCanvas, _combatCanvas, _pauseCanvas, _settingsCanvas };
     }
@@ -95,5 +98,17 @@ public class UIManager : UnityUtils.Singleton<UIManager>
     public void HideTextDoor()
     {
         toogleDoorText.enabled = false;
+    }
+
+    public void CheckEnd()
+    {
+        if (_numberOfEnemies > 0)
+        {
+            _numberOfEnemies--;
+        }
+        else if (_numberOfEnemies <= 0)
+        {
+            ActivateCanvas(_GameOverCanvas);
+        }
     }
 }
