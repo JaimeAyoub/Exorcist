@@ -126,7 +126,8 @@ public class CombatManager : MonoBehaviour
             TeleportEnemy(toEnemySpanwe);
             TeleportPlayer(toPlayerSpawn);
             inputHandler.SetCombat();
-            enemy.transform.LookAt(player.transform.position);
+            //enemy.transform.LookAt(player.transform.position);
+            player.transform.LookAt(player.transform.position);
             letterSpawner.EmptyAll();
             letterSpawner.FillCharQueue();
             UIManager.Instance.ActivateCanvas(UIManager.Instance._combatCanvas);
@@ -293,6 +294,7 @@ public class CombatManager : MonoBehaviour
     {
         if (enemy != null)
         {
+            enemy.transform.DOKill();
             enemy.transform.position = enemyPosTeleport;
             Debug.Log("Enemigo tepeado");
         }
