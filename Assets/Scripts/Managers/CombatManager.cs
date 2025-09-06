@@ -2,6 +2,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.Rendering.Universal;
+using UnityUtils;
 
 public class CombatManager : MonoBehaviour
 {
@@ -25,17 +27,31 @@ public class CombatManager : MonoBehaviour
 
     public GameObject playerSpawner;
     public GameObject enemySpawner;
+    private static Vector3 toPlayerSpawn;
+    private static Vector3 toEnemySpanwe;
 
     public Image imageToFade;
 
-    private Vector3 _currentPositionPlayer;
+    public GameObject _currentPositionPlayer;
     private bool isTransitioning;
+
+    private float _currentAberration;
+    public GameObject bookSprite;
+    public GameObject book;
+    public GameObject candle;
+    public Image DamageVignette;
 
 
     void Start()
     {
+        bookSprite.SetActive(false);
         currentTime = MaxTime;
         _timeSlider.maxValue = MaxTime;
+        Color c = DamageVignette.color;
+        c.a = 0f;
+        DamageVignette.color = c;
+       toPlayerSpawn = playerSpawner.transform.position;
+       toEnemySpanwe = enemySpawner.transform.position;
     }
 
 
@@ -74,29 +90,44 @@ public class CombatManager : MonoBehaviour
         isTransitioning = true;
 
 
+        if (OptionsScript.Instance.volumeProfile.TryGet(out OptionsScript.Instance._chromaticAberration))
+        {
+            _currentAberration = OptionsScript.Instance._chromaticAberration.intensity.value;
+            OptionsScript.Instance._chromaticAberration.intensity.value = 0;
+        }
+
         Sequence seq = DOTween.Sequence().SetUpdate(true);
 
+        _currentPositionPlayer.transform.position = player.transform.position;
 
+        enemy = player.GetComponentInChildren<PlayerCollision>().collisionEnemy;
+        enemy.transform.position = toEnemySpanwe;
         seq.Join(imageToFade.DOFade(1f, 0.5f));
 
+        player.GetComponentInChildren<PlayerAttack>().target = enemy;
         seq.AppendCallback(() =>
         {
-            _currentPositionPlayer = player.transform.position;
-            player.GetComponentInChildren<PlayerAttack>().target = enemy;
-            player.transform.position = playerSpawner.transform.position;
+            player.transform.position = toPlayerSpawn;
+            player.transform.rotation = playerSpawner.transform.rotation;
 
-            enemy.transform.position = enemySpawner.transform.position;
+            enemy.transform.rotation = enemySpawner.transform.rotation;
+
             AudioManager.instance.PlayBGM(SoundType.COMBATE, 0.5f);
             AudioManager.instance.PlaySFX(SoundType.ENEMIGO, 0.5f);
             _currentturn = Combatturn.PlayerTurn;
             isCombat = true;
 
+            letterSpawner.EmptyAll();
             letterSpawner.FillCharQueue();
             UIManager.Instance.ActivateCanvas(UIManager.Instance._combatCanvas);
             inputHandler.SetCombat();
             inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
             inputHandler.KeyTypedEvent += letterSpawner.UpdateScreenText;
             StopAllCoroutines();
+            bookSprite.SetActive(true);
+            book.SetActive(false);
+            candle.SetActive(false);
+
             StartCoroutine(CombatLoop());
         });
 
@@ -126,6 +157,8 @@ public class CombatManager : MonoBehaviour
             else if (_currentturn == Combatturn.EnemyTurn)
             {
                 inputHandler.DesactivateTyping();
+                DamageVignette.DOFade(1, 0.125f)
+                    .SetLoops(2, LoopType.Yoyo);
                 if (enemy != null)
                     enemy.GetComponent<EnemyAttack>().Attack(1);
                 Debug.Log("Enemigo hace damage");
@@ -143,19 +176,34 @@ public class CombatManager : MonoBehaviour
 
     public void EndCombat()
     {
-        isCombat = false;
-        Destroy(enemy);
-        inputHandler.SetGameplay();
-        player.transform.position = _currentPositionPlayer;
-        inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
-        UIManager.Instance.ActivateCanvas(UIManager.Instance._mainCanvas);
-        _currentturn = Combatturn.None;
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-        ResetTime();
-        letterSpawner.EmptyAll();
-    }
+        player.transform.position = _currentPositionPlayer.transform.position;
+        Sequence seq = DOTween.Sequence().SetUpdate(true);
+        if (OptionsScript.Instance.volumeProfile.TryGet(out OptionsScript.Instance._chromaticAberration))
+        {
+            OptionsScript.Instance._chromaticAberration.intensity.value = _currentAberration;
+        }
 
+        seq.Join(imageToFade.DOFade(1f, 0.5f));
+        seq.AppendCallback(() =>
+        {
+            isCombat = false;
+            Destroy(enemy);
+            inputHandler.SetGameplay();
+            inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
+            UIManager.Instance.ActivateCanvas(UIManager.Instance._mainCanvas);
+            _currentturn = Combatturn.None;
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            bookSprite.SetActive(false);
+            book.SetActive(true);
+            candle.SetActive(true);
+            ResetTime();
+            letterSpawner.EmptyAll();
+        });
+        seq.Append(imageToFade.DOFade(0f, 0.5f));
+
+        seq.OnComplete(() => { isTransitioning = false; });
+    }
 
     public bool IsCombatEnd()
     {
