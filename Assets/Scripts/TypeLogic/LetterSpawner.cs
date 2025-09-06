@@ -139,6 +139,7 @@ public class LetterSpawner : MonoBehaviour
             if (_letterObjects.Count > 0)
                 _letterObjects.RemoveAt(0);
 
+            AudioManager.instance.PlayBGM(SoundType.TECLAS, 0.5f);
             _letterCount++;
             _iteratorText++;
             CombatManager.instance.AddTime(1.0f);
@@ -196,23 +197,35 @@ public class LetterSpawner : MonoBehaviour
 
         if (_letterCount >= lettersInParagraph)
         {
-            _seperatorInY -= 0.25f;
+            //_seperatorInY -= 0.25f;
             _letterCount = 0;
-            CombatManager.instance.player.GetComponentInChildren<PlayerAttack>().Attack(1);
 
             foreach (var letters in _lettersInBook)
             {
-                float newY = letters.transform.localPosition.y + 0.25f;
-                letters.transform.DOLocalMoveY(newY, 0.25f)
-                    .SetEase(Ease.OutCubic);
+                if (CombatManager.instance.enemy != null && letters != null)
+                {
+                    letters.transform.DOMove(
+                            Vector3.up + CombatManager.instance.enemy.transform.position,
+                            0.5f)
+                        .SetEase(Ease.InFlash).OnComplete(() =>
+                        {
+                            if (letters != null && CombatManager.instance.player != null)
+                            {
+                                Destroy(letters);
+                                _lettersInBook.Remove(letters);
+                            }
+                        });
+                }
             }
+
+            CombatManager.instance.player.GetComponentInChildren<PlayerAttack>().Attack(1);
         }
 
         GameObject letter = Instantiate(prefabLetterInBook, bookLocation.transform);
 
         letter.transform.localPosition = new Vector3(
             _letterCount * spaceBetweenLetters,
-            _seperatorInY,
+            0f,
             0f
         );
         letter.SetActive(false);
@@ -229,7 +242,7 @@ public class LetterSpawner : MonoBehaviour
             }
         }
 
-        if (letterToAdd != null)
+        if (letterToAdd != null && letter != null)
         {
             letterToAdd.transform.DOMove(letter.transform.position, 0.5f)
                 .OnComplete(() =>
@@ -276,7 +289,7 @@ public class LetterSpawner : MonoBehaviour
         _letterObjects.Clear();
         _lettersInBook.Clear();
         _iteratorText = 0;
-        _letterCount = 0;      
-        _seperatorInY = 0f;  
+        _letterCount = 0;
+        _seperatorInY = 0f;
     }
 }

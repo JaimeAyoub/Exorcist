@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using Unity.Cinemachine;
 using UnityEngine.Rendering.Universal;
 using UnityUtils;
 
@@ -41,6 +42,9 @@ public class CombatManager : MonoBehaviour
     public GameObject book;
     public GameObject candle;
     public Image DamageVignette;
+    public GameObject CameraHolder;
+
+    public CinemachineCamera camera;
 
 
     void Start()
@@ -119,14 +123,13 @@ public class CombatManager : MonoBehaviour
             AudioManager.instance.PlaySFX(SoundType.ENEMIGO, 0.5f);
             _currentturn = Combatturn.PlayerTurn;
             isCombat = true;
-            TeleportPlayer(toPlayerSpawn);
             TeleportEnemy(toEnemySpanwe);
+            TeleportPlayer(toPlayerSpawn);
+            inputHandler.SetCombat();
             enemy.transform.LookAt(player.transform.position);
-            player.transform.LookAt(enemy.transform.position);
             letterSpawner.EmptyAll();
             letterSpawner.FillCharQueue();
             UIManager.Instance.ActivateCanvas(UIManager.Instance._combatCanvas);
-            inputHandler.SetCombat();
             inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
             inputHandler.KeyTypedEvent += letterSpawner.UpdateScreenText;
             StopAllCoroutines();
@@ -151,8 +154,15 @@ public class CombatManager : MonoBehaviour
         {
             if (_currentturn == Combatturn.PlayerTurn)
             {
+                if (enemy != null && CameraHolder != null)
+                {
+                    player.transform.LookAt(enemy.transform.position);
+                }
+
                 inputHandler.EnableTyping();
                 Debug.Log("Turno player");
+
+
                 if (IsCombatEnd()) yield break;
 
 
@@ -192,11 +202,13 @@ public class CombatManager : MonoBehaviour
         seq.Join(imageToFade.DOFade(1f, 0.5f));
         seq.AppendCallback(() =>
         {
+            camera.Follow = CameraHolder.transform;
             isCombat = false;
             Destroy(enemy);
             inputHandler.SetGameplay();
             inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
             TeleportPlayer(_currentPositionPlayer);
+            Debug.Log("PlayerRegresado");
             player.transform.rotation = _currentRotationPlayer;
             UIManager.Instance.ActivateCanvas(UIManager.Instance._mainCanvas);
             _currentturn = Combatturn.None;
@@ -207,6 +219,7 @@ public class CombatManager : MonoBehaviour
             candle.SetActive(true);
             ResetTime();
             letterSpawner.EmptyAll();
+            _currentPositionPlayer = Vector3.zero;
         });
         OptionsScript.Instance.PixelationShaderMaterial.SetFloat("_PixelSize", 4.0f);
         seq.Append(imageToFade.DOFade(0f, 0.5f));
@@ -256,21 +269,32 @@ public class CombatManager : MonoBehaviour
 
     private void TeleportPlayer(Vector3 playerToTeleport)
     {
-        if (player != null)
+        if (player == null)
         {
-            player.transform.position = playerToTeleport;
+            Debug.LogWarning("No player found");
+            return;
         }
-        else
-        {
-            Debug.LogWarning("No player or enemy");
-        }
+
+        CharacterController cc = player.GetComponent<CharacterController>();
+        if (cc != null)
+            cc.enabled = false;
+
+        player.transform.rotation = Quaternion.Euler(0, 0, 0);
+        player.transform.position = playerToTeleport;
+        if (cc != null)
+            cc.enabled = true;
+
+
+        Debug.Log("Player tepeado a: " + player.transform.position);
     }
+
 
     private void TeleportEnemy(Vector3 enemyPosTeleport)
     {
         if (enemy != null)
         {
             enemy.transform.position = enemyPosTeleport;
+            Debug.Log("Enemigo tepeado");
         }
         else
             Debug.LogWarning("Enemy not found");
