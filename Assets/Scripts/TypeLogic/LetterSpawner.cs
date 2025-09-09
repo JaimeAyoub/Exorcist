@@ -25,7 +25,8 @@ public class LetterSpawner : MonoBehaviour
     public Dictionary<char, Sprite> LetterSpritesMap; // Diccionario de sprites
     private List<GameObject> _letterObjects; // Prefabs en pantalla
     public float spaceBetweenLetters; //Variable para la separacion entre letras
-    public VisualEffect visualEffect; //El efecto que quieres que aparezca
+    public VisualEffect vfxBook; //El efecto que quieres que aparezca
+    public VisualEffect vfxHit; //El efecto que quieres que aparezca
 
     [Header("Variables para la aparicion de las letras doradas en el libro")]
     public GameObject bookLocation; //Donde apareceran las letras doradas
@@ -174,15 +175,6 @@ public class LetterSpawner : MonoBehaviour
         }
     }
 
-    private void AnimateText(GameObject letterObj, GameObject finalPosition)
-    {
-        letterObj.transform.DOMove(finalPosition.transform.position, 0.5f)
-            .OnComplete(() =>
-            {
-                SpawnVFX(finalPosition.transform.position);
-                Destroy(letterObj);
-            });
-    }
 
     private void AddTextInBook(GameObject letterToAdd, int index)
     {
@@ -197,28 +189,38 @@ public class LetterSpawner : MonoBehaviour
 
         if (_letterCount >= lettersInParagraph)
         {
-            //_seperatorInY -= 0.25f;
             _letterCount = 0;
 
-            foreach (var letters in _lettersInBook)
+            Sequence seq = DOTween.Sequence();
+
+            foreach (var letters in _lettersInBook.ToList())
             {
                 if (CombatManager.instance.enemy != null && letters != null)
                 {
-                    letters.transform.DOMove(
-                            Vector3.up + CombatManager.instance.enemy.transform.position,
-                            0.5f)
-                        .SetEase(Ease.InFlash).OnComplete(() =>
-                        {
-                            if (letters != null && CombatManager.instance.player != null)
+                    seq.Join(
+                        letters.transform.DOMove(
+                                CombatManager.instance.enemy.transform.position,
+                                0.5f)
+                            .SetEase(Ease.InFlash)
+                            .OnComplete(() =>
                             {
-                                Destroy(letters);
-                                _lettersInBook.Remove(letters);
-                            }
-                        });
+                                if (letters != null && CombatManager.instance.player != null)
+                                {
+                                    Destroy(letters);
+                                    _lettersInBook.Remove(letters);
+                                }
+                            })
+                    );
                 }
             }
 
-            CombatManager.instance.player.GetComponentInChildren<PlayerAttack>().Attack(1);
+            seq.OnComplete(() =>
+            {
+                SpawnVFX(CombatManager.instance.enemy.transform.position, vfxHit);
+                CombatManager.instance.player
+                    .GetComponentInChildren<PlayerAttack>()
+                    .Attack(1);
+            });
         }
 
         GameObject letter = Instantiate(prefabLetterInBook, bookLocation.transform);
@@ -249,17 +251,17 @@ public class LetterSpawner : MonoBehaviour
                 {
                     if (letterToAdd != null) Destroy(letterToAdd);
                     if (letter != null) letter.SetActive(true);
-                    SpawnVFX(letter.transform.position);
+                    SpawnVFX(letter.transform.position, vfxBook);
                 });
         }
 
         _lettersInBook.Add(letter);
     }
 
-    private void SpawnVFX(Vector3 postion)
+    private void SpawnVFX(Vector3 postion, VisualEffect vfx)
     {
-        if (!visualEffect) return;
-        var vfxInstance = Instantiate(visualEffect, postion, Quaternion.identity);
+        if (!vfxBook) return;
+        var vfxInstance = Instantiate(vfx, postion, Quaternion.identity);
         vfxInstance.SendEvent("Play");
         Destroy(vfxInstance.gameObject, 2f);
     }

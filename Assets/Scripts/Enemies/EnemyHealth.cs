@@ -13,7 +13,7 @@ public class EnemyHealth : MonoBehaviour
         currentHealth = maxHealth;
     }
 
-  
+
     public void TakeDamage(int amount)
     {
         if (currentHealth <= 0) return;
@@ -47,12 +47,14 @@ public class EnemyHealth : MonoBehaviour
 
         if (damageTween != null && damageTween.IsActive())
             damageTween.Kill();
-
-        damageTween = enemysp.DOColor(Color.red, 0.125f)
-            .SetLoops(4, LoopType.Yoyo)
+        damageTween = DOTween.Sequence()
+            .Join(enemysp.DOColor(Color.red, 0.125f)
+                .SetLoops(4, LoopType.Yoyo))
+            .Join(transform.DOShakePosition(0.5f, 0.5f))
             .OnKill(() =>
             {
-                if (enemysp != null) enemysp.color = Color.white;
+                if (enemysp != null)
+                    enemysp.color = Color.white; 
             });
     }
 }

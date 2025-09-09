@@ -22073,7 +22073,8 @@ MonoBehaviour:
   prefabLetter: {fileID: 0}
   letterSpriteArray: []
   spaceBetweenLetters: 0
-  visualEffect: {fileID: 0}
+  vfxBook: {fileID: 0}
+  vfxHit: {fileID: 0}
   bookLocation: {fileID: 0}
   prefabLetterInBook: {fileID: 0}
   lettersInParagraph: 0
@@ -55155,6 +55156,14 @@ PrefabInstance:
       propertyPath: mainCamera
       value: 
       objectReference: {fileID: 2014862231}
+    - target: {fileID: 1573627085191976830, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
+      propertyPath: vfxHit
+      value: 
+      objectReference: {fileID: 4912714109062061031, guid: ca19af1804927e041a4064dc71c83bf6, type: 3}
+    - target: {fileID: 1573627085191976830, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
+      propertyPath: vfxBook
+      value: 
+      objectReference: {fileID: 3357787788069614735, guid: 64c51539f180d354ca7c8ba53e4686d7, type: 3}
     - target: {fileID: 1573627085191976830, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
       propertyPath: prefabLetter
       value: 
