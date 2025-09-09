@@ -10,6 +10,10 @@ public enum SoundType
     FONDO,
     COMBATE,
     ENEMIGO,
+    GulaDamage,
+    IraDamage,
+    PadreDamage,
+    PlayerDamage
     //AUDIO CLIPS QUE QUIERAS
 }
 

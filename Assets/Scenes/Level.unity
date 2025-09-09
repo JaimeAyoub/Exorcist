@@ -8442,6 +8442,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0.244
       objectReference: {fileID: 0}
+    - target: {fileID: 7846525464839254429, guid: ce9b438080f5a6a4c8990e95633ca5bd, type: 3}
+      propertyPath: enemyType
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3706984087807544180, guid: ce9b438080f5a6a4c8990e95633ca5bd, type: 3}
     m_RemovedGameObjects: []
@@ -55311,6 +55315,30 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0.428
       objectReference: {fileID: 0}
+    - target: {fileID: 4617091415027507212, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
+      propertyPath: soundList.Array.size
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4617091415027507212, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
+      propertyPath: 'soundList.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: e823543a3d5c43947a818c5200536c1e, type: 3}
+    - target: {fileID: 4617091415027507212, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
+      propertyPath: 'soundList.Array.data[5]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 81a3a72e5a176e3478377a876959da35, type: 3}
+    - target: {fileID: 4617091415027507212, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
+      propertyPath: 'soundList.Array.data[6]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 8db0d71bfe100414a9877684895d6710, type: 3}
+    - target: {fileID: 4617091415027507212, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
+      propertyPath: 'soundList.Array.data[7]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 98ddfa219a39d40478bb14cbe6ddc539, type: 3}
+    - target: {fileID: 4617091415027507212, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
+      propertyPath: 'soundList.Array.data[8]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 5020e820e9afeed468e1464bf6fbed7b, type: 3}
     - target: {fileID: 8621941362691013949, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
       propertyPath: tweenDuration
       value: 0.25

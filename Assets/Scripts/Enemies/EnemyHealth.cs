@@ -1,13 +1,19 @@
 using DG.Tweening;
 using UnityEngine;
 
+public enum EnemyType
+{
+    Gula,
+    Ira,
+    Padre
+}
 public class EnemyHealth : MonoBehaviour
 {
     public int currentHealth;
     public int maxHealth;
 
     private Tween damageTween;
-
+    public EnemyType enemyType;
     void Start()
     {
         currentHealth = maxHealth;
@@ -22,7 +28,7 @@ public class EnemyHealth : MonoBehaviour
         Debug.Log("Vida del enemigo: " + currentHealth);
 
         DamageFlash();
-
+        PlayDamageSound();
         if (currentHealth <= 0)
             Death();
         else
@@ -39,7 +45,25 @@ public class EnemyHealth : MonoBehaviour
             .OnComplete(() => CombatManager.instance.EndCombat());
         ;
     }
+    private void PlayDamageSound()
+    {
+        SoundType soundType;
 
+        switch (enemyType)
+        {
+            case EnemyType.Gula:
+                AudioManager.instance.PlayBGM(SoundType.GulaDamage, 0.5f);
+                break;
+            case EnemyType.Ira:
+                AudioManager.instance.PlayBGM(SoundType.IraDamage, 0.5f);
+                break;
+            case EnemyType.Padre:
+                AudioManager.instance.PlayBGM(SoundType.PadreDamage, 0.5f);
+                break;
+            default:
+                break;
+        }
+    }
     void DamageFlash()
     {
         SpriteRenderer enemysp = GetComponentInChildren<SpriteRenderer>();

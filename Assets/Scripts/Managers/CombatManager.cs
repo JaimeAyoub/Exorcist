@@ -203,6 +203,7 @@ public class CombatManager : MonoBehaviour
         {
             Debug.Log("Derrota");
             EndCombat();
+            AudioManager.instance.StopSFX();
             return true;
         }
 
@@ -210,6 +211,7 @@ public class CombatManager : MonoBehaviour
         {
             Debug.Log("Victoria");
             EndCombat();
+            AudioManager.instance.StopSFX();
             return true;
         }
 
@@ -280,8 +282,8 @@ public class CombatManager : MonoBehaviour
         }
 
         OptionsScript.Instance.PixelationShaderMaterial.SetFloat("_PixelSize", 0.1f);
-        AudioManager.instance.PlayBGM(SoundType.COMBATE, 0.5f);
-        AudioManager.instance.PlaySFX(SoundType.ENEMIGO, 0.5f);
+        AudioManager.instance.PlayBGM(SoundType.COMBATE, 1f);
+        AudioManager.instance.PlaySFX(SoundType.ENEMIGO, 0.3f);
         _currentturn = Combatturn.PlayerTurn;
         isCombat = true;
         TeleportEnemy(toEnemySpanwe);
