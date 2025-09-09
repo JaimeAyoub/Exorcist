@@ -68,7 +68,6 @@ public class CombatManager : MonoBehaviour
         currentTime -= Time.timeScale * Time.deltaTime * 2;
         // Debug.Log(combatTime);
         _timeSlider.value = currentTime;
-       
     }
 
     private enum Combatturn
@@ -109,7 +108,7 @@ public class CombatManager : MonoBehaviour
         }
 
         seq.Join(imageToFade.DOFade(1f, 0.5f));
-        
+
         player.GetComponentInChildren<PlayerAttack>().target = enemy;
         seq.AppendCallback(() =>
         {
@@ -142,8 +141,8 @@ public class CombatManager : MonoBehaviour
             else if (_currentturn == Combatturn.EnemyTurn)
             {
                 inputHandler.DesactivateTyping();
-                DamageVignette.DOFade(1, 0.125f)
-                    .SetLoops(2, LoopType.Yoyo);
+                // DamageVignette.DOFade(1, 0.125f)
+                //     .SetLoops(2, LoopType.Yoyo);
                 if (enemy != null)
                     enemy.GetComponent<EnemyAttack>().Attack(1);
                 Debug.Log("Enemigo hace damage");
@@ -167,6 +166,7 @@ public class CombatManager : MonoBehaviour
         {
             OptionsScript.Instance._chromaticAberration.intensity.value = _currentAberration;
         }
+
         CharacterController cc = player.GetComponent<CharacterController>();
         if (cc != null)
             cc.enabled = true;
@@ -268,7 +268,6 @@ public class CombatManager : MonoBehaviour
 
     public void SetUpCombat()
     {
-        
         CharacterController cc = player.GetComponent<CharacterController>();
         if (cc != null)
             cc.enabled = false;
@@ -289,7 +288,7 @@ public class CombatManager : MonoBehaviour
         TeleportPlayer(toPlayerSpawn);
         inputHandler.SetCombat();
 
-        CameraHolder.transform.rotation = Quaternion.Euler(0,0,0);
+        CameraHolder.transform.rotation = Quaternion.Euler(0, 0, 0);
         player.transform.LookAt(enemy.transform.position);
         letterSpawner.EmptyAll();
         letterSpawner.FillCharQueue();

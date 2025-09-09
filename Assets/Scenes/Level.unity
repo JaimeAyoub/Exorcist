@@ -32350,7 +32350,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72ece51f2901e7445ab60da3685d6b5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ShowDebugText: 1
+  ShowDebugText: 0
   ShowCameraFrustum: 1
   IgnoreTimeScale: 0
   WorldUpOverride: {fileID: 0}
@@ -47852,7 +47852,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1882265187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51332,6 +51332,8 @@ GameObject:
   - component: {fileID: 2014862238}
   - component: {fileID: 2014862237}
   - component: {fileID: 2014862236}
+  - component: {fileID: 2014862239}
+  - component: {fileID: 2014862240}
   m_Layer: 0
   m_Name: CinemachineCamera
   m_TagString: MainCamera
@@ -51457,6 +51459,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damping: 0
+--- !u!114 &2014862239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2014862230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20856a739c02660439fe728eeb82b7ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2014862240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2014862230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NoiseProfile: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
+  PivotOffset: {x: 0, y: 0, z: 0}
+  AmplitudeGain: 0
+  FrequencyGain: 1
+  m_NoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1001 &2017124999
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -55279,6 +55310,30 @@ PrefabInstance:
     - target: {fileID: 3936433896334135371, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.428
+      objectReference: {fileID: 0}
+    - target: {fileID: 8621941362691013949, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
+      propertyPath: tweenDuration
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8621941362691013949, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
+      propertyPath: volumeProfile
+      value: 
+      objectReference: {fileID: 11400000, guid: cbea3553215783e40b933a560601f35d, type: 2}
+    - target: {fileID: 8621941362691013949, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
+      propertyPath: _volumeProfile
+      value: 
+      objectReference: {fileID: 11400000, guid: cbea3553215783e40b933a560601f35d, type: 2}
+    - target: {fileID: 8621941362691013949, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
+      propertyPath: vignetteIntensity
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8621941362691013949, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
+      propertyPath: durationCameraShake
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8621941362691013949, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
+      propertyPath: intensityCameraShake
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6799705412491103786, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
