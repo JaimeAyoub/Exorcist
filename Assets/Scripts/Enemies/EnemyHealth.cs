@@ -52,13 +52,13 @@ public class EnemyHealth : MonoBehaviour
         switch (enemyType)
         {
             case EnemyType.Gula:
-                AudioManager.instance.PlayBGM(SoundType.GulaDamage, 0.5f);
+                AudioManager.instance.PlaySFX(SoundType.GulaDamage, 0.5f);
                 break;
             case EnemyType.Ira:
-                AudioManager.instance.PlayBGM(SoundType.IraDamage, 0.5f);
+                AudioManager.instance.PlaySFX(SoundType.IraDamage, 0.5f);
                 break;
             case EnemyType.Padre:
-                AudioManager.instance.PlayBGM(SoundType.PadreDamage, 0.5f);
+                AudioManager.instance.PlaySFX(SoundType.PadreDamage, 0.5f);
                 break;
             default:
                 break;

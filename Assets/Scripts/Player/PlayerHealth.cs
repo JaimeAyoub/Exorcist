@@ -39,7 +39,7 @@ public class PlayerHealth : MonoBehaviour
 
         currentHealth -= damage;
         CameraShake.Instance.CmrShake(intensityCameraShake, durationCameraShake);
-        AudioManager.instance.PlayBGM(SoundType.PlayerDamage, 0.5f);
+        AudioManager.instance.PlaySFX(SoundType.PlayerDamage, 0.5f);
         DOTween.Kill("VignetteTween");
         DOTween.Kill("VignetteColorTween");
 

@@ -140,7 +140,7 @@ public class LetterSpawner : MonoBehaviour
             if (_letterObjects.Count > 0)
                 _letterObjects.RemoveAt(0);
 
-            AudioManager.instance.PlayBGM(SoundType.TECLAS, 0.5f);
+            AudioManager.instance.PlaySFX(SoundType.TECLAS, 0.5f);
             _letterCount++;
             _iteratorText++;
             CombatManager.instance.AddTime(1.0f);
