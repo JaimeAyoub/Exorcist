@@ -34,8 +34,8 @@ public class OptionsScript : UnityUtils.Singleton<OptionsScript>
 
         if (playerMovement != null)
         {
-            sensitivitySliderX.value = playerMovement.xMouseSensitivity;
-            sensitivitySliderY.value = playerMovement.yMouseSensitivity;
+            playerMovement.xMouseSensitivity = sensitivitySliderX.value * 20;
+            playerMovement.yMouseSensitivity = sensitivitySliderY.value * 20;
         }
 
         else
@@ -83,13 +83,11 @@ public class OptionsScript : UnityUtils.Singleton<OptionsScript>
         Color currentColor = panelToFade.color;
         currentColor.a = 0.0f;
         panelToFade.color = currentColor;
-        ;
     }
 
     public void ChangeSensitivityinX()
     {
         playerMovement.xMouseSensitivity = sensitivitySliderX.value * 20;
-      
     }
 
     public void changeSensitivityinY()

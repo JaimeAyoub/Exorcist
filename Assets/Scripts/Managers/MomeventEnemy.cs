@@ -8,6 +8,7 @@ public class MomeventEnemy : MonoBehaviour
     void Start()
     {
         FloatEffect();
+        player = GameObject.FindGameObjectWithTag("PlayerHolder");
     }
 
     void Update()
@@ -17,7 +18,7 @@ public class MomeventEnemy : MonoBehaviour
 
     void FloatEffect()
     {
-   
+        
         Vector3 startPos = transform.position;
         
         transform.DOMoveY(startPos.y + distanceToFloat, 1f)   

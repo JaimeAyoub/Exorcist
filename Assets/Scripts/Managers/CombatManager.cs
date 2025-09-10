@@ -113,8 +113,10 @@ public class CombatManager : MonoBehaviour
         seq.AppendCallback(() =>
         {
             SetUpCombat();
+
             StartCoroutine(CombatLoop());
         });
+
 
         seq.Append(imageToFade.DOFade(0f, 0.5f));
 
@@ -168,8 +170,7 @@ public class CombatManager : MonoBehaviour
         }
 
         CharacterController cc = player.GetComponent<CharacterController>();
-        if (cc != null)
-            cc.enabled = true;
+
         seq.Join(imageToFade.DOFade(1f, 0.5f));
         seq.AppendCallback(() =>
         {
@@ -178,9 +179,12 @@ public class CombatManager : MonoBehaviour
             inputHandler.SetGameplay();
             inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
             TeleportPlayer(_currentPositionPlayer);
+
             Debug.Log("PlayerRegresado");
             player.transform.rotation = _currentRotationPlayer;
-            UIManager.Instance.ActivateCanvas(UIManager.Instance._mainCanvas);
+            if (cc != null)
+                cc.enabled = true;
+            UIManager.Instance.CheckEnd();
             _currentturn = Combatturn.None;
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
@@ -289,7 +293,6 @@ public class CombatManager : MonoBehaviour
         TeleportEnemy(toEnemySpanwe);
         TeleportPlayer(toPlayerSpawn);
         inputHandler.SetCombat();
-
         CameraHolder.transform.rotation = Quaternion.Euler(0, 0, 0);
         player.transform.LookAt(enemy.transform.position);
         letterSpawner.EmptyAll();
@@ -301,5 +304,9 @@ public class CombatManager : MonoBehaviour
         bookSprite.SetActive(true);
         book.SetActive(false);
         candle.SetActive(false);
+        Vector3 currentPosBook = bookSprite.transform.position;
+        bookSprite.transform.position = new Vector3(currentPosBook.x, currentPosBook.y - 1.5f, currentPosBook.z);
+        bookSprite.transform.DOMove(currentPosBook, 0.5f);
     }
+        
 }

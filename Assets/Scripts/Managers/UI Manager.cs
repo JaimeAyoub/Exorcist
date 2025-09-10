@@ -105,6 +105,7 @@ public class UIManager : UnityUtils.Singleton<UIManager>
         if (_numberOfEnemies > 0)
         {
             _numberOfEnemies--;
+            ActivateCanvas(_mainCanvas);
         }
         else if (_numberOfEnemies <= 0)
         {
