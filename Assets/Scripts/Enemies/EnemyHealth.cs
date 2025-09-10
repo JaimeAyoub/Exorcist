@@ -8,6 +8,7 @@ public enum EnemyType
     Padre,
     Base
 }
+
 public class EnemyHealth : MonoBehaviour
 {
     public int currentHealth;
@@ -15,6 +16,7 @@ public class EnemyHealth : MonoBehaviour
 
     private Tween damageTween;
     public EnemyType enemyType;
+
     void Start()
     {
         currentHealth = maxHealth;
@@ -46,6 +48,7 @@ public class EnemyHealth : MonoBehaviour
             .OnComplete(() => CombatManager.instance.EndCombat());
         ;
     }
+
     private void PlayDamageSound()
     {
         SoundType soundType;
@@ -62,13 +65,13 @@ public class EnemyHealth : MonoBehaviour
                 AudioManager.instance.PlayBGM(SoundType.PadreDamage, 0.5f);
                 break;
             case EnemyType.Base:
-                
+                AudioManager.instance.PlayBGM(SoundType.BaseEnemyDamage, 0.5f);
                 break;
-                
             default:
                 break;
         }
     }
+
     void DamageFlash()
     {
         SpriteRenderer enemysp = GetComponentInChildren<SpriteRenderer>();
@@ -83,8 +86,7 @@ public class EnemyHealth : MonoBehaviour
             .OnKill(() =>
             {
                 if (enemysp != null)
-                    enemysp.color = Color.white; 
+                    enemysp.color = Color.white;
             });
     }
-  
 }

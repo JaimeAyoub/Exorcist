@@ -12,7 +12,8 @@ public enum SoundType
     GulaDamage,
     IraDamage,
     PadreDamage,
-    PlayerDamage
+    PlayerDamage,
+    BaseEnemyDamage
 }
 
 [RequireComponent(typeof(AudioSource))]
@@ -27,7 +28,7 @@ public class AudioManager : MonoBehaviour
     public AudioSource BGMSource;
     public AudioSource soundSourcePoint;
 
-    [Header("Configuración de SFX")]
+    [Header("Configuraciï¿½n de SFX")]
     [SerializeField] private int poolSize = 10; 
     private List<AudioSource> sfxPool = new List<AudioSource>();
 

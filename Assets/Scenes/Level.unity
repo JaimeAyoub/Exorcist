@@ -8444,7 +8444,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7846525464839254429, guid: ce9b438080f5a6a4c8990e95633ca5bd, type: 3}
       propertyPath: enemyType
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3706984087807544180, guid: ce9b438080f5a6a4c8990e95633ca5bd, type: 3}
@@ -35899,6 +35899,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0.244
       objectReference: {fileID: 0}
+    - target: {fileID: 4886356631243961489, guid: 01201f795171e4249891648e51df9092, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 429819550}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -55391,7 +55395,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2865001616013221305, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: PlayerHolder
       objectReference: {fileID: 0}
     - target: {fileID: 3267899633981754054, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -55456,7 +55460,7 @@ PrefabInstance:
     - target: {fileID: 4617091415027507212, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
       propertyPath: 'soundList.Array.data[8]'
       value: 
-      objectReference: {fileID: 8300000, guid: 5020e820e9afeed468e1464bf6fbed7b, type: 3}
+      objectReference: {fileID: 8300000, guid: 4cd3f36b794e9a247abfc752240d8f4b, type: 3}
     - target: {fileID: 8621941362691013949, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
       propertyPath: tweenDuration
       value: 0.25

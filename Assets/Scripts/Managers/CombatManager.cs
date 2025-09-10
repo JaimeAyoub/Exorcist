@@ -184,7 +184,7 @@ public class CombatManager : MonoBehaviour
             player.transform.rotation = _currentRotationPlayer;
             if (cc != null)
                 cc.enabled = true;
-            UIManager.Instance.ActivateCanvas(UIManager.Instance._mainCanvas);
+            UIManager.Instance.CheckEnd();
             _currentturn = Combatturn.None;
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;

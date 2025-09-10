@@ -8,6 +8,7 @@ public class MomeventEnemy : MonoBehaviour
     void Start()
     {
         FloatEffect();
+        player = GameObject.FindGameObjectWithTag("PlayerHolder");
     }
 
     void Update()
