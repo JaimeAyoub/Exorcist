@@ -65,7 +65,7 @@ public class EnemyHealth : MonoBehaviour
                 AudioManager.instance.PlaySFX(SoundType.PadreDamage, 0.5f);
                 break;
             case EnemyType.Base:
-                AudioManager.instance.PlayBGM(SoundType.BaseEnemyDamage, 0.5f);
+                AudioManager.instance.PlaySFX(SoundType.BaseEnemyDamage, 0.5f);
                 break;
             default:
                 break;
