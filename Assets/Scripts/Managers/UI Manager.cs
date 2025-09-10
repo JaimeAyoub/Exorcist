@@ -10,7 +10,7 @@ public class UIManager : UnityUtils.Singleton<UIManager>
     [SerializeField] public CanvasGroup _combatCanvas;
     [SerializeField] private CanvasGroup _pauseCanvas;
     [SerializeField] private CanvasGroup _settingsCanvas;
-    [SerializeField] private CanvasGroup _GameOverCanvas;
+    [SerializeField] public CanvasGroup _GameOverCanvas;
     public TextMeshProUGUI toogleDoorText;
     private bool _isPaused = false;
     public float _numberOfEnemies;

@@ -78,6 +78,7 @@ public class PlayerHealth : MonoBehaviour
 
     private void Death()
     {
-        throw new System.NotImplementedException();
+
+        UIManager.Instance.ActivateCanvas(UIManager.Instance._GameOverCanvas);
     }
 }
