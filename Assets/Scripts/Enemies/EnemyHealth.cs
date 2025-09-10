@@ -5,7 +5,8 @@ public enum EnemyType
 {
     Gula,
     Ira,
-    Padre
+    Padre,
+    Base
 }
 public class EnemyHealth : MonoBehaviour
 {
@@ -60,6 +61,10 @@ public class EnemyHealth : MonoBehaviour
             case EnemyType.Padre:
                 AudioManager.instance.PlayBGM(SoundType.PadreDamage, 0.5f);
                 break;
+            case EnemyType.Base:
+                
+                break;
+                
             default:
                 break;
         }
@@ -81,4 +86,5 @@ public class EnemyHealth : MonoBehaviour
                     enemysp.color = Color.white; 
             });
     }
+  
 }

@@ -69,6 +69,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentHealth: 0
   maxHealth: 3
+  enemyType: 3
 --- !u!136 &2397334692099887620
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -140,6 +141,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   distanceToFloat: 0.25
+  player: {fileID: 0}
 --- !u!1 &7277433024272809850
 GameObject:
   m_ObjectHideFlags: 0

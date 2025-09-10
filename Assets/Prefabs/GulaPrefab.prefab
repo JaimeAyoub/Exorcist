@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2397334692099887620}
   - component: {fileID: 2689797817641159155}
   - component: {fileID: 2849304739144376535}
+  - component: {fileID: 4886356631243961489}
   m_Layer: 0
   m_Name: GulaPrefab
   m_TagString: Enemy
@@ -68,6 +69,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentHealth: 0
   maxHealth: 3
+  enemyType: 0
 --- !u!136 &2397334692099887620
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -126,6 +128,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3194076526668939009}
   m_CullTransparentMesh: 1
+--- !u!114 &4886356631243961489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3194076526668939009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 235c0bbcdc602014f8370e28d40beabb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
 --- !u!1 &7277433024272809850
 GameObject:
   m_ObjectHideFlags: 0

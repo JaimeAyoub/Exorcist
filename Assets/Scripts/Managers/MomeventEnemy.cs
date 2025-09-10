@@ -17,7 +17,7 @@ public class MomeventEnemy : MonoBehaviour
 
     void FloatEffect()
     {
-   
+        
         Vector3 startPos = transform.position;
         
         transform.DOMoveY(startPos.y + distanceToFloat, 1f)   
