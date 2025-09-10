@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public enum SoundType
@@ -14,9 +13,7 @@ public enum SoundType
     IraDamage,
     PadreDamage,
     PlayerDamage
-    //AUDIO CLIPS QUE QUIERAS
 }
-
 
 [RequireComponent(typeof(AudioSource))]
 public class AudioManager : MonoBehaviour
@@ -24,43 +21,82 @@ public class AudioManager : MonoBehaviour
     [Tooltip("Esta lista tiene que ser llenada en orden de acuerdo con el enum de arriba en la clase AudioManager")]
     [SerializeField]
     private List<AudioClip> soundList;
-   
+
     public static AudioManager instance;
     public AudioSource audioSource;
     public AudioSource BGMSource;
     public AudioSource soundSourcePoint;
 
+    [Header("Configuración de SFX")]
+    [SerializeField] private int poolSize = 10; 
+    private List<AudioSource> sfxPool = new List<AudioSource>();
+
     private void Awake()
     {
-        if (instance == null) {
+        if (instance == null)
+        {
             instance = this;
-        } 
-        else 
+        }
+        else
         {
             Destroy(gameObject);
         }
+
+        InitializeSFXPool();
     }
 
-    private void Start()
+    private void InitializeSFXPool()
     {
-        audioSource = GetComponent<AudioSource>();
+        for (int i = 0; i < poolSize; i++)
+        {
+            AudioSource newSource = gameObject.AddComponent<AudioSource>();
+            newSource.playOnAwake = false;
+            newSource.loop = false;
+            sfxPool.Add(newSource);
+        }
     }
 
-
+    private AudioSource GetAvailableSFXSource()
+    {
+        foreach (AudioSource source in sfxPool)
+        {
+            if (!source.isPlaying)
+                return source;
+        }
+        AudioSource newSource = gameObject.AddComponent<AudioSource>();
+        newSource.playOnAwake = false;
+        newSource.loop = false;
+        sfxPool.Add(newSource);
+        return newSource;
+    }
 
     public void PlaySFX(SoundType clip, float volume = 1f)
     {
-        instance.audioSource.PlayOneShot(instance.soundList[(int)clip], volume);
+        AudioSource source = GetAvailableSFXSource();
+        source.PlayOneShot(soundList[(int)clip], volume);
     }
 
     public void PlayBGM(SoundType clip, float volume = 1f)
     {
-        instance.BGMSource.PlayOneShot(instance.soundList[(int)clip], volume);
+        BGMSource.clip = soundList[(int)clip];
+        BGMSource.volume = volume;
+        BGMSource.loop = true;
+        BGMSource.Play();
     }
 
     public void PlaySFXRandom(SoundType clip, float minValue, float maxValue, float volume = 1f)
     {
-        instance.StartCoroutine(PlayRandomPitch(clip, minValue, maxValue));
+        AudioSource source = GetAvailableSFXSource();
+        float randomPitch = Random.Range(minValue, maxValue);
+        source.pitch = randomPitch;
+        source.PlayOneShot(soundList[(int)clip], volume);
+        StartCoroutine(ResetPitchAfterPlay(source, randomPitch));
+    }
+
+    private IEnumerator ResetPitchAfterPlay(AudioSource source, float originalPitch)
+    {
+        yield return new WaitForSeconds(0.1f);
+        source.pitch = 1f;
     }
 
     public void PlayClipAtPoint(AudioClip clip, Vector3 position, float volume = 1f)
@@ -69,26 +105,14 @@ public class AudioManager : MonoBehaviour
         audioSource.clip = clip;
         audioSource.volume = volume;
         audioSource.Play();
-        float clipLength = audioSource.clip.length;
-        //DESTROY
-    }
-
-    private void ResetPitch()
-    {
-        instance.audioSource.pitch = 1;
+        Destroy(audioSource.gameObject, clip.length);
     }
 
     public void StopSFX()
     {
-        instance.audioSource.Stop();
-    }
-
-    private IEnumerator PlayRandomPitch(SoundType clip, float minValue, float maxValue, float volume = 1f)
-    {
-        float random = Random.Range(minValue, maxValue);
-        instance.audioSource.pitch = random;
-        PlaySFX(clip, volume);
-        yield return new WaitForSecondsRealtime(0.1f);
-        ResetPitch();
+        foreach (AudioSource source in sfxPool)
+        {
+            source.Stop();
+        }
     }
 }
