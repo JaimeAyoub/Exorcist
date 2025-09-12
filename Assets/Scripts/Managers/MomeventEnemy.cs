@@ -1,9 +1,12 @@
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
+
 public class MomeventEnemy : MonoBehaviour
 {
     public float distanceToFloat;
     public GameObject player;
+    private Tween tween;
 
     void Start()
     {
@@ -21,8 +24,13 @@ public class MomeventEnemy : MonoBehaviour
         
         Vector3 startPos = transform.position;
         
-        transform.DOMoveY(startPos.y + distanceToFloat, 1f)   
+        tween = transform.DOMoveY(startPos.y + distanceToFloat, 1f)   
             .SetLoops(-1, LoopType.Yoyo)      
             .SetEase(Ease.InOutSine);        
+    }
+
+    public void Destroy()
+    {
+        tween.Kill();
     }
 }

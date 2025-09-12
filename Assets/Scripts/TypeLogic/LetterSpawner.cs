@@ -33,7 +33,6 @@ public class LetterSpawner : MonoBehaviour
 
     public GameObject prefabLetterInBook; //GameObject con el sprite renderer y shader dorado
     private List<GameObject> _lettersInBook; //Lista donde guardamos las letras que hay en el libro
-    private float _seperatorInY = 0; //Variable para pasar parrafo
     [SerializeField] public int lettersInParagraph; //Variable para poner cuantas letras quieres por parrafo
     public int _letterCount; //Variable para saber cuantas letras hemos escrito.
 
@@ -106,7 +105,7 @@ public class LetterSpawner : MonoBehaviour
     {
         if (!CombatManager.instance.isCombat) return;
 
-        // Avanzar punteaciones
+        // Avanzar
         while (QueueTextToScreen.Count > 0 && !char.IsLetterOrDigit(QueueTextToScreen.Peek()) &&
                QueueTextToScreen.Peek() != ' ')
         {
@@ -292,6 +291,5 @@ public class LetterSpawner : MonoBehaviour
         _lettersInBook.Clear();
         _iteratorText = 0;
         _letterCount = 0;
-        _seperatorInY = 0f;
     }
 }

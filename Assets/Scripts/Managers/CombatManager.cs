@@ -17,9 +17,8 @@ public class CombatManager : MonoBehaviour
     public CanvasGroup combatgroup;
     public GameObject player;
     public GameObject enemy;
-    private bool isplayerTurn = true;
-    private bool isenemyTurn;
     public bool isCombat = false;
+    private bool _isPlayerAlive = true;
 
     //Variables para la logica del tiempo
     public float currentTime;
@@ -45,8 +44,6 @@ public class CombatManager : MonoBehaviour
     public GameObject candle;
     public Image DamageVignette;
     public GameObject CameraHolder;
-
-    public CinemachineCamera camera;
 
 
     void Start()
@@ -137,7 +134,6 @@ public class CombatManager : MonoBehaviour
 
 
                 yield return new WaitUntil(() => currentTime <= 0);
-                isplayerTurn = false;
                 _currentturn = Combatturn.EnemyTurn;
             }
             else if (_currentturn == Combatturn.EnemyTurn)
@@ -150,8 +146,6 @@ public class CombatManager : MonoBehaviour
                 Debug.Log("Enemigo hace damage");
                 if (IsCombatEnd()) yield break;
 
-
-                isplayerTurn = true;
                 ResetTime();
                 _currentturn = Combatturn.PlayerTurn;
             }
@@ -184,7 +178,7 @@ public class CombatManager : MonoBehaviour
             player.transform.rotation = _currentRotationPlayer;
             if (cc != null)
                 cc.enabled = true;
-            UIManager.Instance.CheckEnd();
+            UIManager.Instance.ActivateCanvas(UIManager.Instance._mainCanvas);
             _currentturn = Combatturn.None;
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
@@ -193,12 +187,30 @@ public class CombatManager : MonoBehaviour
             candle.SetActive(true);
             ResetTime();
             letterSpawner.EmptyAll();
+            
             _currentPositionPlayer = Vector3.zero;
         });
         OptionsScript.Instance.PixelationShaderMaterial.SetFloat("_PixelSize", 4.0f);
-        seq.Append(imageToFade.DOFade(0f, 0.5f));
-
-        seq.OnComplete(() => { isTransitioning = false; });
+        if (_isPlayerAlive)
+        {
+            seq.Append(imageToFade.DOFade(0f, 0.5f));
+            seq.OnComplete(() => { isTransitioning = false; });
+        }
+        else
+        {
+            inputHandler.SetUI();
+            ChangeScene sceneChange = FindFirstObjectByType<ChangeScene>();
+            if (sceneChange)
+            {
+                seq.Kill();
+                
+                sceneChange.SelectSceneT(2);
+            }
+            else
+            {
+                Debug.Log("No se hay SceneChange weon");
+            }
+        }
     }
 
     public bool IsCombatEnd()
@@ -206,9 +218,14 @@ public class CombatManager : MonoBehaviour
         if (player.GetComponentInChildren<PlayerHealth>().currentHealth <= 0)
         {
             Debug.Log("Derrota");
-            EndCombat();
             AudioManager.instance.StopSFX();
+            _isPlayerAlive = false;
+            EndCombat();
             return true;
+        }
+        else
+        {
+            Debug.Log("No hay player health");
         }
 
         if (enemy.GetComponent<EnemyHealth>().currentHealth <= 0)
@@ -220,11 +237,6 @@ public class CombatManager : MonoBehaviour
         }
 
         return false;
-    }
-
-    public void EndPlayerTurn()
-    {
-        isplayerTurn = false;
     }
 
     public void AddTime(float time)
@@ -308,5 +320,4 @@ public class CombatManager : MonoBehaviour
         bookSprite.transform.position = new Vector3(currentPosBook.x, currentPosBook.y - 1.5f, currentPosBook.z);
         bookSprite.transform.DOMove(currentPosBook, 0.5f);
     }
-        
 }

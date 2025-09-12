@@ -15388,7 +15388,6 @@ MonoBehaviour:
   imgTutorial: {fileID: 1753309163}
   MainMenu: {fileID: 1242355210}
   comicImage: {fileID: 944378678}
-  sceneToChange: 1
 --- !u!4 &364889000
 Transform:
   m_ObjectHideFlags: 0
@@ -24133,12 +24132,12 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 364888999}
         m_TargetAssemblyTypeName: ChangeScene, Assembly-CSharp
-        m_MethodName: ChangeSceneF
-        m_Mode: 1
+        m_MethodName: SelectSceneT
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -50168,12 +50167,12 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 364888999}
         m_TargetAssemblyTypeName: ChangeScene, Assembly-CSharp
-        m_MethodName: ChangeToLevel
-        m_Mode: 1
+        m_MethodName: SelectSceneT
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -81189,7 +81188,7 @@ MonoBehaviour:
         value:
           x: 0.1089787
           y: 0.8080894
-          z: -0.13061821
+          z: -0.1306182
           w: -0.5639629
     - Position:
         x: -39.870003
@@ -81260,7 +81259,7 @@ MonoBehaviour:
       Rotation:
         value:
           x: -0.06959609
-          y: 0.99717814
+          y: 0.9971781
           z: -0.006548179
           w: 0.02737251
     - Position:
@@ -81313,9 +81312,9 @@ MonoBehaviour:
         z: 4.8093834
       Rotation:
         value:
-          x: 0.10244938
+          x: 0.102449395
           y: 0.91330814
-          z: -0.037370667
+          z: -0.03737066
           w: -0.39239758
     - Position:
         x: -40.18
