@@ -18,7 +18,8 @@ public class ChangeScene : MonoBehaviour
     {
         MainMenu,
         Level,
-        GameOver
+        GameOver,
+        Credits,
     };
     //Los indices de las escenas son: 0 es MainMeu, 1 es el nivel y 2 es el Game Over
     void Start()
@@ -64,6 +65,9 @@ public class ChangeScene : MonoBehaviour
                 break;
             case SceneToChange.GameOver:
                 imageToFade.DOFade(1, fadeTime).OnComplete(() => SceneManager.LoadScene(2));
+                break;
+            case SceneToChange.Credits:
+                imageToFade.DOFade(1, fadeTime).OnComplete(() => SceneManager.LoadScene(3));
                 break;
             default:
                 imageToFade.DOFade(1, fadeTime).OnComplete(() => SceneManager.LoadScene(0));

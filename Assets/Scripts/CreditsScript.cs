@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CreditsScript : MonoBehaviour
 {
@@ -14,5 +15,9 @@ public class CreditsScript : MonoBehaviour
     void Update()
     {
         rectTransform.anchoredPosition += new Vector2(0, scrollSpeed * Time.deltaTime);
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene(0);
+        }
     }
 }
