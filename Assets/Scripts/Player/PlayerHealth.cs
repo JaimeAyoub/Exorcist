@@ -17,9 +17,12 @@ public class PlayerHealth : MonoBehaviour
     public float intensityCameraShake;
     public float durationCameraShake;
 
+    public Sprite[] candleHealthSprites;
+    public SpriteRenderer candleHealthSpriteRenderer;
 
     void Start()
     {
+        maxHealth = 6;
         currentHealth = maxHealth;
         if (_volumeProfile.TryGet(out vignette))
         {
@@ -36,7 +39,6 @@ public class PlayerHealth : MonoBehaviour
     public void TakeDamage(int damage)
     {
         if (currentHealth <= 0) return;
-
         currentHealth -= damage;
         CameraShake.Instance.CmrShake(intensityCameraShake, durationCameraShake);
         AudioManager.instance.PlaySFX(SoundType.PlayerDamage, 0.5f);
@@ -72,6 +74,7 @@ public class PlayerHealth : MonoBehaviour
                     .SetId("VignetteColorTween");
             });
 
+        ChangeSprite();
         if (currentHealth <= 0)
             Death();
     }
@@ -80,5 +83,10 @@ public class PlayerHealth : MonoBehaviour
     {
 
         UIManager.Instance.ActivateCanvas(UIManager.Instance._GameOverCanvas);
+    }
+
+    void ChangeSprite()
+    {
+        candleHealthSpriteRenderer.sprite = currentHealth >= 0 ? candleHealthSprites[currentHealth] : candleHealthSprites[0];
     }
 }

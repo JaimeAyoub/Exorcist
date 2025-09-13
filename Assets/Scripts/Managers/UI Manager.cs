@@ -1,6 +1,7 @@
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
 public class UIManager : UnityUtils.Singleton<UIManager>
@@ -33,7 +34,7 @@ public class UIManager : UnityUtils.Singleton<UIManager>
 
     private void Awake()
     {
-        _numberOfEnemies = 2; 
+        _numberOfEnemies = 4; 
         base.Awake();
         canvases = new CanvasGroup[] { _mainCanvas, _combatCanvas, _pauseCanvas, _settingsCanvas };
     }
@@ -109,7 +110,7 @@ public class UIManager : UnityUtils.Singleton<UIManager>
         }
         else if (_numberOfEnemies <= 0)
         {
-            ActivateCanvas(_GameOverCanvas);
+            SceneManager.LoadScene(0);
         }
     }
 }

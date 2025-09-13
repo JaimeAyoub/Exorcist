@@ -42,6 +42,7 @@ public class CombatManager : MonoBehaviour
     public GameObject bookSprite;
     public GameObject book;
     public GameObject candle;
+    public GameObject healthCandle;
     public Image DamageVignette;
     public GameObject CameraHolder;
 
@@ -49,6 +50,7 @@ public class CombatManager : MonoBehaviour
     void Start()
     {
         bookSprite.SetActive(false);
+        healthCandle.SetActive(false);
         currentTime = MaxTime;
         _timeSlider.maxValue = MaxTime;
         Color c = DamageVignette.color;
@@ -178,9 +180,10 @@ public class CombatManager : MonoBehaviour
             player.transform.rotation = _currentRotationPlayer;
             if (cc != null)
                 cc.enabled = true;
-            UIManager.Instance.ActivateCanvas(UIManager.Instance._mainCanvas);
+            UIManager.Instance.CheckEnd();
             _currentturn = Combatturn.None;
             Cursor.visible = false;
+            healthCandle.SetActive(false);
             Cursor.lockState = CursorLockMode.Locked;
             bookSprite.SetActive(false);
             book.SetActive(true);
@@ -316,6 +319,7 @@ public class CombatManager : MonoBehaviour
         bookSprite.SetActive(true);
         book.SetActive(false);
         candle.SetActive(false);
+        healthCandle.SetActive(true);
         Vector3 currentPosBook = bookSprite.transform.position;
         bookSprite.transform.position = new Vector3(currentPosBook.x, currentPosBook.y - 1.5f, currentPosBook.z);
         bookSprite.transform.DOMove(currentPosBook, 0.5f);

@@ -106,8 +106,7 @@ public class LetterSpawner : MonoBehaviour
         if (!CombatManager.instance.isCombat) return;
 
         // Avanzar
-        while (QueueTextToScreen.Count > 0 && !char.IsLetterOrDigit(QueueTextToScreen.Peek()) &&
-               QueueTextToScreen.Peek() != ' ')
+        while (QueueTextToScreen.Count > 0 && !char.IsLetterOrDigit(QueueTextToScreen.Peek()))
         {
             if (_letterObjects.Count > 0)
             {
@@ -151,6 +150,7 @@ public class LetterSpawner : MonoBehaviour
         }
         else // tecla incorrecta
         {
+            CameraShake.Instance.CmrShake(0.55f, 0.50f);
             if (_letterObjects.Count > 0 && keyTyped != ' ')
             {
                 SpriteRenderer sp = _letterObjects[0].GetComponent<SpriteRenderer>();
