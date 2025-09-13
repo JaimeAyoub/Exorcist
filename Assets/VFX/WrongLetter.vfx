@@ -37,10 +37,10 @@ MonoBehaviour:
   categories: []
   uiBounds:
     serializedVersion: 2
-    x: 242
-    y: 222
-    width: 496
-    height: 2271
+    x: 264
+    y: 47
+    width: 474
+    height: 2446
 --- !u!114 &114350483966674976
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1816,7 +1816,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: False
+      m_SerializableObject: True
     m_Space: -1
   m_Property:
     name: _vfx_enabled
@@ -2706,7 +2706,7 @@ MonoBehaviour:
   - link:
     - context: {fileID: 8926484042661614700}
       slotIndex: 0
-  eventName: OnPlay
+  eventName: Play
 --- !u!114 &8926484042661614976
 MonoBehaviour:
   m_ObjectHideFlags: 0
