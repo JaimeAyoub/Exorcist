@@ -27,6 +27,7 @@ public class LetterSpawner : MonoBehaviour
     public float spaceBetweenLetters; //Variable para la separacion entre letras
     public VisualEffect vfxBook; //El efecto que quieres que aparezca
     public VisualEffect vfxHit; //El efecto que quieres que aparezca
+    public VisualEffect vfxMiss;
 
     [Header("Variables para la aparicion de las letras doradas en el libro")]
     public GameObject bookLocation; //Donde apareceran las letras doradas
@@ -35,6 +36,7 @@ public class LetterSpawner : MonoBehaviour
     private List<GameObject> _lettersInBook; //Lista donde guardamos las letras que hay en el libro
     [SerializeField] public int lettersInParagraph; //Variable para poner cuantas letras quieres por parrafo
     public int _letterCount; //Variable para saber cuantas letras hemos escrito.
+    public GameObject SpawnVFXBarra;
 
     private void OnEnable()
     {
@@ -150,12 +152,14 @@ public class LetterSpawner : MonoBehaviour
         }
         else // tecla incorrecta
         {
-            CameraShake.Instance.CmrShake(0.55f, 0.50f);
+            
             if (_letterObjects.Count > 0 && keyTyped != ' ')
             {
                 SpriteRenderer sp = _letterObjects[0].GetComponent<SpriteRenderer>();
                 sp.DOColor(Color.red, 0.125f).SetLoops(2, LoopType.Yoyo);
                 CombatManager.instance.SubstracTime(1.0f);
+                CameraShake.Instance.CmrShake(0.55f, 0.50f);
+                SpawnVFX(SpawnVFXBarra.transform.position,vfxMiss);
             }
         }
     }

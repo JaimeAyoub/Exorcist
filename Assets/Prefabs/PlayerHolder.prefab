@@ -38,6 +38,7 @@ Transform:
   - {fileID: 1468677067219552535}
   - {fileID: 3267899633981754054}
   - {fileID: 5546457067754747905}
+  - {fileID: 5104052321564454479}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &8861053696897699088
@@ -104,6 +105,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collisionEnemy: {fileID: 0}
+--- !u!1 &5203132435590743003
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5104052321564454479}
+  m_Layer: 6
+  m_Name: VFXSpawnBarra
+  m_TagString: Untagged
+  m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5104052321564454479
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5203132435590743003}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.643, y: 2.549, z: 5.392}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2226985624189528904}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5262456016617754853
 GameObject:
   m_ObjectHideFlags: 0
@@ -524,10 +556,12 @@ MonoBehaviour:
   spaceBetweenLetters: 0.15
   vfxBook: {fileID: 3357787788069614735, guid: 64c51539f180d354ca7c8ba53e4686d7, type: 3}
   vfxHit: {fileID: 4912714109062061031, guid: ca19af1804927e041a4064dc71c83bf6, type: 3}
+  vfxMiss: {fileID: 0}
   bookLocation: {fileID: 8770650952528971842}
   prefabLetterInBook: {fileID: 0}
   lettersInParagraph: 20
   _letterCount: 0
+  SpawnVFXBarra: {fileID: 0}
 --- !u!1 &7306536667626368167
 GameObject:
   m_ObjectHideFlags: 0
@@ -680,6 +714,15 @@ MonoBehaviour:
   tweenDuration: 0.25
   intensityCameraShake: 7
   durationCameraShake: 0.1
+  candleHealthSprites:
+  - {fileID: -1614266600, guid: 7873266345a8b0549b7d8898a8af5401, type: 3}
+  - {fileID: -35958546, guid: 7873266345a8b0549b7d8898a8af5401, type: 3}
+  - {fileID: 288630593, guid: 7873266345a8b0549b7d8898a8af5401, type: 3}
+  - {fileID: 92651698, guid: 7873266345a8b0549b7d8898a8af5401, type: 3}
+  - {fileID: 236912569, guid: 7873266345a8b0549b7d8898a8af5401, type: 3}
+  - {fileID: 2106368223, guid: 7873266345a8b0549b7d8898a8af5401, type: 3}
+  - {fileID: -1892297091, guid: 7873266345a8b0549b7d8898a8af5401, type: 3}
+  candleHealthSpriteRenderer: {fileID: 2742530159081680231}
 --- !u!114 &4929770871129126834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -751,7 +794,7 @@ GameObject:
   m_Layer: 0
   m_Name: Health
   m_TagString: Untagged
-  m_Icon: {fileID: -1412012063857583412, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 419385456094870383, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -763,13 +806,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7717775423392549466}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13955332, y: 0, z: 0, w: 0.9902146}
-  m_LocalPosition: {x: -0.009, y: 0.753, z: 4.337}
-  m_LocalScale: {x: 0.45207304, y: 0.35917085, z: 0.45207304}
+  m_LocalRotation: {x: -0.0034101293, y: -0, z: -0, w: 0.99999416}
+  m_LocalPosition: {x: 3.283, y: 1.547, z: 4.337}
+  m_LocalScale: {x: 0.35217848, y: 0.2798049, z: 0.35217848}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 2226985624189528904}
-  m_LocalEulerAnglesHint: {x: 16.044, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -0.391, y: 0, z: 0}
 --- !u!212 &2742530159081680231
 SpriteRenderer:
   m_ObjectHideFlags: 0
