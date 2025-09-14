@@ -12,6 +12,7 @@ public class ChangeScene : MonoBehaviour
     public Image imageToFade;
     public Image imgTutorial;
     public RectTransform MainMenu;
+    public CanvasGroup TutorialPanel;
     public Image comicImage;
 
     public enum SceneToChange
@@ -42,7 +43,14 @@ public class ChangeScene : MonoBehaviour
     {
         imageToFade.DOFade(1, fadeTime).OnComplete(() => imageToFade.DOFade(0, fadeTime));
         MainMenu.gameObject.SetActive(false);
-        imgTutorial.DOFade(1, fadeTime).OnComplete(() => imgTutorial.SetActive());
+        imageToFade.DOFade(1, fadeTime).OnComplete(() =>
+        {
+            TutorialPanel.DOFade(1, fadeTime);
+            TutorialPanel.gameObject.SetActive(true);
+            TutorialPanel.alpha = 1;
+            TutorialPanel.interactable = true;
+            TutorialPanel.blocksRaycasts = true;
+        });
     }
 
 
