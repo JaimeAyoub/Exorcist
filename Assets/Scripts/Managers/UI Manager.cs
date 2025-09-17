@@ -3,6 +3,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class UIManager : UnityUtils.Singleton<UIManager>
 {
@@ -12,19 +13,23 @@ public class UIManager : UnityUtils.Singleton<UIManager>
     [SerializeField] private CanvasGroup _pauseCanvas;
     [SerializeField] private CanvasGroup _settingsCanvas;
     [SerializeField] public CanvasGroup _GameOverCanvas;
+    [SerializeField] private CanvasGroup _noteCanvas;
+
     public TextMeshProUGUI toogleDoorText;
     private bool _isPaused = false;
+    private bool _isNoteOpen = false;
     public float _numberOfEnemies;
 
     public CanvasGroup[] canvases;
     public AnimationUI[] animationsPauseMenu;
+
+    [SerializeField] private Image noteImage;
 
     private void OnEnable()
     {
         PlayerInputHandler.PauseEvent += Pause;
         PlayerInputHandler.ResumeEvent += Pause;
     }
-
 
     private void OnDisable()
     {
@@ -34,9 +39,9 @@ public class UIManager : UnityUtils.Singleton<UIManager>
 
     private void Awake()
     {
-        _numberOfEnemies = 4; 
+        _numberOfEnemies = 4;
         base.Awake();
-        canvases = new CanvasGroup[] { _mainCanvas, _combatCanvas, _pauseCanvas, _settingsCanvas };
+        canvases = new CanvasGroup[] { _mainCanvas, _combatCanvas, _pauseCanvas, _settingsCanvas, _noteCanvas };
     }
 
     void Start()
@@ -44,9 +49,19 @@ public class UIManager : UnityUtils.Singleton<UIManager>
         StartSceneCanvas();
     }
 
+    void Update()
+    {
+        // Cerrar nota con Escape (igual que pausa)
+        if (_isNoteOpen && Input.GetKeyDown(KeyCode.Escape))
+        {
+            CloseNote();
+        }
+    }
 
     void Pause()
     {
+        if (_isNoteOpen) return;
+
         _isPaused = !_isPaused;
         if (_isPaused == true)
         {
@@ -71,7 +86,6 @@ public class UIManager : UnityUtils.Singleton<UIManager>
         ActivateCanvas(_mainCanvas);
     }
 
-
     public void ActivateCanvas(CanvasGroup canvasToActivate)
     {
         foreach (CanvasGroup canvas in canvases)
@@ -90,17 +104,6 @@ public class UIManager : UnityUtils.Singleton<UIManager>
             }
         }
     }
-
-    public void ShowTextDoor()
-    {
-        toogleDoorText.enabled = true;
-    }
-
-    public void HideTextDoor()
-    {
-        toogleDoorText.enabled = false;
-    }
-
     public void CheckEnd()
     {
         if (_numberOfEnemies > 0)
@@ -112,5 +115,51 @@ public class UIManager : UnityUtils.Singleton<UIManager>
         {
             SceneManager.LoadScene(0);
         }
+    }
+    // Métodos para el sistema de notas
+    public void ShowNote(Sprite noteSprite)
+    {
+        if (noteImage != null && _noteCanvas != null)
+        {
+            noteImage.sprite = noteSprite;
+            _isNoteOpen = true;
+
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            ActivateCanvas(_noteCanvas);
+            Time.timeScale = 0;
+        }
+    }
+
+    public void CloseNote()
+    {
+        _isNoteOpen = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        Time.timeScale = 1;
+        ActivateCanvas(_mainCanvas);
+    }
+
+    public bool IsNoteOpen()
+    {
+        return _isNoteOpen;
+    }
+
+    public void ShowTextDoor()
+    {
+        if (toogleDoorText != null)
+            toogleDoorText.enabled = true;
+    }
+
+    public void HideTextDoor()
+    {
+        if (toogleDoorText != null)
+            toogleDoorText.enabled = false;
+    }
+
+    
+    public void OnCloseNoteButton()
+    {
+        CloseNote();
     }
 }
