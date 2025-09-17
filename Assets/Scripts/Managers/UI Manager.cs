@@ -51,7 +51,6 @@ public class UIManager : UnityUtils.Singleton<UIManager>
 
     void Update()
     {
-        // Cerrar nota con Escape (igual que pausa)
         if (_isNoteOpen && Input.GetKeyDown(KeyCode.Escape))
         {
             CloseNote();
@@ -60,7 +59,7 @@ public class UIManager : UnityUtils.Singleton<UIManager>
 
     void Pause()
     {
-        if (_isNoteOpen) return;
+        if (_isNoteOpen) return; 
 
         _isPaused = !_isPaused;
         if (_isPaused == true)
@@ -71,6 +70,10 @@ public class UIManager : UnityUtils.Singleton<UIManager>
             foreach (AnimationUI animation in animationsPauseMenu)
                 animation.StartAnimationAction();
             Time.timeScale = 0;
+            if (PlayerInputHandler != null)
+            {
+                PlayerInputHandler.SetUI();
+            }
         }
         else if (_isPaused == false)
         {
@@ -78,6 +81,10 @@ public class UIManager : UnityUtils.Singleton<UIManager>
             Cursor.visible = false;
             Time.timeScale = 1;
             ActivateCanvas(_mainCanvas);
+            if (PlayerInputHandler != null)
+            {
+                PlayerInputHandler.SetGameplay();
+            }
         }
     }
 
@@ -104,19 +111,6 @@ public class UIManager : UnityUtils.Singleton<UIManager>
             }
         }
     }
-    public void CheckEnd()
-    {
-        if (_numberOfEnemies > 0)
-        {
-            _numberOfEnemies--;
-            ActivateCanvas(_mainCanvas);
-        }
-        else if (_numberOfEnemies <= 0)
-        {
-            SceneManager.LoadScene(0);
-        }
-    }
-    // Métodos para el sistema de notas
     public void ShowNote(Sprite noteSprite)
     {
         if (noteImage != null && _noteCanvas != null)
@@ -128,6 +122,10 @@ public class UIManager : UnityUtils.Singleton<UIManager>
             Cursor.visible = true;
             ActivateCanvas(_noteCanvas);
             Time.timeScale = 0;
+            if (PlayerInputHandler != null)
+            {
+                PlayerInputHandler.SetUI();
+            }
         }
     }
 
@@ -138,6 +136,10 @@ public class UIManager : UnityUtils.Singleton<UIManager>
         Cursor.visible = false;
         Time.timeScale = 1;
         ActivateCanvas(_mainCanvas);
+        if (PlayerInputHandler != null)
+        {
+            PlayerInputHandler.SetGameplay();
+        }
     }
 
     public bool IsNoteOpen()
@@ -157,7 +159,19 @@ public class UIManager : UnityUtils.Singleton<UIManager>
             toogleDoorText.enabled = false;
     }
 
-    
+    public void CheckEnd()
+    {
+        if (_numberOfEnemies > 0)
+        {
+            _numberOfEnemies--;
+            ActivateCanvas(_mainCanvas);
+        }
+        else if (_numberOfEnemies <= 0)
+        {
+            SceneManager.LoadScene(0);
+        }
+    }
+
     public void OnCloseNoteButton()
     {
         CloseNote();
