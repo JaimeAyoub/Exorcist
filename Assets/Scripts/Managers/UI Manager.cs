@@ -37,7 +37,9 @@ public class UIManager : UnityUtils.Singleton<UIManager>
         PlayerInputHandler.ResumeEvent -= Pause;
     }
 
+#pragma warning disable CS0114 
     private void Awake()
+#pragma warning restore CS0114 
     {
         _numberOfEnemies = 4;
         base.Awake();
@@ -59,8 +61,6 @@ public class UIManager : UnityUtils.Singleton<UIManager>
 
     void Pause()
     {
-        if (_isNoteOpen) return; 
-
         _isPaused = !_isPaused;
         if (_isPaused == true)
         {
