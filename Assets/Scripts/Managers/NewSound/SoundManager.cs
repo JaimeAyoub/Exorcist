@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityUtils;
-public class SoundManager : PersistentSingleton<SoundManager>
+using UnityEngine.Audio;
+
+public class SoundManager : Singleton<SoundManager>
 {
     IObjectPool<SoundEmitter> _soundEmitterPool;
     private readonly List<SoundEmitter> _activeSoundEmitters = new();
@@ -15,13 +17,56 @@ public class SoundManager : PersistentSingleton<SoundManager>
     [SerializeField] private int maxPoolSize = 100;
     [SerializeField] private int maxSoundInstances = 30;
 
+    [Header("Music Settings")]
+    [SerializeField] private AudioMixerGroup musicMixerGroup;
+    private AudioSource _musicSource;
+    public AudioClip musicClip;
+
     private void Start()
     {
         InitializePool();
+        InitializeMusicSource();
+    }
+
+    private void Update()
+    {
+        PlayMusic();
     }
 
     public SoundBuilder CreateSound() => new SoundBuilder(this);
     
+
+    private void InitializeMusicSource()
+    {
+        _musicSource = gameObject.AddComponent<AudioSource>();
+        _musicSource.loop = true;
+        _musicSource.playOnAwake = false;
+        _musicSource.outputAudioMixerGroup = musicMixerGroup;
+    }
+
+# region Music
+    public void PlayMusic()
+    {
+        if (musicClip == null) return;
+
+        if (_musicSource.clip == musicClip && _musicSource.isPlaying) return;
+
+        _musicSource.clip = musicClip;
+        _musicSource.Play();
+    }
+
+    public void StopMusic()
+    {
+        _musicSource.Stop();
+    }
+
+    public void SetMusicVolume(float volume)
+    {
+        _musicSource.volume = volume;
+    }
+# endregion
+
+#region SFX
     public bool CanPlaySound(SoundData sData)
     {
         if (!sData.frequentSound) return true;
@@ -86,4 +131,5 @@ public class SoundManager : PersistentSingleton<SoundManager>
     {
         Destroy(emitter.gameObject);
     }
+    #endregion
 }

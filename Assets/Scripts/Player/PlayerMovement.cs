@@ -23,7 +23,6 @@ public class PlayerMovement : MonoBehaviour
     [Header("Footstep Parameters")]
     [SerializeField] private float walkStepInterval = 0.5f;
     [SerializeField] private float sprintStepInterval = 0.3f;
-    [SerializeField] private float footstepVolume = 0.7f;
 
     [Header("References")]
     [SerializeField] private CharacterController characterController;
@@ -42,6 +41,10 @@ public class PlayerMovement : MonoBehaviour
     //INTEGRAR CINEMACHINE
     public CinemachineCamera mainCamera;
 
+    // Audio
+    public SoundData stepSD;
+    //
+
     void Awake()
     {
         alignedRotation = new Vector2(mainCamera.transform.position.x, mainCamera.transform.position.y);
@@ -53,7 +56,12 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (!Application.isPlaying || CombatManager.instance.isCombat) return;
+        // 1. Guarda de estado de la aplicación y combate
+        if (!Application.isPlaying || CombatManager.Instance.isCombat) return;
+
+        // 2. GUARDA DE SEGURIDAD (SAFETY GUARD): 
+        // Previene el error "Move called on inactive controller" si el componente se desactiva
+        if (!characterController.enabled || !characterController.gameObject.activeInHierarchy) return;
 
         HandleMovement();
         HandleRotation();
@@ -80,7 +88,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void PlayFootstepSound()
     {
-        AudioManager.instance.PlaySFXRandom(SoundType.PASOS, 0.1f, 0.3f, footstepVolume);
+        SoundManager.Instance.CreateSound().WithRandomPitch().WithSoundData(stepSD).Play();
     }
 
     private bool IsMoving()
@@ -119,7 +127,12 @@ public class PlayerMovement : MonoBehaviour
         currentMovement.z = worldDirection.z * CurrentSpeed;
 
         HandleJumping();
-        characterController.Move(currentMovement * Time.deltaTime);
+        
+        // Guarda extra de protección antes de mover
+        if (characterController.enabled)
+        {
+            characterController.Move(currentMovement * Time.deltaTime);
+        }
     }
 
     private void ApplyHorizontalRotation(float rotationAmount)

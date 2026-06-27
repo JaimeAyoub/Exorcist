@@ -41,7 +41,7 @@ public class PlayerHealth : MonoBehaviour
         if (currentHealth <= 0) return;
         currentHealth -= damage;
         CameraShake.Instance.CmrShake(intensityCameraShake, durationCameraShake);
-        AudioManager.instance.PlaySFX(SoundType.PlayerDamage, 0.5f);
+        //AudioManager.instance.PlaySFX(SoundType.PlayerDamage, 0.5f);
         DOTween.Kill("VignetteTween");
         DOTween.Kill("VignetteColorTween");
 

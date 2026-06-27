@@ -35,7 +35,7 @@ public class EnemyHealth : MonoBehaviour
         if (currentHealth <= 0)
             Death();
         else
-            CombatManager.instance.IsCombatEnd();
+            CombatManager.Instance.IsCombatEnd();
     }
 
     private void Death()
@@ -45,27 +45,26 @@ public class EnemyHealth : MonoBehaviour
             damageTween.Kill();
 
         transform.DOScale(Vector3.zero, 0.5f)
-            .OnComplete(() => CombatManager.instance.EndCombat());
+            .OnComplete(() => CombatManager.Instance.EndCombat());
         ;
     }
 
     private void PlayDamageSound()
     {
-        SoundType soundType;
 
         switch (enemyType)
         {
             case EnemyType.Gula:
-                AudioManager.instance.PlaySFX(SoundType.GulaDamage, 0.5f);
+                //AudioManager.Instance.PlaySFX(SoundType.GulaDamage, 0.5f);
                 break;
             case EnemyType.Ira:
-                AudioManager.instance.PlaySFX(SoundType.IraDamage, 0.5f);
+                //AudioManager.Instance.PlaySFX(SoundType.IraDamage, 0.5f);
                 break;
             case EnemyType.Padre:
-                AudioManager.instance.PlaySFX(SoundType.PadreDamage, 0.5f);
+                //AudioManager.Instance.PlaySFX(SoundType.PadreDamage, 0.5f);
                 break;
             case EnemyType.Base:
-                AudioManager.instance.PlaySFX(SoundType.BaseEnemyDamage, 0.5f);
+                //AudioManager.Instance.PlaySFX(SoundType.BaseEnemyDamage, 0.5f);
                 break;
             default:
                 break;
