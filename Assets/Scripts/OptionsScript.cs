@@ -87,11 +87,11 @@ public class OptionsScript : UnityUtils.Singleton<OptionsScript>
 
     public void ChangeSensitivityinX()
     {
-        playerMovement.xMouseSensitivity = sensitivitySliderX.value * 20;
+        playerMovement.xMouseSensitivity = sensitivitySliderX.value;
     }
 
     public void changeSensitivityinY()
     {
-        playerMovement.yMouseSensitivity = sensitivitySliderY.value * 20;
+        playerMovement.yMouseSensitivity = sensitivitySliderY.value;
     }
 }
