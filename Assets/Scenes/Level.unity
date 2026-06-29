@@ -16217,6 +16217,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 26d9660038ebc684091dbe56adce98cf, type: 3}
   m_PrefabInstance: {fileID: 585021745}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &588509190 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4617091415027507212, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
+  m_PrefabInstance: {fileID: 5224361644754688012}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8fa421d8713b7e4b98bad0b0c2a4f64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &589739811 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8164078558771037576, guid: 7b283fc8959330a4ba49f7f4d29dd4b9, type: 3}
@@ -16329,6 +16340,56 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 3157effd89629c147842ad3fc74e3cb5, type: 3}
   m_PrefabInstance: {fileID: 589926096}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &592378145
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 592378147}
+  - component: {fileID: 592378146}
+  m_Layer: 0
+  m_Name: SoundManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &592378146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 592378145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cc75ba25c913424cbd3cf4585ff8e40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AutoUnparentOnAwake: 1
+  soundEmitterPrefab: {fileID: 4757077105493572898, guid: f8c7b6079c6fb52439e908caa77c87bf, type: 3}
+  collectionCheck: 1
+  defaultCapacity: 10
+  maxPoolSize: 100
+  maxSoundInstances: 30
+--- !u!4 &592378147
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 592378145}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.404719, y: 2.2158241, z: -12.709842}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &598522859
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22530,14 +22591,6 @@ MonoBehaviour:
   lettersInParagraph: 0
   _letterCount: 0
   SpawnVFXBarra: {fileID: 0}
-  typeSD:
-    clip: {fileID: 0}
-    mixerGroup: {fileID: 0}
-    loop: 0
-    playOnAwake: 0
-    frequentSound: 0
-    walkClips: []
-    floorType: 0
 --- !u!4 &837265233
 Transform:
   m_ObjectHideFlags: 0
@@ -23298,6 +23351,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fea187ee15906504c92bd48c8c1f6f08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioManager: {fileID: 588509190}
   inputHandler: {fileID: 1437453744}
   letterSpawner: {fileID: 5224361644754688013}
   combatgroup: {fileID: 870630822}
@@ -27907,10 +27961,6 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: c4d45a2eae4b8694f8de0616f22816ef, type: 3}
       propertyPath: m_Name
       value: stairs1
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: c4d45a2eae4b8694f8de0616f22816ef, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -39197,57 +39247,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 46f9c3a0eec45614a9a6eebf8ee288ca, type: 3}
   m_PrefabInstance: {fileID: 1449187983}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1455588826
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1455588828}
-  - component: {fileID: 1455588827}
-  m_Layer: 0
-  m_Name: SoundManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1455588827
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1455588826}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1cc75ba25c913424cbd3cf4585ff8e40, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoundManager
-  soundEmitterPrefab: {fileID: 3593444812031802195, guid: e8e8037f0047f0682bffb7a04cce8bf2, type: 3}
-  collectionCheck: 1
-  defaultCapacity: 10
-  maxPoolSize: 100
-  maxSoundInstances: 30
-  musicMixerGroup: {fileID: 0}
-  musicClip: {fileID: 0}
---- !u!4 &1455588828
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1455588826}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.94433, y: 1.06954, z: 14.70878}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1455830988
 GameObject:
   m_ObjectHideFlags: 0
@@ -56782,34 +56781,10 @@ PrefabInstance:
       propertyPath: mainCamera
       value: 
       objectReference: {fileID: 2014862231}
-    - target: {fileID: 1388610619814314635, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
-      propertyPath: stepSD.clip
-      value: 
-      objectReference: {fileID: 8300000, guid: e823543a3d5c43947a818c5200536c1e, type: 3}
-    - target: {fileID: 1388610619814314635, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
-      propertyPath: stepSD.floorType
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1388610619814314635, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
-      propertyPath: stepSD.mixerGroup
-      value: 
-      objectReference: {fileID: -2311999712682677846, guid: 68a196039f6a9632e9dcef31ca8df12d, type: 2}
-    - target: {fileID: 1388610619814314635, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
-      propertyPath: stepSD.walkClips.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1388610619814314635, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
-      propertyPath: 'stepSD.walkClips.Array.data[0]'
-      value: 
-      objectReference: {fileID: 8300000, guid: e823543a3d5c43947a818c5200536c1e, type: 3}
     - target: {fileID: 1573627085191976830, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
       propertyPath: vfxMiss
       value: 
       objectReference: {fileID: 5408711748532382962, guid: be4cb58e12983994bb7900a08219a579, type: 3}
-    - target: {fileID: 1573627085191976830, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
-      propertyPath: typeSD.clip
-      value: 
-      objectReference: {fileID: 8300000, guid: e902432a6f9b0b5449f43efb4622ac3d, type: 3}
     - target: {fileID: 1573627085191976830, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
       propertyPath: prefabLetter
       value: 
@@ -56866,18 +56841,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerHolder
       objectReference: {fileID: 0}
-    - target: {fileID: 2865001616013221305, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4617091415027507212, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
-      propertyPath: BGMSource
-      value: 
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 857757659493838570, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
-    m_RemovedGameObjects:
-    - {fileID: 5262456016617754853, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
@@ -57015,6 +56980,7 @@ SceneRoots:
   - {fileID: 1230714981}
   - {fileID: 262800516}
   - {fileID: 661606699}
+  - {fileID: 592378147}
   - {fileID: 333400123}
   - {fileID: 315007212}
   - {fileID: 1280602311}
@@ -57033,4 +56999,3 @@ SceneRoots:
   - {fileID: 1763913178}
   - {fileID: 692490183}
   - {fileID: 1779165850}
-  - {fileID: 1455588828}

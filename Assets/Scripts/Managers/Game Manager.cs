@@ -31,6 +31,10 @@ public class GameManager : Singleton<GameManager>
         SoundManager.Instance.CreateSound().WithSoundData(walkSoundData).WithRandomPitch().StepSound().Play();
     }
 
+    void Awake()
+    {
+        base.Awake();
+    }
     void Start()
     {
         AudioManager.instance.PlayBGM(SoundType.FONDO, 0.5f);
