@@ -9,7 +9,7 @@ public class CameraRaycast : UnityUtils.Singleton<CameraRaycast>
 
     void Awake()
     {
-        layerMask = LayerMask.GetMask("Door", "Player", "Note");
+        layerMask = LayerMask.GetMask("Interactable", "Player");
     }
 
     void Update()

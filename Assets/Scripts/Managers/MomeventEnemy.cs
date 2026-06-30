@@ -16,7 +16,7 @@ public class MomeventEnemy : MonoBehaviour
 
     void Update()
     {
-        gameObject.transform.LookAt(player.transform.position);
+        gameObject.transform.LookAt(player.transform.position, Vector3.up);
     }
 
     void FloatEffect()

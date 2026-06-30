@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 681367813933722532}
   - component: {fileID: 7957736725580894071}
   - component: {fileID: 8408053324334532745}
-  m_Layer: 7
+  m_Layer: 9
   m_Name: default
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -100,7 +100,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6683893214029589146}
   - component: {fileID: 3770567418104828653}
-  m_Layer: 7
+  m_Layer: 9
   m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -155,7 +155,7 @@ GameObject:
   - component: {fileID: 8047407572342380564}
   - component: {fileID: 6528201562651212232}
   - component: {fileID: 2728432031133395950}
-  m_Layer: 7
+  m_Layer: 9
   m_Name: DoorPivot
   m_TagString: Untagged
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
