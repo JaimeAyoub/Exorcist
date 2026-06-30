@@ -5,8 +5,7 @@ public class CameraRaycast : UnityUtils.Singleton<CameraRaycast>
 {
     public CinemachineVirtualCameraBase virtualCamera;
     LayerMask layerMask;
-
-    public bool canOpen = false;
+    
 
     void Awake()
     {
@@ -25,22 +24,20 @@ public class CameraRaycast : UnityUtils.Singleton<CameraRaycast>
     private void TryInteract()
     {
         RaycastHit hit;
-        if (Physics.Raycast(virtualCamera.transform.position, virtualCamera.transform.forward, out hit, 2.5f, layerMask))
+        if (Physics.Raycast(virtualCamera.transform.position, virtualCamera.transform.forward, out hit, 2.5f,
+                layerMask))
         {
-            DoorScript door = hit.collider.GetComponent<DoorScript>();
-            if (door != null)
+            if (hit.collider.TryGetComponent<Interactable>(out Interactable interactable))
             {
-                door.ToggleDoor();
-                return;
-            }
-
-            // Detectar notas
-            Note note = hit.collider.GetComponent<Note>();
-            if (note != null)
-            {
-                note.ShowNote();
-                return;
+                interactable.Interact();
             }
         }
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(virtualCamera.transform.position, virtualCamera.transform.forward * 2.5f);
+        
     }
 }

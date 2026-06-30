@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class DoorScript : MonoBehaviour
+public class DoorInteractable : Interactable
 {
     public bool isOpen;
     public GameObject pivot;
@@ -21,18 +21,11 @@ public class DoorScript : MonoBehaviour
         _openRotation = _closedRotation + new Vector3(0, -90, 0);
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.E) && CameraRaycast.Instance.canOpen)
-        {
-            ToggleDoor();
-        }
-    }
 
-    public void ToggleDoor()
+    public override void Interact()
     {
         _currentTween?.Kill();
-      
+
         if (!isOpen)
         {
             _currentTween = pivot.transform.DORotate(_openRotation, 0.2f, RotateMode.Fast);
