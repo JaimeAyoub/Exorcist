@@ -14,5 +14,5 @@ public class SoundData
     public bool playOnAwake;
     public bool frequentSound;
     public List<AudioClip> walkClips;
-    [SerializeField] public FloorType floorType;
+   // [SerializeField] public FloorType floorType;
 }

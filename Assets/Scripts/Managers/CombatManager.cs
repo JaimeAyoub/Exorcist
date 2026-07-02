@@ -111,7 +111,6 @@ public class CombatManager : Singleton<CombatManager>
             if (_currentturn == Combatturn.PlayerTurn)
             {
                 inputHandler.EnableTyping();
-                Debug.Log("Turno player");
 
                 if (IsCombatEnd()) yield break;
 
@@ -248,7 +247,6 @@ public class CombatManager : Singleton<CombatManager>
 
         player.transform.rotation = Quaternion.Euler(0, 0, 0);
         player.transform.position = playerToTeleport;
-        Debug.Log("Player tepeado a: " + player.transform.position);
     }
 
     private void TeleportEnemy(Vector3 enemyPosTeleport)
