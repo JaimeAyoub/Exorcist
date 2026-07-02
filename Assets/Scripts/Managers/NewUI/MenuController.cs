@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Net;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -7,11 +8,48 @@ using UnityEngine.EventSystems;
 public class MenuController : MonoBehaviour
 {
     [SerializeField] private Page initialPage;
+    [SerializeField] private Page menuPage;
     [SerializeField] private GameObject firstFocusItem;
+
+  //  [SerializeField] private PlayerInputHandler playerInputHandler;
 
     private Canvas _rootCanvas;
 
     private readonly Stack<Page> _pageStack = new Stack<Page>();
+    [SerializeField, Header("DEBUG - Stack Visualizacion")]
+    private List<Page> _stackVisualization = new List<Page>();
+
+    private bool _isPaused = false;
+
+    private void OnEnable()
+    {
+        //playerInputHandler.PauseEvent += OnPause;
+       // playerInputHandler.ResumeEvent += OnCancel;
+    }
+
+    private void OnDisable()
+    {
+        //playerInputHandler.PauseEvent -= OnPause;
+        //playerInputHandler.ResumeEvent -= OnCancel;
+    }
+
+    private void OnPause()
+    {
+        _isPaused = !_isPaused;
+        if (_isPaused == true)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+           // playerInputHandler.SetUI();
+            if (_pageStack.Contains(menuPage))
+            {
+                return;
+            }
+            PushPage(menuPage);
+
+        }
+
+    }
 
     private void Awake()
     {
@@ -20,12 +58,13 @@ public class MenuController : MonoBehaviour
 
     private void Start()
     {
+
         if (firstFocusItem != null)
         {
             EventSystem.current.SetSelectedGameObject(firstFocusItem);
         }
 
-        if (initialPage != null)
+        if (initialPage != null && !_pageStack.Contains(initialPage))
         {
             PushPage(initialPage);
         }
@@ -33,11 +72,16 @@ public class MenuController : MonoBehaviour
 
     private void OnCancel()
     {
+        Debug.Log("OnCancel");
         if (_rootCanvas.enabled && _rootCanvas.gameObject.activeInHierarchy)
         {
-            if (_pageStack.Count != 0)
+            if (_pageStack.Count > 1)
             {
                 PopPage();
+               // playerInputHandler.SetGameplay();
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                Time.timeScale = 1;
             }
         }
     }
@@ -65,34 +109,49 @@ public class MenuController : MonoBehaviour
                 currentPage.Exit(false);
             }
         }
-
-        _pageStack.Push(page);
+        if (!_pageStack.Contains(page))
+        {
+            _pageStack.Push(page);
+        }
+        UpdateStackVisualisation();
     }
 
-    private void PopPage()
+    public void PopPage()
     {
-        if (_pageStack.Count > 1)
+        
+        if (_pageStack.Count > 0) 
         {
             var page = _pageStack.Pop();
-            page.Exit(true);
+            page.Exit(true); 
 
-            var newCurrentPage = _pageStack.Peek();
-            if (newCurrentPage.exitOnNewPagePush)
+            if (_pageStack.Count > 0)
             {
-                newCurrentPage.Enter(false);
+                var newCurrentPage = _pageStack.Peek();
+                if (newCurrentPage.exitOnNewPagePush)
+                {
+                    newCurrentPage.Enter(false);
+                }
             }
         }
-        else
-        {
-            Debug.LogWarning("Trying to pop a page but only 1 page remains in the stack!");
-        }
+        UpdateStackVisualisation();
     }
 
     public void PopAllPages()
     {
-        for (int i = 1; i < _pageStack.Count; i++)
+
+        while (_pageStack.Count > 0)
         {
             PopPage();
+        }
+    }
+
+    void UpdateStackVisualisation()
+    {
+        _stackVisualization.Clear();
+        var stackArray = _pageStack.ToArray();
+        for (int i = stackArray.Length - 1; i >= 0; i--)
+        {
+            _stackVisualization.Add(stackArray[i]);
         }
     }
 }
