@@ -53,7 +53,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (!Application.isPlaying || CombatManager.instance.isCombat) return;
+        if (!Application.isPlaying || CombatManager.Instance.isCombat) return;
 
         HandleMovement();
         HandleRotation();

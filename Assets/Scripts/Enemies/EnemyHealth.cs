@@ -35,7 +35,7 @@ public class EnemyHealth : MonoBehaviour
         if (currentHealth <= 0)
             Death();
         else
-            CombatManager.instance.IsCombatEnd();
+            CombatManager.Instance.IsCombatEnd();
     }
 
     private void Death()
@@ -45,7 +45,7 @@ public class EnemyHealth : MonoBehaviour
             damageTween.Kill();
 
         transform.DOScale(Vector3.zero, 0.5f)
-            .OnComplete(() => CombatManager.instance.EndCombat());
+            .OnComplete(() => CombatManager.Instance.EndCombat());
         ;
     }
 
