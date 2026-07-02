@@ -24,7 +24,7 @@ public class CameraRaycast : UnityUtils.Singleton<CameraRaycast>
     private void TryInteract()
     {
         RaycastHit hit;
-        if (Physics.Raycast(virtualCamera.transform.position, virtualCamera.transform.forward, out hit, 2.5f,
+        if (Physics.Raycast(virtualCamera.transform.position, virtualCamera.transform.forward, out hit, 5.0f,
                 layerMask))
         {
             if (hit.collider.TryGetComponent<Interactable>(out Interactable interactable))
@@ -37,7 +37,7 @@ public class CameraRaycast : UnityUtils.Singleton<CameraRaycast>
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawRay(virtualCamera.transform.position, virtualCamera.transform.forward * 2.5f);
+        Gizmos.DrawRay(virtualCamera.transform.position, virtualCamera.transform.forward * 5.0f);
         
     }
 }
