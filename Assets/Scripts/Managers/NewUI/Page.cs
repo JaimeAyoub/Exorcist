@@ -6,11 +6,11 @@ using UnityEngine.Events;
 [DisallowMultipleComponent]
 public class Page : MonoBehaviour
 {
-    private AudioSource _audioSource;
+    
     private RectTransform _rectTransform;
     private CanvasGroup _canvasGroup;
 
-    [SerializeField] private float animationSpeed = 1f; 
+    [SerializeField] private float animationSpeed = 1f;
     public bool exitOnNewPagePush = false;
     [SerializeField] private AudioClip entryClip;
     [SerializeField] private AudioClip exitClip;
@@ -23,26 +23,24 @@ public class Page : MonoBehaviour
     [SerializeField] private UnityEvent prePopAction;
     [SerializeField] private UnityEvent postPopAction;
 
+    public SoundData soundData;
+
     private Coroutine _animationCoroutine;
     private Coroutine _audioCoroutine;
+
 
     private void Awake()
     {
         _rectTransform = GetComponent<RectTransform>();
         _canvasGroup = GetComponent<CanvasGroup>();
-        _audioSource = GetComponent<AudioSource>();
 
-        _audioSource.playOnAwake = false;
-        _audioSource.loop = false;
-        _audioSource.spatialBlend = 0;
-        _audioSource.enabled = false;
     }
 
     public void Enter(bool playAudio)
     {
         prePushAction?.Invoke();
 
-        switch(entryMode)
+        switch (entryMode)
         {
             case EntryMode.SLIDE:
                 SlideIn(playAudio);
@@ -58,7 +56,7 @@ public class Page : MonoBehaviour
 
     public void Exit(bool playAudio)
     {
-		prePopAction?.Invoke();
+        prePopAction?.Invoke();
 
         switch (exitMode)
         {
@@ -95,7 +93,7 @@ public class Page : MonoBehaviour
 
         PlayExitClip(playAudio);
     }
-    
+
     private void ZoomIn(bool playAudio)
     {
         if (_animationCoroutine != null)
@@ -142,41 +140,29 @@ public class Page : MonoBehaviour
 
     private void PlayEntryClip(bool playAudio)
     {
-        if (playAudio && entryClip != null && _audioSource != null)
+        if (playAudio && entryClip != null)
         {
             if (_audioCoroutine != null)
             {
                 StopCoroutine(_audioCoroutine);
             }
 
-            _audioCoroutine = StartCoroutine(PlayClip(entryClip));
+            soundData.clip = entryClip;
+            SoundManager.Instance.CreateSound().WithSoundData(soundData).Play();
         }
     }
-    
+
     private void PlayExitClip(bool playAudio)
     {
-        if (playAudio && exitClip != null && _audioSource != null)
+        if (playAudio && exitClip != null)
         {
             if (_audioCoroutine != null)
             {
                 StopCoroutine(_audioCoroutine);
             }
 
-            _audioCoroutine = StartCoroutine(PlayClip(exitClip));
+            soundData.clip = exitClip;
+            SoundManager.Instance.CreateSound().WithSoundData(soundData).Play();
         }
-    }
-
-    private IEnumerator PlayClip(AudioClip clip)
-    {
-        //SoundManager.Instance.CreateSound().WithSoundData(clip).Play();
-        _audioSource.enabled = true;
-
-        WaitForSeconds wait = new WaitForSeconds(clip.length);
-
-        _audioSource.PlayOneShot(clip);
-
-        yield return wait;
-
-        _audioSource.enabled = false;
     }
 }
