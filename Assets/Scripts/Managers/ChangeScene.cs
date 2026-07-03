@@ -100,9 +100,4 @@ public class ChangeScene : MonoBehaviour
     public void GameOverScene()
     {
     }
-
-    public void ExitGame()
-    {
-        Application.Quit();
-    }
 }
