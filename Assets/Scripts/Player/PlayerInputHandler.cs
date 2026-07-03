@@ -119,7 +119,7 @@ public class PlayerInputHandler : MonoBehaviour
         }
 
         KeyTypedEvent?.Invoke(endChar[0]);
-        Debug.Log(endChar);
+       // Debug.Log(endChar);
     }
 
     private void OnPause(InputAction.CallbackContext ctx)
