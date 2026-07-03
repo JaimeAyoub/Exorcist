@@ -7,7 +7,7 @@ public class CameraShake : UnityUtils.Singleton<CameraShake>
     private CinemachineBasicMultiChannelPerlin _noise;
     private float shakeTime;
 
-    private void Start()
+    private void Awake()
     {
         _cinemachineCamera = this.gameObject.GetComponent<CinemachineCamera>();
         if (_cinemachineCamera != null)

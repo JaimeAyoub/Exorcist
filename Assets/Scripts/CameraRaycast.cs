@@ -8,7 +8,7 @@ public class CameraRaycast : UnityUtils.Singleton<CameraRaycast>
 
     public bool canOpen = false;
 
-    void Start()
+    void Awake()
     {
         layerMask = LayerMask.GetMask("Door", "Player", "Note");
     }
