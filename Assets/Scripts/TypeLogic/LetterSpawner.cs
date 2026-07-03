@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
+using NUnit.Framework;
+using NUnit.Framework.Interfaces;
+using TMPro;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -9,33 +12,37 @@ public class LetterSpawner : MonoBehaviour
     [SerializeField] private PlayerInputHandler playerInputHandler;
     private const int NumberOfCharsInScreen = 7;
 
-    [Header("Variables para el texto")] 
-    public TextAsset textAsset;
-    public List<char> textToCharList;
-    public Queue<char> QueueTextToScreen;
-    private int _iteratorText;
+    [Header("Variables para el texto")] public TextAsset textAsset; // Texto que se leerá
+    public List<char> textToCharList; // Lista de caracteres del texto
+    public Queue<char> QueueTextToScreen; // Letras en pantalla
+    private int _iteratorText; // Posición actual en el texto
 
 
-    [Header("Variables para la aparición de las letras")]
-    public GameObject prefabLetter;
-    public Sprite[] letterSpriteArray;
-    public Dictionary<char, Sprite> LetterSpritesMap;
-    private List<GameObject> _letterObjects;
-    public float spaceBetweenLetters;
-    public VisualEffect vfxBook;
-    public VisualEffect vfxHit;
+    [Header("Variables para el la aparicion de las letras")]
+    public GameObject prefabLetter; // Prefab de letra
+
+    public Sprite[] letterSpriteArray; // Sprites de letras
+    public Dictionary<char, Sprite> LetterSpritesMap; // Diccionario de sprites
+    private List<GameObject> _letterObjects; // Prefabs en pantalla
+    public float spaceBetweenLetters; //Variable para la separacion entre letras
+    public VisualEffect vfxBook; //El efecto que quieres que aparezca
+    public VisualEffect vfxHit; //El efecto que quieres que aparezca
     public VisualEffect vfxMiss;
 
-    [Header("Variables para el libro")]
-    public GameObject bookLocation;
-    public GameObject prefabLetterInBook;
-    private List<GameObject> _lettersInBook;
-    [SerializeField] public int lettersInParagraph;
-    public int _letterCount;
+    [Header("Variables para la aparicion de las letras doradas en el libro")]
+    public GameObject bookLocation; //Donde apareceran las letras doradas
+
+    public GameObject prefabLetterInBook; //GameObject con el sprite renderer y shader dorado
+    private List<GameObject> _lettersInBook; //Lista donde guardamos las letras que hay en el libro
+    [SerializeField] public int lettersInParagraph; //Variable para poner cuantas letras quieres por parrafo
+    public int _letterCount; //Variable para saber cuantas letras hemos escrito.
     public GameObject SpawnVFXBarra;
 
+    private void OnEnable()
+    {
+        // playerInputHandler.KeyTypedEvent += UpdateScreenText;
+    }
 
-    public SoundData typeSD;
     private void Awake()
     {
         textToCharList = textAsset.text.ToList();
@@ -46,22 +53,9 @@ public class LetterSpawner : MonoBehaviour
         LetterSpritesMap = new Dictionary<char, Sprite>();
         foreach (Sprite sprite in letterSpriteArray)
         {
-        
-            char key = sprite.name[0]; 
+            char key = char.ToUpper(sprite.name[0]);
             LetterSpritesMap[key] = sprite;
         }
-    }
-
-    private void OnEnable()
-    {
-        if (playerInputHandler != null)
-            playerInputHandler.KeyTypedEvent += UpdateScreenText;
-    }
-
-    private void OnDisable()
-    {
-        if (playerInputHandler != null)
-            playerInputHandler.KeyTypedEvent -= UpdateScreenText;
     }
 
     void Start()
@@ -96,6 +90,7 @@ public class LetterSpawner : MonoBehaviour
         GameObject letterObj = Instantiate(prefabLetter, transform);
         letterObj.transform.localPosition = new Vector3(index * spaceBetweenLetters, 0, 0);
 
+
         var sr = letterObj.GetComponent<SpriteRenderer>();
         sr.material = new Material(sr.material);
 
@@ -110,9 +105,10 @@ public class LetterSpawner : MonoBehaviour
 
     public void UpdateScreenText(char keyTyped)
     {
-        if (!CombatManager.Instance.isCombat) return;
+        if (!CombatManager.instance.isCombat) return;
 
-        while (QueueTextToScreen.Count > 0 && char.IsControl(QueueTextToScreen.Peek()))
+        // Avanzar
+        while (QueueTextToScreen.Count > 0 && !char.IsLetterOrDigit(QueueTextToScreen.Peek()))
         {
             if (_letterObjects.Count > 0)
             {
@@ -120,7 +116,9 @@ public class LetterSpawner : MonoBehaviour
                 _letterObjects.RemoveAt(0);
             }
 
-            QueueTextToScreen.Dequeue();
+            if (QueueTextToScreen.Count > 0)
+                QueueTextToScreen.Dequeue();
+
             _iteratorText++;
             AddQueueIfAvailable();
         }
@@ -129,42 +127,43 @@ public class LetterSpawner : MonoBehaviour
 
         char currentChar = QueueTextToScreen.Peek();
 
-        if (keyTyped == currentChar)
+        if (char.ToUpper(keyTyped) == char.ToUpper(currentChar)) // tecla correcta
         {
             int indexForBook = _iteratorText;
             GameObject letterObj = _letterObjects[0];
 
             AddTextInBook(letterObj, indexForBook);
 
-            QueueTextToScreen.Dequeue();
-            _letterObjects.RemoveAt(0);
+            if (QueueTextToScreen.Count > 0)
+                QueueTextToScreen.Dequeue();
 
-            SoundManager.Instance.CreateSound().WithSoundData(typeSD).WithRandomPitch().Play();
+            if (_letterObjects.Count > 0)
+                _letterObjects.RemoveAt(0);
+
+            AudioManager.instance.PlaySFX(SoundType.TECLAS, 0.5f);
             _letterCount++;
             _iteratorText++;
-            CombatManager.Instance.AddTime(1.0f);
+            CombatManager.instance.AddTime(1.0f);
 
             AddQueueIfAvailable();
 
             for (int i = 0; i < _letterObjects.Count; i++)
                 _letterObjects[i].transform.localPosition = new Vector3(i * spaceBetweenLetters, 0, 0);
         }
-        else 
+        else // tecla incorrecta
         {
+            
             if (_letterObjects.Count > 0 && keyTyped != ' ')
             {
                 SpriteRenderer sp = _letterObjects[0].GetComponent<SpriteRenderer>();
-                
-                sp.DOKill(); 
-                sp.color = Color.white; 
                 sp.DOColor(Color.red, 0.125f).SetLoops(2, LoopType.Yoyo);
-                
-                CombatManager.Instance.SubstracTime(1.0f);
+                CombatManager.instance.SubstracTime(1.0f);
                 CameraShake.Instance.CmrShake(0.55f, 0.50f);
-                SpawnVFX(SpawnVFXBarra.transform.position, vfxMiss);
+                SpawnVFX(SpawnVFXBarra.transform.position,vfxMiss);
             }
         }
     }
+
 
     private void AddQueueIfAvailable()
     {
@@ -175,12 +174,14 @@ public class LetterSpawner : MonoBehaviour
             char nextChar = textToCharList[nextIndex];
             QueueTextToScreen.Enqueue(nextChar);
             SpawnLetter(nextChar, _letterObjects.Count, prefabLetter.transform.position);
+            Debug.Log($"Se agregó la letra: {nextChar}");
         }
     }
 
+
     private void AddTextInBook(GameObject letterToAdd, int index)
     {
-        if (!CombatManager.Instance.isCombat || index >= textToCharList.Count || _letterObjects.Count == 0)
+        if (!CombatManager.instance.isCombat || index >= textToCharList.Count || _letterObjects.Count == 0)
         {
             Destroy(letterToAdd);
             return;
@@ -188,24 +189,28 @@ public class LetterSpawner : MonoBehaviour
 
         char currentChar = textToCharList[index];
 
+
         if (_letterCount >= lettersInParagraph)
         {
             _letterCount = 0;
+
             Sequence seq = DOTween.Sequence();
 
-            foreach (var letterObj in _lettersInBook.ToList())
+            foreach (var letters in _lettersInBook.ToList())
             {
-                if (CombatManager.Instance.enemy != null && letterObj != null)
+                if (CombatManager.instance.enemy != null && letters != null)
                 {
                     seq.Join(
-                        letterObj.transform.DOMove(CombatManager.Instance.enemy.transform.position, 0.5f)
+                        letters.transform.DOMove(
+                                CombatManager.instance.enemy.transform.position,
+                                0.5f)
                             .SetEase(Ease.InFlash)
                             .OnComplete(() =>
                             {
-                                if (letterObj != null && CombatManager.Instance.player != null)
+                                if (letters != null && CombatManager.instance.player != null)
                                 {
-                                    Destroy(letterObj);
-                                    _lettersInBook.Remove(letterObj);
+                                    Destroy(letters);
+                                    _lettersInBook.Remove(letters);
                                 }
                             })
                     );
@@ -214,19 +219,28 @@ public class LetterSpawner : MonoBehaviour
 
             seq.OnComplete(() =>
             {
-                SpawnVFX(CombatManager.Instance.enemy.transform.position, vfxHit);
-                CombatManager.Instance.player.GetComponentInChildren<PlayerAttack>().Attack(1);
+                SpawnVFX(CombatManager.instance.enemy.transform.position, vfxHit);
+                CombatManager.instance.player
+                    .GetComponentInChildren<PlayerAttack>()
+                    .Attack(1);
             });
         }
 
         GameObject letter = Instantiate(prefabLetterInBook, bookLocation.transform);
-        letter.transform.localPosition = new Vector3(_letterCount * spaceBetweenLetters, 0f, 0f);
+
+        letter.transform.localPosition = new Vector3(
+            _letterCount * spaceBetweenLetters,
+            0f,
+            0f
+        );
         letter.SetActive(false);
 
         var sr = letter.GetComponent<SpriteRenderer>();
         if (LetterSpritesMap.TryGetValue(char.ToUpper(currentChar), out Sprite sprite))
         {
             sr.sprite = sprite;
+
+
             if (sr.material.HasProperty("_LetterTexture"))
             {
                 sr.material.SetTexture("_LetterTexture", sprite.texture);
@@ -247,10 +261,10 @@ public class LetterSpawner : MonoBehaviour
         _lettersInBook.Add(letter);
     }
 
-    private void SpawnVFX(Vector3 position, VisualEffect vfx)
+    private void SpawnVFX(Vector3 postion, VisualEffect vfx)
     {
-        if (!vfx) return; 
-        var vfxInstance = Instantiate(vfx, position, Quaternion.identity);
+        if (!vfxBook) return;
+        var vfxInstance = Instantiate(vfx, postion, Quaternion.identity);
         vfxInstance.SendEvent("Play");
         Destroy(vfxInstance.gameObject, 2f);
     }
@@ -265,6 +279,7 @@ public class LetterSpawner : MonoBehaviour
                 Destroy(go);
             }
         }
+
 
         foreach (var go in _lettersInBook)
         {
