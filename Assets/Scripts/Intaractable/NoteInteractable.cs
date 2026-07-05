@@ -1,31 +1,51 @@
+using System;
 using UnityEngine;
 using TMPro;
+using UnityEngine.InputSystem;
 
 public class NoteInteractable : Interactable
 {
-
     public TextAsset noteText;
-    
-    public TextMeshProUGUI noteTextUI;
-    
+
     public MenuController menuController;
-    
-    public Page page;
- 
+
+    public PlayerInputHandler playerInputHandler;
+
+    private InputAction _closection;
+
+
+    private void Start()
+    {
+        _closection = InputSystem.actions.FindAction("CloseNote");
+    }
+
+
+    private void Update()
+    {
+        if (_closection.WasPerformedThisFrame())
+        {
+            CloseNote();
+            Debug.Log("Close Note");
+        }
+    }
 
     public override void Interact()
     {
-       Debug.Log(noteText.text);
+        if (menuController)
+        {
+            if (playerInputHandler != null)
+            {
+                menuController.PushNotePage(noteText.text);
+                playerInputHandler.SetNote();
+                GameManager.Instance.EnableCursor();
+            }
+        }
+    }
 
-       Cursor.lockState = CursorLockMode.None;
-       Cursor.visible = true;
-       if (noteTextUI != null)
-       {
-           if (menuController)
-           {
-               menuController.PushPage(page);
-           }
-           noteTextUI.text = noteText.text;
-       }
+    private void CloseNote()
+    {
+        menuController.PopPage();
+        playerInputHandler.SetGameplay();
+        GameManager.Instance.DisableCursor();
     }
 }

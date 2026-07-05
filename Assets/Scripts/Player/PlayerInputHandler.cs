@@ -14,6 +14,7 @@ public class PlayerInputHandler : MonoBehaviour
 
     [SerializeField] private string uiActionMapName = "UI";
     [SerializeField] private string typingActionMapName = "Typing";
+    [SerializeField] private string noteActionMapName = "Note";
 
     [Header("Player Action Name References")] [SerializeField]
     private string movement = "Movement";
@@ -66,6 +67,7 @@ public class PlayerInputHandler : MonoBehaviour
         var playerMapReference = playerControls.FindActionMap(playerActionMapName);
         var uiMapReference = playerControls.FindActionMap(uiActionMapName);
         var typingMapReference = playerControls.FindActionMap(typingActionMapName);
+        var noteMapReference = playerControls.FindActionMap(noteActionMapName);
 
         _movementAction = playerMapReference.FindAction(movement);
         _rotationAction = playerMapReference.FindAction(rotation);
@@ -176,20 +178,24 @@ public class PlayerInputHandler : MonoBehaviour
         playerControls.FindActionMap(playerActionMapName).Enable();
         playerControls.FindActionMap(typingActionMapName).Enable();
         playerControls.FindActionMap(uiActionMapName).Disable();
+        playerControls.FindActionMap(noteActionMapName).Disable();
+        
     }
 
     public void SetUI()
     {
         playerControls.FindActionMap(playerActionMapName).Disable();
         playerControls.FindActionMap(typingActionMapName).Disable();
+        playerControls.FindActionMap(noteActionMapName).Disable();
         playerControls.FindActionMap(uiActionMapName).Enable();
     }
 
     public void SetCombat()
     {
-        playerControls.FindActionMap(playerActionMapName).Disable();
         playerControls.FindActionMap(typingActionMapName).Enable();
+        playerControls.FindActionMap(playerActionMapName).Disable();
         playerControls.FindActionMap(uiActionMapName).Disable();
+        playerControls.FindActionMap(noteActionMapName).Disable();
     }
 
     public void DesactivateTyping()
@@ -200,6 +206,15 @@ public class PlayerInputHandler : MonoBehaviour
     public void EnableTyping()
     {
         playerControls.FindActionMap(typingActionMapName).Enable();
+    }
+
+    public void SetNote()
+    {
+        playerControls.FindActionMap(noteActionMapName).Enable();
+        playerControls.FindActionMap(typingActionMapName).Disable();
+        playerControls.FindActionMap(playerActionMapName).Disable();
+        playerControls.FindActionMap(uiActionMapName).Disable();
+        
     }
 
 }
