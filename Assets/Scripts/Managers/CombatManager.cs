@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 using Unity.Cinemachine;
 using UnityEngine.InputSystem;
+using UnityEngine.Playables;
 using UnityEngine.Rendering.Universal;
 using UnityUtils;
 
@@ -43,6 +44,9 @@ public class CombatManager : Singleton<CombatManager>
     public Image DamageVignette;
     public GameObject CameraHolder;
 
+    public PlayableDirector sequenceCombat;
+    public CanvasGroup sequence;
+
 
     void Start()
     {
@@ -77,32 +81,45 @@ public class CombatManager : Singleton<CombatManager>
     {
         if (isCombat || isTransitioning) return;
         isTransitioning = true;
-        
-        StartCoroutine(StartCombatRoutine());
+
+        StartCombatTimeLine();
     }
 
-    private IEnumerator StartCombatRoutine()
+    public void PauseTimeLine()
     {
+        sequenceCombat.Pause();
+    }
+
+    public void ResumeTimeLine()
+    {
+        sequenceCombat.Resume();
+    }
+    private void StartCombatTimeLine()
+    {
+        sequenceCombat.Play();
+    }
+
+
+    public void StartCombatRoutine()
+    {
+        
         enemy = player.GetComponentInChildren<PlayerCollision>().collisionEnemy;
         if (enemy == null)
         {
             Debug.LogWarning("Enemy not found, teleport skipped.");
             isTransitioning = false;
-            yield break;
+            return;
         }
 
-        imageToFade.DOFade(1f, 0.5f).SetUpdate(true);
-        yield return new WaitForSecondsRealtime(0.5f); 
 
         player.GetComponentInChildren<PlayerAttack>().target = enemy;
-        SetUpCombat();
-        StartCoroutine(CombatLoop());
 
-        imageToFade.DOFade(0f, 0.5f).SetUpdate(true);
-        yield return new WaitForSecondsRealtime(0.5f);
+
+        SetUpCombat();
 
         isTransitioning = false;
     }
+
 
     private IEnumerator CombatLoop()
     {
@@ -120,11 +137,11 @@ public class CombatManager : Singleton<CombatManager>
             else if (_currentturn == Combatturn.EnemyTurn)
             {
                 inputHandler.DesactivateTyping();
-                
+
                 if (enemy != null)
                     enemy.GetComponent<EnemyAttack>().Attack(1);
                 Debug.Log("Enemigo hace damage");
-                
+
                 if (IsCombatEnd()) yield break;
 
                 ResetTime();
@@ -135,7 +152,7 @@ public class CombatManager : Singleton<CombatManager>
 
     public void EndCombat()
     {
-        if (isTransitioning) return; 
+        if (isTransitioning) return;
         isTransitioning = true;
 
         StartCoroutine(EndCombatRoutine());
@@ -155,15 +172,15 @@ public class CombatManager : Singleton<CombatManager>
         Destroy(enemy);
         inputHandler.SetGameplay();
         inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
-        
+
         TeleportPlayer(_currentPositionPlayer);
         Debug.Log("PlayerRegresado");
         player.transform.rotation = _currentRotationPlayer;
-        
+
         CharacterController cc = player.GetComponent<CharacterController>();
         if (cc != null)
             cc.enabled = true;
-            
+
         UIManager.Instance.CheckEnd();
         _currentturn = Combatturn.None;
         Cursor.visible = false;
@@ -174,10 +191,10 @@ public class CombatManager : Singleton<CombatManager>
         candle.SetActive(true);
         ResetTime();
         letterSpawner.EmptyAll();
-        
+
         _currentPositionPlayer = Vector3.zero;
         OptionsScript.Instance.PixelationShaderMaterial.SetFloat("_PixelSize", 4.0f);
-        
+
         if (_isPlayerAlive)
         {
             imageToFade.DOFade(0f, 0.5f).SetUpdate(true);
@@ -190,7 +207,7 @@ public class CombatManager : Singleton<CombatManager>
             ChangeScene sceneChange = FindFirstObjectByType<ChangeScene>();
             if (sceneChange)
             {
-                sceneChange.SelectSceneT(2); 
+                sceneChange.SelectSceneT(2);
             }
             else
             {
@@ -268,7 +285,8 @@ public class CombatManager : Singleton<CombatManager>
         if (player == null) Debug.LogError("¡PLAYER es null!");
         if (enemy == null) Debug.LogError("¡ENEMY es null!");
         if (OptionsScript.Instance == null) Debug.LogError("¡OptionsScript.Instance es null!");
-        else if (OptionsScript.Instance.PixelationShaderMaterial == null) Debug.LogError("¡PixelationShaderMaterial es null!");
+        else if (OptionsScript.Instance.PixelationShaderMaterial == null)
+            Debug.LogError("¡PixelationShaderMaterial es null!");
         if (inputHandler == null) Debug.LogError("¡inputHandler es null!");
         if (CameraHolder == null) Debug.LogError("¡CameraHolder es null!");
         if (letterSpawner == null) Debug.LogError("¡letterSpawner es null!");
@@ -278,10 +296,10 @@ public class CombatManager : Singleton<CombatManager>
         CharacterController cc = player.GetComponent<CharacterController>();
         if (cc != null)
             cc.enabled = false;
-            
+
         _currentPositionPlayer = player.transform.position;
         _currentRotationPlayer = player.transform.rotation;
-        
+
         if (OptionsScript.Instance.volumeProfile.TryGet(out OptionsScript.Instance._chromaticAberration))
         {
             _currentAberration = OptionsScript.Instance._chromaticAberration.intensity.value;
@@ -292,7 +310,7 @@ public class CombatManager : Singleton<CombatManager>
         //AudioManager.instance.PlayBGM(SoundType.COMBATE, 1f);
         //AudioManager.instance.PlaySFX(SoundType.ENEMIGO, 0.3f);
         _currentturn = Combatturn.PlayerTurn;
-                
+
         TeleportEnemy(toEnemySpanwe);
         TeleportPlayer(toPlayerSpawn);
         inputHandler.SetCombat();
@@ -303,13 +321,13 @@ public class CombatManager : Singleton<CombatManager>
         UIManager.Instance.ActivateCanvas(UIManager.Instance._combatCanvas);
         inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
         inputHandler.KeyTypedEvent += letterSpawner.UpdateScreenText;
-    
-        
+
+
         bookSprite.SetActive(true);
         book.SetActive(false);
         candle.SetActive(false);
         healthCandle.SetActive(true);
-        
+
         Vector3 currentPosBook = bookSprite.transform.position;
         bookSprite.transform.position = new Vector3(currentPosBook.x, currentPosBook.y - 1.5f, currentPosBook.z);
         bookSprite.transform.DOMove(currentPosBook, 0.5f).SetUpdate(true);
