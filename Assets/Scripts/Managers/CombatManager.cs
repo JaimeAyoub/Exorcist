@@ -47,6 +47,7 @@ public class CombatManager : Singleton<CombatManager>
     public PlayableDirector sequenceCombat;
     public CanvasGroup sequence;
 
+    public SoundData TriggerSound;
 
     void Start()
     {
@@ -82,11 +83,11 @@ public class CombatManager : Singleton<CombatManager>
     {
         if (isCombat || isTransitioning) return;
         isTransitioning = true;
-
+        SoundManager.Instance.CreateSound().WithSoundData(TriggerSound).Play();
         inputHandler.EnableTyping();
         StartCombatTimeLine();
         Time.timeScale = 0;
-        AudioManager.instance.StopSFX();
+
     }
 
     public void PauseTimeLine()

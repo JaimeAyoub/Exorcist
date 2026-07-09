@@ -23601,6 +23601,13 @@ MonoBehaviour:
   lettersInParagraph: 0
   _letterCount: 0
   SpawnVFXBarra: {fileID: 0}
+  letterSound:
+    clip: {fileID: 0}
+    mixerGroup: {fileID: 0}
+    loop: 0
+    playOnAwake: 0
+    frequentSound: 0
+    walkClips: []
 --- !u!4 &837265233
 Transform:
   m_ObjectHideFlags: 0
@@ -24520,6 +24527,13 @@ MonoBehaviour:
   CameraHolder: {fileID: 1906441200}
   sequenceCombat: {fileID: 1249534626}
   sequence: {fileID: 0}
+  TriggerSound:
+    clip: {fileID: 8300000, guid: f9079abc115345f4a9b88279732321e9, type: 3}
+    mixerGroup: {fileID: 0}
+    loop: 0
+    playOnAwake: 0
+    frequentSound: 0
+    walkClips: []
 --- !u!114 &870630825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59513,6 +59527,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 653689221}
     - target: {fileID: 1573627085191976830, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
+      propertyPath: letterSound.clip
+      value: 
+      objectReference: {fileID: 8300000, guid: e902432a6f9b0b5449f43efb4622ac3d, type: 3}
+    - target: {fileID: 1573627085191976830, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
       propertyPath: prefabLetterInBook
       value: 
       objectReference: {fileID: 661606700}
@@ -59560,6 +59578,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerHolder
       objectReference: {fileID: 0}
+    - target: {fileID: 8621941362691013949, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
+      propertyPath: DamageSound.clip
+      value: 
+      objectReference: {fileID: 8300000, guid: 5020e820e9afeed468e1464bf6fbed7b, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

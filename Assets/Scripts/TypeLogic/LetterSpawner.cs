@@ -38,6 +38,8 @@ public class LetterSpawner : MonoBehaviour
     public int _letterCount; //Variable para saber cuantas letras hemos escrito.
     public GameObject SpawnVFXBarra;
 
+    [Header("Sonidos")] public SoundData letterSound;
+
     private void OnEnable()
     {
         // playerInputHandler.KeyTypedEvent += UpdateScreenText;
@@ -140,7 +142,8 @@ public class LetterSpawner : MonoBehaviour
             if (_letterObjects.Count > 0)
                 _letterObjects.RemoveAt(0);
 
-            AudioManager.instance.PlaySFX(SoundType.TECLAS, 0.5f);
+            //AudioManager.instance.PlaySFX(SoundType.TECLAS, 0.5f);
+            SoundManager.Instance.CreateSound().WithSoundData(letterSound).Play();
             _letterCount++;
             _iteratorText++;
             CombatManager.Instance.AddTime(1.0f);
@@ -152,14 +155,13 @@ public class LetterSpawner : MonoBehaviour
         }
         else // tecla incorrecta
         {
-            
             if (_letterObjects.Count > 0 && keyTyped != ' ')
             {
                 SpriteRenderer sp = _letterObjects[0].GetComponent<SpriteRenderer>();
                 sp.DOColor(Color.red, 0.125f).SetLoops(2, LoopType.Yoyo);
                 CombatManager.Instance.SubstracTime(1.0f);
                 CameraShake.Instance.CmrShake(0.55f, 0.50f);
-                SpawnVFX(SpawnVFXBarra.transform.position,vfxMiss);
+                SpawnVFX(SpawnVFXBarra.transform.position, vfxMiss);
             }
         }
     }

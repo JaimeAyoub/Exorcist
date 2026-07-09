@@ -8,7 +8,7 @@ public class PlayerCollision : MonoBehaviour
     public GameObject collisionEnemy;
     void Start()
     {
-        AudioManager.instance.PlayBGM(SoundType.FONDO, 1f);
+       // AudioManager.instance.PlayBGM(SoundType.FONDO, 1f);
     }
 
     // Update is called once per frame
