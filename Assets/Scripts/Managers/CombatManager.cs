@@ -75,6 +75,7 @@ public class CombatManager : Singleton<CombatManager>
         None
     }
 
+
     private Combatturn _currentturn;
 
     public void StartCombat()
@@ -82,7 +83,10 @@ public class CombatManager : Singleton<CombatManager>
         if (isCombat || isTransitioning) return;
         isTransitioning = true;
 
+        inputHandler.EnableTyping();
         StartCombatTimeLine();
+        Time.timeScale = 0;
+        AudioManager.instance.StopSFX();
     }
 
     public void PauseTimeLine()
@@ -90,10 +94,13 @@ public class CombatManager : Singleton<CombatManager>
         sequenceCombat.Pause();
     }
 
+
     public void ResumeTimeLine()
     {
+        Time.timeScale = 1;
         sequenceCombat.Resume();
     }
+
     private void StartCombatTimeLine()
     {
         sequenceCombat.Play();
@@ -102,7 +109,6 @@ public class CombatManager : Singleton<CombatManager>
 
     public void StartCombatRoutine()
     {
-        
         enemy = player.GetComponentInChildren<PlayerCollision>().collisionEnemy;
         if (enemy == null)
         {
