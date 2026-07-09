@@ -131,7 +131,7 @@ public class TypewriterWithShake : MonoBehaviour
     {
         if (audioSource != null && typingSound != null)
         {
-            audioSource.pitch = randomizePitch ? Random.Range(0.85f, 1.0f) : 1.0f;
+            audioSource.pitch = randomizePitch ? Random.Range(0.85f, 1.00f) : 1.0f;
             audioSource.PlayOneShot(typingSound, soundVolume);
         }
     }

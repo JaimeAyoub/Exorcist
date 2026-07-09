@@ -30,6 +30,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private PlayerInputHandler playerInputHandler;
     [SerializeField] private GameObject cameraHolder;
 
+    [Header("Sonidos")] public SoundData pasosSFX;
+
     private Vector2 alignedRotation;
     private Vector3 currentMovement;
     private float verticalRotation;
@@ -80,7 +82,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void PlayFootstepSound()
     {
-        AudioManager.instance.PlaySFXRandom(SoundType.PASOS, 0.1f, 0.3f, footstepVolume);
+        SoundManager.Instance.CreateSound().WithSoundData(pasosSFX).WithRandomPitch().Play();
     }
 
     private bool IsMoving()

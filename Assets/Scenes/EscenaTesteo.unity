@@ -24601,12 +24601,27 @@ MonoBehaviour:
   m_Events:
     m_Signals:
     - {fileID: 11400000, guid: 0a99fe5151d8d414487b34affae8f4c8, type: 2}
+    - {fileID: 11400000, guid: f5a25d50813393545955872be598e1b3, type: 2}
     m_Events:
     - m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 870630824}
           m_TargetAssemblyTypeName: CombatManager, Assembly-CSharp
           m_MethodName: PauseTimeLine
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 870630824}
+          m_TargetAssemblyTypeName: CombatManager, Assembly-CSharp
+          m_MethodName: StartCombatRoutine
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -35315,8 +35330,8 @@ PlayableDirector:
     value: {fileID: 870630828}
   - key: {fileID: 8204166552140012236, guid: dae653a94dade3c49a4d91188409259b, type: 2}
     value: {fileID: 1577496227}
-  - key: {fileID: -7023930901326064472, guid: dae653a94dade3c49a4d91188409259b, type: 2}
-    value: {fileID: 1437651771}
+  - key: {fileID: -2234234616384512357, guid: dae653a94dade3c49a4d91188409259b, type: 2}
+    value: {fileID: 870630828}
   m_ExposedReferences:
     m_References:
     - e551830cadd431f4c9662bbdc6971a6d: {fileID: 1249534624}
@@ -40910,7 +40925,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1437651765}
   - component: {fileID: 1437651767}
-  - component: {fileID: 1437651772}
   - component: {fileID: 1437651766}
   - component: {fileID: 1437651769}
   - component: {fileID: 1437651768}
@@ -40962,9 +40976,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '
-
-'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 723e9fbe2052b4346a319cbbe9793e67, type: 2}
   m_sharedMaterial: {fileID: -7983387461546863470, guid: 723e9fbe2052b4346a319cbbe9793e67, type: 2}
@@ -41153,13 +41165,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc9b5b280b10bfd4eb37263053730976, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TypewriterEffect
-  delayBetweenCharacters: 0.25
-  typingSound: {fileID: 8300000, guid: 58a9ccf766154e649987dfe3b692f1d9, type: 3}
+  delayBetweenCharacters: 0.5
+  typingSound: {fileID: 8300000, guid: be8bc8cd6c188934b857144d3c8b9813, type: 3}
   soundVolume: 1
   soundPlayInterval: 1
-  randomizePitch: 0
+  randomizePitch: 1
   enableShake: 1
-  shakeMagnitude: 2
+  shakeMagnitude: 15
   shakeSpeed: 30
   OnTypewriteComplete:
     m_PersistentCalls:
@@ -41167,18 +41179,6 @@ MonoBehaviour:
       - m_Target: {fileID: 870630824}
         m_TargetAssemblyTypeName: CombatManager, Assembly-CSharp
         m_MethodName: ResumeTimeLine
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 870630824}
-        m_TargetAssemblyTypeName: CombatManager, Assembly-CSharp
-        m_MethodName: StartCombatRoutine
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -41240,18 +41240,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!225 &1437651772
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1437651764}
-  m_Enabled: 1
-  m_Alpha: 0
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!4 &1437668044 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d7ba0c60526ec9c409658f37c0be6969, type: 3}
@@ -59508,6 +59496,10 @@ PrefabInstance:
       propertyPath: mainCamera
       value: 
       objectReference: {fileID: 2014862231}
+    - target: {fileID: 1388610619814314635, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
+      propertyPath: pasosSFX.clip
+      value: 
+      objectReference: {fileID: 8300000, guid: e823543a3d5c43947a818c5200536c1e, type: 3}
     - target: {fileID: 1573627085191976830, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
       propertyPath: vfxMiss
       value: 
