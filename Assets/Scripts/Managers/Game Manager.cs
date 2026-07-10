@@ -21,6 +21,11 @@ public class GameManager : Singleton<GameManager>
         Cursor.lockState = CursorLockMode.Locked;
        
     }
+    
+    public void SetTimeScale(float timeScale)
+    {
+        Time.timeScale = timeScale;
+    }
 
 
 

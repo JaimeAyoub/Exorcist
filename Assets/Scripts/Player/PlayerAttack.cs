@@ -16,7 +16,7 @@ public class PlayerAttack : MonoBehaviour
 
     public void Attack(int amout)
     {
-        target.GetComponent<EnemyHealth>().TakeDamage(amout);
+        target.GetComponent<EnemyHealthBase>().TakeDamage(amout);
      
     }
     

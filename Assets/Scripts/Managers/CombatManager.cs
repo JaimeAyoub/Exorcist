@@ -49,6 +49,8 @@ public class CombatManager : Singleton<CombatManager>
 
     public SoundData TriggerSound;
 
+    public float timeToSubstract;
+
     void Start()
     {
         bookSprite.SetActive(false);
@@ -85,26 +87,6 @@ public class CombatManager : Singleton<CombatManager>
         isTransitioning = true;
         SoundManager.Instance.CreateSound().WithSoundData(TriggerSound).Play();
         inputHandler.EnableTyping();
-        StartCombatTimeLine();
-        Time.timeScale = 0;
-
-    }
-
-    public void PauseTimeLine()
-    {
-        sequenceCombat.Pause();
-    }
-
-
-    public void ResumeTimeLine()
-    {
-        Time.timeScale = 1;
-        sequenceCombat.Resume();
-    }
-
-    private void StartCombatTimeLine()
-    {
-        sequenceCombat.Play();
     }
 
 
@@ -234,7 +216,7 @@ public class CombatManager : Singleton<CombatManager>
             return true;
         }
 
-        if (enemy.GetComponent<EnemyHealth>().currentHealth <= 0)
+        if (enemy.GetComponent<EnemyHealthBase>().currentHealth <= 0)
         {
             Debug.Log("Victoria");
             EndCombat();
@@ -259,6 +241,12 @@ public class CombatManager : Singleton<CombatManager>
     void ResetTime()
     {
         currentTime = MaxTime;
+        timeToSubstract = 0;
+    }
+
+    public void SetTimeToSubstract(float time)
+    {
+        timeToSubstract = time;
     }
 
     private void TeleportPlayer(Vector3 playerToTeleport)

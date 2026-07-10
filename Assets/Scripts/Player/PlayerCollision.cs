@@ -21,6 +21,7 @@ public class PlayerCollision : MonoBehaviour
         if (other.CompareTag("Enemy") && !CombatManager.Instance.isCombat)
         {
             AudioManager.instance.StopSFX();
+            TimelinesManager.Instance.PlayTimeLine(TimelinesManager.Instance.StartCombatTimeline);
             collisionEnemy =  other.gameObject;
             CombatManager.Instance.StartCombat();
         }
