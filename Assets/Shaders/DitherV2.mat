@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: PixelationShade
-  m_Shader: {fileID: -6465566751694194690, guid: 8a497e72ae8ee9a44b8e9ac45f95b0ad, type: 3}
+  m_Name: DitherV2
+  m_Shader: {fileID: -6465566751694194690, guid: 52defbef75d763b4e8b736dd2ce7f790, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -37,7 +37,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _PixelSize: 3
+    - _ColorResolution: 8
+    - _DitherSpreat: 0.1
     m_Colors: []
   m_BuildTextureStacks: []
   m_AllowLocking: 1

@@ -26816,14 +26816,14 @@ Light:
   m_Enabled: 1
   serializedVersion: 12
   m_Type: 2
-  m_Color: {r: 0.6792453, g: 0.47235194, b: 0.06087574, a: 1}
-  m_Intensity: 22.2
-  m_Range: 19.33
+  m_Color: {r: 0.33962262, g: 0.1868549, b: 0, a: 1}
+  m_Intensity: 218.64
+  m_Range: 10.1
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
-    m_Type: 0
+    m_Type: 1
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -43995,6 +43995,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e688ed2d35c96cf4fb14e95fa1475d48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  DitherMat: {fileID: 2100000, guid: 78745e765ccc35f46b504d2201bf9301, type: 2}
 --- !u!4 &1546266868
 Transform:
   m_ObjectHideFlags: 0
@@ -44026,6 +44027,8 @@ MonoBehaviour:
     m_Signals:
     - {fileID: 11400000, guid: f8d70fa2813474f468fe38b3abbd154b, type: 2}
     - {fileID: 11400000, guid: c2d100ad3afd4c042b0e5e2a638d7279, type: 2}
+    - {fileID: 11400000, guid: 700cff7eacdcd3e4d9b60145838afe14, type: 2}
+    - {fileID: 11400000, guid: 1a8f682418932cc4789e66f67443eeaa, type: 2}
     m_Events:
     - m_PersistentCalls:
         m_Calls:
@@ -44052,6 +44055,34 @@ MonoBehaviour:
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 1
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1546266867}
+          m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+          m_MethodName: StartDither
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1546266867}
+          m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+          m_MethodName: ResetDitherToDefault
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
@@ -47445,10 +47476,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemyBase (1)
       objectReference: {fileID: 0}
-    - target: {fileID: 3706984087807544180, guid: ce9b438080f5a6a4c8990e95633ca5bd, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3831227527538872822, guid: ce9b438080f5a6a4c8990e95633ca5bd, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -47529,24 +47556,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0.244
       objectReference: {fileID: 0}
-    - target: {fileID: 7846525464839254429, guid: ce9b438080f5a6a4c8990e95633ca5bd, type: 3}
-      propertyPath: enemyType
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 8955140265872948669, guid: ce9b438080f5a6a4c8990e95633ca5bd, type: 3}
-      propertyPath: m_FlipX
-      value: 0
+      propertyPath: m_Color.a
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 8955140265872948669, guid: ce9b438080f5a6a4c8990e95633ca5bd, type: 3}
-      propertyPath: m_FlipY
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8955140265872948669, guid: ce9b438080f5a6a4c8990e95633ca5bd, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: abbc8743d900a66418404edeb0dafcc9, type: 2}
-    m_RemovedComponents:
-    - {fileID: 3706984087807544180, guid: ce9b438080f5a6a4c8990e95633ca5bd, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
