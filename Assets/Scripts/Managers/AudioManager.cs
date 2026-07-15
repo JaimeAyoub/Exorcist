@@ -114,6 +114,7 @@ public class AudioManager : MonoBehaviour
         foreach (AudioSource source in sfxPool)
         {
             source.Stop();
+            Debug.Log(source.name);
         }
     }
 }

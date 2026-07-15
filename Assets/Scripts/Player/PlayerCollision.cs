@@ -18,11 +18,11 @@ public class PlayerCollision : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Enemy") && !CombatManager.instance.isCombat)
+        if (other.CompareTag("Enemy") && !CombatManager.Instance.isCombat)
         {
             AudioManager.instance.StopSFX();
             collisionEnemy =  other.gameObject;
-            CombatManager.instance.StartCombat();
+            CombatManager.Instance.StartCombat();
         }
     }
 }

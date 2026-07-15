@@ -105,7 +105,7 @@ public class LetterSpawner : MonoBehaviour
 
     public void UpdateScreenText(char keyTyped)
     {
-        if (!CombatManager.instance.isCombat) return;
+        if (!CombatManager.Instance.isCombat) return;
 
         // Avanzar
         while (QueueTextToScreen.Count > 0 && !char.IsLetterOrDigit(QueueTextToScreen.Peek()))
@@ -143,7 +143,7 @@ public class LetterSpawner : MonoBehaviour
             AudioManager.instance.PlaySFX(SoundType.TECLAS, 0.5f);
             _letterCount++;
             _iteratorText++;
-            CombatManager.instance.AddTime(1.0f);
+            CombatManager.Instance.AddTime(1.0f);
 
             AddQueueIfAvailable();
 
@@ -157,7 +157,7 @@ public class LetterSpawner : MonoBehaviour
             {
                 SpriteRenderer sp = _letterObjects[0].GetComponent<SpriteRenderer>();
                 sp.DOColor(Color.red, 0.125f).SetLoops(2, LoopType.Yoyo);
-                CombatManager.instance.SubstracTime(1.0f);
+                CombatManager.Instance.SubstracTime(1.0f);
                 CameraShake.Instance.CmrShake(0.55f, 0.50f);
                 SpawnVFX(SpawnVFXBarra.transform.position,vfxMiss);
             }
@@ -181,7 +181,7 @@ public class LetterSpawner : MonoBehaviour
 
     private void AddTextInBook(GameObject letterToAdd, int index)
     {
-        if (!CombatManager.instance.isCombat || index >= textToCharList.Count || _letterObjects.Count == 0)
+        if (!CombatManager.Instance.isCombat || index >= textToCharList.Count || _letterObjects.Count == 0)
         {
             Destroy(letterToAdd);
             return;
@@ -198,16 +198,16 @@ public class LetterSpawner : MonoBehaviour
 
             foreach (var letters in _lettersInBook.ToList())
             {
-                if (CombatManager.instance.enemy != null && letters != null)
+                if (CombatManager.Instance.enemy != null && letters != null)
                 {
                     seq.Join(
                         letters.transform.DOMove(
-                                CombatManager.instance.enemy.transform.position,
+                                CombatManager.Instance.enemy.transform.position,
                                 0.5f)
                             .SetEase(Ease.InFlash)
                             .OnComplete(() =>
                             {
-                                if (letters != null && CombatManager.instance.player != null)
+                                if (letters != null && CombatManager.Instance.player != null)
                                 {
                                     Destroy(letters);
                                     _lettersInBook.Remove(letters);
@@ -219,8 +219,8 @@ public class LetterSpawner : MonoBehaviour
 
             seq.OnComplete(() =>
             {
-                SpawnVFX(CombatManager.instance.enemy.transform.position, vfxHit);
-                CombatManager.instance.player
+                SpawnVFX(CombatManager.Instance.enemy.transform.position, vfxHit);
+                CombatManager.Instance.player
                     .GetComponentInChildren<PlayerAttack>()
                     .Attack(1);
             });
