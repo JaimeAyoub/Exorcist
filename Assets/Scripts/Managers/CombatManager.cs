@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -46,10 +47,17 @@ public class CombatManager : Singleton<CombatManager>
 
     public PlayableDirector sequenceCombat;
     public CanvasGroup sequence;
-
     public SoundData TriggerSound;
-
     public float timeToSubstract;
+
+    //Cosas para el nuevo combate
+
+    private Vector2 MouseDelta;
+    private float baseRotationXCamera;
+    private float timeForChangeLook;
+    private bool canChangeLook = true;
+    public bool isLookingAtBook;
+    public CinemachineCamera camera;
 
     void Start()
     {
@@ -69,6 +77,21 @@ public class CombatManager : Singleton<CombatManager>
         if (!isCombat) return;
         currentTime -= Time.timeScale * Time.deltaTime * 2;
         _timeSlider.value = currentTime;
+
+        MouseDelta = UnityEngine.InputSystem.Mouse.current.delta.ReadValue();
+
+        //Debug.Log(MouseDelta);
+
+        if (MouseDelta.y < -40 && !isLookingAtBook && canChangeLook)
+        {
+            LookAtBook();
+            Debug.Log("Miro Abajo");
+        }
+
+        if (MouseDelta.y > 80 && isLookingAtBook && canChangeLook)
+        {
+            LookAtEnemy();
+        }
     }
 
     private enum Combatturn
@@ -310,6 +333,7 @@ public class CombatManager : Singleton<CombatManager>
         TeleportPlayer(toPlayerSpawn);
         inputHandler.SetCombat();
         CameraHolder.transform.rotation = Quaternion.Euler(0, 0, 0);
+        baseRotationXCamera = CameraHolder.transform.rotation.eulerAngles.x;
         player.transform.LookAt(enemy.transform.position);
         letterSpawner.EmptyAll();
         letterSpawner.FillCharQueue();
@@ -318,7 +342,7 @@ public class CombatManager : Singleton<CombatManager>
         inputHandler.KeyTypedEvent += letterSpawner.UpdateScreenText;
 
 
-        bookSprite.SetActive(true);
+        bookSprite.SetActive(false);
         book.SetActive(false);
         candle.SetActive(false);
         healthCandle.SetActive(true);
@@ -326,5 +350,46 @@ public class CombatManager : Singleton<CombatManager>
         Vector3 currentPosBook = bookSprite.transform.position;
         bookSprite.transform.position = new Vector3(currentPosBook.x, currentPosBook.y - 1.5f, currentPosBook.z);
         bookSprite.transform.DOMove(currentPosBook, 0.5f).SetUpdate(true);
+    }
+
+    private void LookAtBook()
+    {
+        StopAllCoroutines();
+        StartCoroutine(CoolDownForChangeLook());
+        if (CameraHolder != null)
+        {
+            isLookingAtBook = true;
+
+            CameraHolder.transform.DOKill();
+
+
+            Vector3 currentCameraRotation = CameraHolder.transform.rotation.eulerAngles;
+            Vector3 newCameraRotation =
+                new Vector3(baseRotationXCamera + 45.0f, currentCameraRotation.y, currentCameraRotation.z);
+            CameraHolder.transform.DORotate(newCameraRotation, 0.3f);
+        }
+    }
+
+    private void LookAtEnemy()
+    {
+        StopAllCoroutines();
+        StartCoroutine(CoolDownForChangeLook());
+        if (CameraHolder != null)
+        {
+            isLookingAtBook = false;
+            CameraHolder.transform.DOKill();
+            Vector3 currentCameraRotation = CameraHolder.transform.rotation.eulerAngles;
+            Vector3 newCameraRotation =
+                new Vector3(baseRotationXCamera, currentCameraRotation.y, currentCameraRotation.z);
+
+            CameraHolder.transform.DORotate(newCameraRotation, 0.3f);
+        }
+    }
+
+    private IEnumerator CoolDownForChangeLook()
+    {
+        canChangeLook = false;
+        yield return new WaitForSeconds(0.5f);
+        canChangeLook = true;
     }
 }
