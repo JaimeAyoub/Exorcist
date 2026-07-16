@@ -8,7 +8,7 @@ public class PlayerCollision : MonoBehaviour
     public GameObject collisionEnemy;
     void Start()
     {
-        AudioManager.instance.PlayBGM(SoundType.FONDO, 1f);
+       // AudioManager.instance.PlayBGM(SoundType.FONDO, 1f);
     }
 
     // Update is called once per frame
@@ -21,6 +21,7 @@ public class PlayerCollision : MonoBehaviour
         if (other.CompareTag("Enemy") && !CombatManager.Instance.isCombat)
         {
             AudioManager.instance.StopSFX();
+            TimelinesManager.Instance.PlayTimeLine(TimelinesManager.Instance.StartCombatTimeline);
             collisionEnemy =  other.gameObject;
             CombatManager.Instance.StartCombat();
         }
