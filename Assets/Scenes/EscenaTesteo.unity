@@ -24526,6 +24526,32 @@ MonoBehaviour:
     frequentSound: 0
     walkClips: []
   timeToSubstract: 0
+  isLookingAtBook: 0
+  camera: {fileID: 0}
+  LookBooKAction:
+    m_Name: Look Boo K
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 23561338-ad54-40d8-8614-d549598534c2
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  movementSoundData:
+    clip: {fileID: 8300000, guid: 9fbc6e5b7dd20994b998ea8697527119, type: 3}
+    mixerGroup: {fileID: 0}
+    loop: 0
+    playOnAwake: 0
+    frequentSound: 0
+    walkClips: []
+  stepInterval: 0.5
+  BGMMusic:
+    clip: {fileID: 8300000, guid: 8636c06c6018bce41a85a4adbb8268b0, type: 3}
+    mixerGroup: {fileID: 0}
+    loop: 0
+    playOnAwake: 0
+    frequentSound: 0
+    walkClips: []
 --- !u!114 &870630825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49007,7 +49033,7 @@ Transform:
   m_GameObject: {fileID: 1763913177}
   serializedVersion: 2
   m_LocalRotation: {x: 0.0024276325, y: 0.90172315, z: -0.0008440008, w: 0.43230644}
-  m_LocalPosition: {x: -20.610245, y: 7.423516, z: -87.13232}
+  m_LocalPosition: {x: -20.610245, y: 8.054, z: -87.13232}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -59815,6 +59841,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerHolder
       objectReference: {fileID: 0}
+    - target: {fileID: 7306536667626368167, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8621941362691013949, guid: 9aad224b0143af4489810854a056d6e6, type: 3}
       propertyPath: DamageSound.clip
       value: 
@@ -59935,7 +59965,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -1179,6 +1179,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LookBook"",
+                    ""type"": ""Button"",
+                    ""id"": ""6bbe1309-d5e5-4e34-823f-2a043f4dfbc9"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1511,6 +1520,28 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""action"": ""Mayus"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""22cc70ff-0fc2-4288-b03b-058f30c0dc4f"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LookBook"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6d1d6d36-40b6-4525-8de9-bcdba72f82ce"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse;Gamepad"",
+                    ""action"": ""LookBook"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -1690,6 +1721,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Typing = asset.FindActionMap("Typing", throwIfNotFound: true);
         m_Typing_Type = m_Typing.FindAction("Type", throwIfNotFound: true);
         m_Typing_Mayus = m_Typing.FindAction("Mayus", throwIfNotFound: true);
+        m_Typing_LookBook = m_Typing.FindAction("LookBook", throwIfNotFound: true);
         // Note
         m_Note = asset.FindActionMap("Note", throwIfNotFound: true);
         m_Note_CloseNote = m_Note.FindAction("CloseNote", throwIfNotFound: true);
@@ -2202,6 +2234,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private List<ITypingActions> m_TypingActionsCallbackInterfaces = new List<ITypingActions>();
     private readonly InputAction m_Typing_Type;
     private readonly InputAction m_Typing_Mayus;
+    private readonly InputAction m_Typing_LookBook;
     /// <summary>
     /// Provides access to input actions defined in input action map "Typing".
     /// </summary>
@@ -2221,6 +2254,10 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Typing/Mayus".
         /// </summary>
         public InputAction @Mayus => m_Wrapper.m_Typing_Mayus;
+        /// <summary>
+        /// Provides access to the underlying input action "Typing/LookBook".
+        /// </summary>
+        public InputAction @LookBook => m_Wrapper.m_Typing_LookBook;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2253,6 +2290,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Mayus.started += instance.OnMayus;
             @Mayus.performed += instance.OnMayus;
             @Mayus.canceled += instance.OnMayus;
+            @LookBook.started += instance.OnLookBook;
+            @LookBook.performed += instance.OnLookBook;
+            @LookBook.canceled += instance.OnLookBook;
         }
 
         /// <summary>
@@ -2270,6 +2310,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Mayus.started -= instance.OnMayus;
             @Mayus.performed -= instance.OnMayus;
             @Mayus.canceled -= instance.OnMayus;
+            @LookBook.started -= instance.OnLookBook;
+            @LookBook.performed -= instance.OnLookBook;
+            @LookBook.canceled -= instance.OnLookBook;
         }
 
         /// <summary>
@@ -2673,6 +2716,13 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMayus(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "LookBook" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnLookBook(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Note" which allows adding and removing callbacks.

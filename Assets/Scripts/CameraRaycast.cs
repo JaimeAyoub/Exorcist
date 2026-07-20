@@ -15,7 +15,7 @@ public class CameraRaycast : UnityUtils.Singleton<CameraRaycast>
     private bool isShowingMessage = false;
 
 
-    void Awake()
+    protected override void Awake()
     {
         layerMask = LayerMask.GetMask("Interactable", "Player");
     }

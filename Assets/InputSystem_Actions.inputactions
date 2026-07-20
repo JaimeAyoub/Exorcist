@@ -1093,6 +1093,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "LookBook",
+                    "type": "Button",
+                    "id": "6bbe1309-d5e5-4e34-823f-2a043f4dfbc9",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1423,6 +1432,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Mayus",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "22cc70ff-0fc2-4288-b03b-058f30c0dc4f",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LookBook",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6d1d6d36-40b6-4525-8de9-bcdba72f82ce",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse;Gamepad",
+                    "action": "LookBook",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

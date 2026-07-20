@@ -58,9 +58,13 @@ public class CombatManager : Singleton<CombatManager>
     private bool canChangeLook = true;
     public bool isLookingAtBook;
     public CinemachineCamera camera;
+    public InputAction LookBooKAction;
+
+    public SoundData BGMMusic;
 
     void Start()
     {
+        LookBooKAction = InputSystem.actions.FindAction("LookBook");
         bookSprite.SetActive(false);
         healthCandle.SetActive(false);
         currentTime = MaxTime;
@@ -78,17 +82,13 @@ public class CombatManager : Singleton<CombatManager>
         currentTime -= Time.timeScale * Time.deltaTime * 2;
         _timeSlider.value = currentTime;
 
-        MouseDelta = UnityEngine.InputSystem.Mouse.current.delta.ReadValue();
-
-        //Debug.Log(MouseDelta);
-
-        if (MouseDelta.y < -40 && !isLookingAtBook && canChangeLook)
+        isLookingAtBook = LookBooKAction.IsPressed();
+        if (isLookingAtBook)
         {
             LookAtBook();
-            Debug.Log("Miro Abajo");
+            ApproachToPlayer();
         }
-
-        if (MouseDelta.y > 80 && isLookingAtBook && canChangeLook)
+        else
         {
             LookAtEnemy();
         }
@@ -108,6 +108,7 @@ public class CombatManager : Singleton<CombatManager>
     {
         if (isCombat || isTransitioning) return;
         isTransitioning = true;
+
         SoundManager.Instance.CreateSound().WithSoundData(TriggerSound).Play();
         inputHandler.EnableTyping();
     }
@@ -299,6 +300,7 @@ public class CombatManager : Singleton<CombatManager>
     public void SetUpCombat()
     {
         isCombat = true;
+        SoundManager.Instance.CreateSound().WithSoundData(BGMMusic).Play();
 
         if (player == null) Debug.LogError("¡PLAYER es null!");
         if (enemy == null) Debug.LogError("¡ENEMY es null!");
@@ -358,11 +360,9 @@ public class CombatManager : Singleton<CombatManager>
         StartCoroutine(CoolDownForChangeLook());
         if (CameraHolder != null)
         {
-            isLookingAtBook = true;
-
             CameraHolder.transform.DOKill();
 
-
+            SoundManager.Instance.CreateSound().WithSoundData(BGMMusic).Play();
             Vector3 currentCameraRotation = CameraHolder.transform.rotation.eulerAngles;
             Vector3 newCameraRotation =
                 new Vector3(baseRotationXCamera + 45.0f, currentCameraRotation.y, currentCameraRotation.z);
@@ -376,7 +376,6 @@ public class CombatManager : Singleton<CombatManager>
         StartCoroutine(CoolDownForChangeLook());
         if (CameraHolder != null)
         {
-            isLookingAtBook = false;
             CameraHolder.transform.DOKill();
             Vector3 currentCameraRotation = CameraHolder.transform.rotation.eulerAngles;
             Vector3 newCameraRotation =
@@ -385,6 +384,25 @@ public class CombatManager : Singleton<CombatManager>
             CameraHolder.transform.DORotate(newCameraRotation, 0.3f);
         }
     }
+
+    public void ApproachToPlayer()
+    {
+        if (player)
+        {
+            Vector3 direction = (player.transform.position - enemy.transform.position).normalized;
+
+            Vector3 newDirection = new Vector3(direction.x, 0, direction.z);
+            enemy.transform.position += newDirection * (2.0f * Time.deltaTime);
+
+            Debug.Log(Vector3.Distance(enemy.transform.position, player.transform.position));
+            if (Vector3.Distance(enemy.transform.position, player.transform.position) <= 2.5f)
+            {
+                enemy.GetComponent<EnemyAttack>().Attack(1);
+                TeleportEnemy(toEnemySpanwe);
+            }
+        }
+    }
+
 
     private IEnumerator CoolDownForChangeLook()
     {

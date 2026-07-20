@@ -8,15 +8,18 @@ public class MomeventEnemy : MonoBehaviour
     public GameObject player;
     private Tween tween;
 
+    public SoundData soundEnemy;
+
     void Start()
     {
         FloatEffect();
         player = GameObject.FindGameObjectWithTag("PlayerHolder");
+        
     }
 
     void Update()
     {
-        gameObject.transform.LookAt(player.transform);
+       LookAtPlayer();
     }
 
     void FloatEffect()
@@ -27,6 +30,18 @@ public class MomeventEnemy : MonoBehaviour
         tween = transform.DOMoveY(startPos.y + distanceToFloat, 1f)   
             .SetLoops(-1, LoopType.Yoyo)      
             .SetEase(Ease.InOutSine);        
+    }
+
+
+
+    void LookAtPlayer()
+    {
+        Vector3 targetPosition = player.transform.position;
+        
+        targetPosition.y = transform.position.y;
+
+
+        transform.LookAt(targetPosition);
     }
 
     public void Destroy()

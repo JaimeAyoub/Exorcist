@@ -23,6 +23,7 @@ public class PlayerCollision : MonoBehaviour
             AudioManager.instance.StopSFX();
             TimelinesManager.Instance.PlayTimeLine(TimelinesManager.Instance.StartCombatTimeline);
             collisionEnemy =  other.gameObject;
+            collisionEnemy.GetComponent<EnemyAttack>().isInCombat = true;
             CombatManager.Instance.StartCombat();
         }
     }
