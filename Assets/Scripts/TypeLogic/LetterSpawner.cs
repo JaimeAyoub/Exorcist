@@ -146,7 +146,6 @@ public class LetterSpawner : MonoBehaviour
             SoundManager.Instance.CreateSound().WithSoundData(letterSound).Play();
             _letterCount++;
             _iteratorText++;
-            CombatManager.Instance.AddTime(1.0f);
 
             AddQueueIfAvailable();
 
@@ -159,7 +158,6 @@ public class LetterSpawner : MonoBehaviour
             {
                 SpriteRenderer sp = _letterObjects[0].GetComponent<SpriteRenderer>();
                 sp.DOColor(Color.red, 0.125f).SetLoops(2, LoopType.Yoyo);
-                CombatManager.Instance.SubstracTime(1.0f);
                 CameraShake.Instance.CmrShake(0.55f, 0.50f);
                 SpawnVFX(SpawnVFXBarra.transform.position, vfxMiss);
             }

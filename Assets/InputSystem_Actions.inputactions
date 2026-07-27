@@ -1093,15 +1093,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "LookBook",
-                    "type": "Button",
-                    "id": "6bbe1309-d5e5-4e34-823f-2a043f4dfbc9",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1434,28 +1425,6 @@
                     "action": "Mayus",
                     "isComposite": false,
                     "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "22cc70ff-0fc2-4288-b03b-058f30c0dc4f",
-                    "path": "",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "LookBook",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "6d1d6d36-40b6-4525-8de9-bcdba72f82ce",
-                    "path": "<Keyboard>/tab",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse;Gamepad",
-                    "action": "LookBook",
-                    "isComposite": false,
-                    "isPartOfComposite": false
                 }
             ]
         },
@@ -1535,6 +1504,34 @@
                     "processors": "",
                     "groups": "XR",
                     "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "LookAtBook",
+            "id": "9b1025e4-43b8-44dd-8b0c-af81c4deafce",
+            "actions": [
+                {
+                    "name": "LookBook",
+                    "type": "Button",
+                    "id": "4d8fa4d6-4f5d-47ef-a9e7-f67d5d51a5f8",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "dc6296d0-3776-4857-9e62-bde58b64ba98",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse;Gamepad",
+                    "action": "LookBook",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

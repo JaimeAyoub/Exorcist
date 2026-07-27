@@ -32,9 +32,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1.2586573, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1795836651257670555}
   - {fileID: 3280832996174256475}
   - {fileID: 3936433896334135371}
-  - {fileID: 1795836651257670555}
   - {fileID: 1468677067219552535}
   - {fileID: 3267899633981754054}
   - {fileID: 5546457067754747905}
@@ -91,6 +91,13 @@ MonoBehaviour:
   characterController: {fileID: 8861053696897699088}
   playerInputHandler: {fileID: 7287273172424694452}
   cameraHolder: {fileID: 6472073514178018805}
+  pasosSFX:
+    clip: {fileID: 0}
+    mixerGroup: {fileID: 0}
+    loop: 0
+    playOnAwake: 0
+    frequentSound: 0
+    walkClips: []
   mainCamera: {fileID: 0}
 --- !u!114 &6132645714130148522
 MonoBehaviour:
@@ -439,6 +446,7 @@ MonoBehaviour:
   playerActionMapName: Player
   uiActionMapName: UI
   typingActionMapName: Typing
+  noteActionMapName: Note
   movement: Movement
   rotation: Rotation
   jump: Jump
@@ -503,8 +511,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6540624143909085976}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.42400026, y: 0.9096996, z: 3.502}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.42400026, y: 0.9096996, z: 3.5019999}
   m_LocalScale: {x: 1, y: 0.79449743, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -562,6 +570,13 @@ MonoBehaviour:
   lettersInParagraph: 20
   _letterCount: 0
   SpawnVFXBarra: {fileID: 0}
+  letterSound:
+    clip: {fileID: 0}
+    mixerGroup: {fileID: 0}
+    loop: 0
+    playOnAwake: 0
+    frequentSound: 0
+    walkClips: []
 --- !u!1 &7306536667626368167
 GameObject:
   m_ObjectHideFlags: 0
@@ -596,6 +611,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 6.414, y: -180, z: 0}
 --- !u!212 &3788196102736210729
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -614,6 +630,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -635,9 +653,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 1315279817, guid: da5a3e72cd295214ea71461a63e5ae89, type: 3}
   m_Color: {r: 0.5943396, g: 0.5943396, b: 0.5943396, a: 1}
   m_FlipX: 0
@@ -647,7 +667,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &7656004186870676313
 GameObject:
@@ -723,6 +742,13 @@ MonoBehaviour:
   - {fileID: 2106368223, guid: 7873266345a8b0549b7d8898a8af5401, type: 3}
   - {fileID: -1892297091, guid: 7873266345a8b0549b7d8898a8af5401, type: 3}
   candleHealthSpriteRenderer: {fileID: 2742530159081680231}
+  DamageSound:
+    clip: {fileID: 0}
+    mixerGroup: {fileID: 0}
+    loop: 0
+    playOnAwake: 0
+    frequentSound: 0
+    walkClips: []
 --- !u!114 &4929770871129126834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -756,6 +782,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -777,9 +805,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &7717775423392549466
 GameObject:
@@ -815,6 +845,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: -0.391, y: 0, z: 0}
 --- !u!212 &2742530159081680231
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -833,6 +864,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -854,9 +887,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: -1892297091, guid: 7873266345a8b0549b7d8898a8af5401, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -866,7 +901,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &8770650952528971842
 GameObject:
@@ -902,6 +936,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 16.044, y: 0, z: 0}
 --- !u!212 &7533063103460588016
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -920,6 +955,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -941,9 +978,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -953,5 +992,4 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0

@@ -1179,15 +1179,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""LookBook"",
-                    ""type"": ""Button"",
-                    ""id"": ""6bbe1309-d5e5-4e34-823f-2a043f4dfbc9"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1520,28 +1511,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""action"": ""Mayus"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""22cc70ff-0fc2-4288-b03b-058f30c0dc4f"",
-                    ""path"": """",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""LookBook"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""6d1d6d36-40b6-4525-8de9-bcdba72f82ce"",
-                    ""path"": ""<Keyboard>/tab"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Keyboard&Mouse;Gamepad"",
-                    ""action"": ""LookBook"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -1621,6 +1590,34 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""XR"",
                     ""action"": ""Click"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""LookAtBook"",
+            ""id"": ""9b1025e4-43b8-44dd-8b0c-af81c4deafce"",
+            ""actions"": [
+                {
+                    ""name"": ""LookBook"",
+                    ""type"": ""Button"",
+                    ""id"": ""4d8fa4d6-4f5d-47ef-a9e7-f67d5d51a5f8"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""dc6296d0-3776-4857-9e62-bde58b64ba98"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse;Gamepad"",
+                    ""action"": ""LookBook"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1721,11 +1718,13 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Typing = asset.FindActionMap("Typing", throwIfNotFound: true);
         m_Typing_Type = m_Typing.FindAction("Type", throwIfNotFound: true);
         m_Typing_Mayus = m_Typing.FindAction("Mayus", throwIfNotFound: true);
-        m_Typing_LookBook = m_Typing.FindAction("LookBook", throwIfNotFound: true);
         // Note
         m_Note = asset.FindActionMap("Note", throwIfNotFound: true);
         m_Note_CloseNote = m_Note.FindAction("CloseNote", throwIfNotFound: true);
         m_Note_Click = m_Note.FindAction("Click", throwIfNotFound: true);
+        // LookAtBook
+        m_LookAtBook = asset.FindActionMap("LookAtBook", throwIfNotFound: true);
+        m_LookAtBook_LookBook = m_LookAtBook.FindAction("LookBook", throwIfNotFound: true);
     }
 
     ~@InputSystem_Actions()
@@ -1734,6 +1733,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, InputSystem_Actions.UI.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Typing.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Typing.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Note.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Note.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_LookAtBook.enabled, "This will cause a leak and performance issues, InputSystem_Actions.LookAtBook.Disable() has not been called.");
     }
 
     /// <summary>
@@ -2234,7 +2234,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private List<ITypingActions> m_TypingActionsCallbackInterfaces = new List<ITypingActions>();
     private readonly InputAction m_Typing_Type;
     private readonly InputAction m_Typing_Mayus;
-    private readonly InputAction m_Typing_LookBook;
     /// <summary>
     /// Provides access to input actions defined in input action map "Typing".
     /// </summary>
@@ -2254,10 +2253,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Typing/Mayus".
         /// </summary>
         public InputAction @Mayus => m_Wrapper.m_Typing_Mayus;
-        /// <summary>
-        /// Provides access to the underlying input action "Typing/LookBook".
-        /// </summary>
-        public InputAction @LookBook => m_Wrapper.m_Typing_LookBook;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2290,9 +2285,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Mayus.started += instance.OnMayus;
             @Mayus.performed += instance.OnMayus;
             @Mayus.canceled += instance.OnMayus;
-            @LookBook.started += instance.OnLookBook;
-            @LookBook.performed += instance.OnLookBook;
-            @LookBook.canceled += instance.OnLookBook;
         }
 
         /// <summary>
@@ -2310,9 +2302,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Mayus.started -= instance.OnMayus;
             @Mayus.performed -= instance.OnMayus;
             @Mayus.canceled -= instance.OnMayus;
-            @LookBook.started -= instance.OnLookBook;
-            @LookBook.performed -= instance.OnLookBook;
-            @LookBook.canceled -= instance.OnLookBook;
         }
 
         /// <summary>
@@ -2453,6 +2442,102 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="NoteActions" /> instance referencing this action map.
     /// </summary>
     public NoteActions @Note => new NoteActions(this);
+
+    // LookAtBook
+    private readonly InputActionMap m_LookAtBook;
+    private List<ILookAtBookActions> m_LookAtBookActionsCallbackInterfaces = new List<ILookAtBookActions>();
+    private readonly InputAction m_LookAtBook_LookBook;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "LookAtBook".
+    /// </summary>
+    public struct LookAtBookActions
+    {
+        private @InputSystem_Actions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public LookAtBookActions(@InputSystem_Actions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "LookAtBook/LookBook".
+        /// </summary>
+        public InputAction @LookBook => m_Wrapper.m_LookAtBook_LookBook;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_LookAtBook; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="LookAtBookActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(LookAtBookActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="LookAtBookActions" />
+        public void AddCallbacks(ILookAtBookActions instance)
+        {
+            if (instance == null || m_Wrapper.m_LookAtBookActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_LookAtBookActionsCallbackInterfaces.Add(instance);
+            @LookBook.started += instance.OnLookBook;
+            @LookBook.performed += instance.OnLookBook;
+            @LookBook.canceled += instance.OnLookBook;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="LookAtBookActions" />
+        private void UnregisterCallbacks(ILookAtBookActions instance)
+        {
+            @LookBook.started -= instance.OnLookBook;
+            @LookBook.performed -= instance.OnLookBook;
+            @LookBook.canceled -= instance.OnLookBook;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="LookAtBookActions.UnregisterCallbacks(ILookAtBookActions)" />.
+        /// </summary>
+        /// <seealso cref="LookAtBookActions.UnregisterCallbacks(ILookAtBookActions)" />
+        public void RemoveCallbacks(ILookAtBookActions instance)
+        {
+            if (m_Wrapper.m_LookAtBookActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="LookAtBookActions.AddCallbacks(ILookAtBookActions)" />
+        /// <seealso cref="LookAtBookActions.RemoveCallbacks(ILookAtBookActions)" />
+        /// <seealso cref="LookAtBookActions.UnregisterCallbacks(ILookAtBookActions)" />
+        public void SetCallbacks(ILookAtBookActions instance)
+        {
+            foreach (var item in m_Wrapper.m_LookAtBookActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_LookAtBookActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="LookAtBookActions" /> instance referencing this action map.
+    /// </summary>
+    public LookAtBookActions @LookAtBook => new LookAtBookActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -2716,13 +2801,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMayus(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "LookBook" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnLookBook(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Note" which allows adding and removing callbacks.
@@ -2745,5 +2823,20 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnClick(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "LookAtBook" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="LookAtBookActions.AddCallbacks(ILookAtBookActions)" />
+    /// <seealso cref="LookAtBookActions.RemoveCallbacks(ILookAtBookActions)" />
+    public interface ILookAtBookActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "LookBook" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnLookBook(InputAction.CallbackContext context);
     }
 }

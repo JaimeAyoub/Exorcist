@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: VelaWalk
+  m_Name: New Animation
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -37,7 +37,7 @@ AnimationClip:
     - time: 0.5833333
       value: {fileID: 1796304277, guid: c4f8a40230dd524408293135efdbf8dd, type: 3}
     attribute: m_Sprite
-    path: Square (1)
+    path: 
     classID: 212
     script: {fileID: 0}
     flags: 2
@@ -49,7 +49,7 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - serializedVersion: 2
-      path: 2595957057
+      path: 0
       attribute: 0
       script: {fileID: 0}
       typeID: 212

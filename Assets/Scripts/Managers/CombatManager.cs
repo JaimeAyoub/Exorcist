@@ -13,23 +13,13 @@ public class CombatManager : Singleton<CombatManager>
 {
     public PlayerInputHandler inputHandler;
     public LetterSpawner letterSpawner;
-    public CanvasGroup combatgroup;
     public GameObject player;
     public GameObject enemy;
     public bool isCombat = false;
-    private bool _isPlayerAlive = true;
 
-    //Variables para la logica del tiempo
-    public float currentTime;
-    public float MaxTime = 20;
-    public Slider _timeSlider;
-
-    private CinemachineHardLookAt cam;
 
     public GameObject playerSpawner;
     public GameObject enemySpawner;
-    private static Vector3 toPlayerSpawn;
-    private static Vector3 toEnemySpanwe;
 
     public Image imageToFade;
 
@@ -38,21 +28,17 @@ public class CombatManager : Singleton<CombatManager>
     private bool isTransitioning;
 
     private float _currentAberration;
-    public GameObject bookSprite;
     public GameObject book;
     public GameObject candle;
-    public GameObject healthCandle;
     public Image DamageVignette;
     public GameObject CameraHolder;
 
     public PlayableDirector sequenceCombat;
     public CanvasGroup sequence;
     public SoundData TriggerSound;
-    public float timeToSubstract;
 
     //Cosas para el nuevo combate
 
-    private Vector2 MouseDelta;
     private float baseRotationXCamera;
     private float timeForChangeLook;
     private bool canChangeLook = true;
@@ -61,26 +47,20 @@ public class CombatManager : Singleton<CombatManager>
     public InputAction LookBooKAction;
 
     public SoundData BGMMusic;
+    private bool _isPlayerAlive;
 
     void Start()
     {
         LookBooKAction = InputSystem.actions.FindAction("LookBook");
-        bookSprite.SetActive(false);
-        healthCandle.SetActive(false);
-        currentTime = MaxTime;
-        _timeSlider.maxValue = MaxTime;
+
         Color c = DamageVignette.color;
         c.a = 0f;
         DamageVignette.color = c;
-        toPlayerSpawn = playerSpawner.transform.position;
-        toEnemySpanwe = enemySpawner.transform.position;
     }
 
     void Update()
     {
         if (!isCombat) return;
-        currentTime -= Time.timeScale * Time.deltaTime * 2;
-        _timeSlider.value = currentTime;
 
         isLookingAtBook = LookBooKAction.IsPressed();
         if (isLookingAtBook)
@@ -94,15 +74,6 @@ public class CombatManager : Singleton<CombatManager>
         }
     }
 
-    private enum Combatturn
-    {
-        PlayerTurn,
-        EnemyTurn,
-        None
-    }
-
-
-    private Combatturn _currentturn;
 
     public void StartCombat()
     {
@@ -124,44 +95,12 @@ public class CombatManager : Singleton<CombatManager>
             return;
         }
 
-
         player.GetComponentInChildren<PlayerAttack>().target = enemy;
 
-
         SetUpCombat();
-
         isTransitioning = false;
     }
 
-
-    private IEnumerator CombatLoop()
-    {
-        while (isCombat)
-        {
-            if (_currentturn == Combatturn.PlayerTurn)
-            {
-                inputHandler.EnableTyping();
-
-                if (IsCombatEnd()) yield break;
-
-                yield return new WaitUntil(() => currentTime <= 0);
-                _currentturn = Combatturn.EnemyTurn;
-            }
-            else if (_currentturn == Combatturn.EnemyTurn)
-            {
-                inputHandler.DesactivateTyping();
-
-                if (enemy != null)
-                    enemy.GetComponent<EnemyAttack>().Attack(1);
-                Debug.Log("Enemigo hace damage");
-
-                if (IsCombatEnd()) yield break;
-
-                ResetTime();
-                _currentturn = Combatturn.PlayerTurn;
-            }
-        }
-    }
 
     public void EndCombat()
     {
@@ -195,14 +134,10 @@ public class CombatManager : Singleton<CombatManager>
             cc.enabled = true;
 
         UIManager.Instance.CheckEnd();
-        _currentturn = Combatturn.None;
         Cursor.visible = false;
-        healthCandle.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
-        bookSprite.SetActive(false);
         book.SetActive(true);
         candle.SetActive(true);
-        ResetTime();
         letterSpawner.EmptyAll();
 
         _currentPositionPlayer = Vector3.zero;
@@ -251,27 +186,6 @@ public class CombatManager : Singleton<CombatManager>
         return false;
     }
 
-    public void AddTime(float time)
-    {
-        if (currentTime <= MaxTime)
-            currentTime += time;
-    }
-
-    public void SubstracTime(float time)
-    {
-        currentTime -= time;
-    }
-
-    void ResetTime()
-    {
-        currentTime = MaxTime;
-        timeToSubstract = 0;
-    }
-
-    public void SetTimeToSubstract(float time)
-    {
-        timeToSubstract = time;
-    }
 
     private void TeleportPlayer(Vector3 playerToTeleport)
     {
@@ -311,7 +225,6 @@ public class CombatManager : Singleton<CombatManager>
         if (CameraHolder == null) Debug.LogError("¡CameraHolder es null!");
         if (letterSpawner == null) Debug.LogError("¡letterSpawner es null!");
         if (UIManager.Instance == null) Debug.LogError("¡UIManager.Instance es null!");
-        if (bookSprite == null) Debug.LogError("¡bookSprite es null!");
 
         CharacterController cc = player.GetComponent<CharacterController>();
         if (cc != null)
@@ -327,12 +240,9 @@ public class CombatManager : Singleton<CombatManager>
         }
 
         OptionsScript.Instance.PixelationShaderMaterial.SetFloat("_PixelSize", 0.1f);
-        //AudioManager.instance.PlayBGM(SoundType.COMBATE, 1f);
-        //AudioManager.instance.PlaySFX(SoundType.ENEMIGO, 0.3f);
-        _currentturn = Combatturn.PlayerTurn;
 
-        TeleportEnemy(toEnemySpanwe);
-        TeleportPlayer(toPlayerSpawn);
+        TeleportEnemy(enemySpawner.transform.position);
+        TeleportPlayer(playerSpawner.transform.position);
         inputHandler.SetCombat();
         CameraHolder.transform.rotation = Quaternion.Euler(0, 0, 0);
         baseRotationXCamera = CameraHolder.transform.rotation.eulerAngles.x;
@@ -343,21 +253,12 @@ public class CombatManager : Singleton<CombatManager>
         inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
         inputHandler.KeyTypedEvent += letterSpawner.UpdateScreenText;
 
-
-        bookSprite.SetActive(false);
-        book.SetActive(false);
-        candle.SetActive(false);
-        healthCandle.SetActive(true);
-
-        Vector3 currentPosBook = bookSprite.transform.position;
-        bookSprite.transform.position = new Vector3(currentPosBook.x, currentPosBook.y - 1.5f, currentPosBook.z);
-        bookSprite.transform.DOMove(currentPosBook, 0.5f).SetUpdate(true);
+        
     }
 
     private void LookAtBook()
     {
-        StopAllCoroutines();
-        StartCoroutine(CoolDownForChangeLook());
+        inputHandler.DesactivateTyping();
         if (CameraHolder != null)
         {
             CameraHolder.transform.DOKill();
@@ -367,13 +268,14 @@ public class CombatManager : Singleton<CombatManager>
             Vector3 newCameraRotation =
                 new Vector3(baseRotationXCamera + 45.0f, currentCameraRotation.y, currentCameraRotation.z);
             CameraHolder.transform.DORotate(newCameraRotation, 0.3f);
+            letterSpawner.gameObject.SetActive(true);
         }
     }
 
     private void LookAtEnemy()
     {
-        StopAllCoroutines();
-        StartCoroutine(CoolDownForChangeLook());
+       // letterSpawner.gameObject.SetActive(false);
+        inputHandler.EnableTyping();
         if (CameraHolder != null)
         {
             CameraHolder.transform.DOKill();
@@ -398,16 +300,11 @@ public class CombatManager : Singleton<CombatManager>
             if (Vector3.Distance(enemy.transform.position, player.transform.position) <= 2.5f)
             {
                 enemy.GetComponent<EnemyAttack>().Attack(1);
-                TeleportEnemy(toEnemySpanwe);
+                TeleportEnemy(enemySpawner.transform.position);
             }
         }
     }
 
 
-    private IEnumerator CoolDownForChangeLook()
-    {
-        canChangeLook = false;
-        yield return new WaitForSeconds(0.5f);
-        canChangeLook = true;
-    }
+
 }
