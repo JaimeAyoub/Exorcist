@@ -214,7 +214,7 @@ public class CombatManager : Singleton<CombatManager>
     public void SetUpCombat()
     {
         isCombat = true;
-        SoundManager.Instance.CreateSound().WithSoundData(BGMMusic).Play();
+        //SoundManager.Instance.CreateSound().WithSoundData(BGMMusic).Play();
 
         if (player == null) Debug.LogError("¡PLAYER es null!");
         if (enemy == null) Debug.LogError("¡ENEMY es null!");
