@@ -49,6 +49,8 @@ public class CombatManager : Singleton<CombatManager>
     public SoundData BGMMusic;
     private bool _isPlayerAlive;
 
+    private bool _isTakingDamage;
+
     void Start()
     {
         LookBooKAction = InputSystem.actions.FindAction("LookBook");
@@ -63,7 +65,7 @@ public class CombatManager : Singleton<CombatManager>
         if (!isCombat) return;
 
         isLookingAtBook = LookBooKAction.IsPressed();
-        if (isLookingAtBook)
+        if (isLookingAtBook && !_isTakingDamage)
         {
             LookAtBook();
             ApproachToPlayer();
@@ -252,8 +254,6 @@ public class CombatManager : Singleton<CombatManager>
         UIManager.Instance.ActivateCanvas(UIManager.Instance._combatCanvas);
         inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
         inputHandler.KeyTypedEvent += letterSpawner.UpdateScreenText;
-
-        
     }
 
     private void LookAtBook()
@@ -274,7 +274,7 @@ public class CombatManager : Singleton<CombatManager>
 
     private void LookAtEnemy()
     {
-       // letterSpawner.gameObject.SetActive(false);
+        // letterSpawner.gameObject.SetActive(false);
         inputHandler.EnableTyping();
         if (CameraHolder != null)
         {
@@ -297,14 +297,19 @@ public class CombatManager : Singleton<CombatManager>
             enemy.transform.position += newDirection * (2.0f * Time.deltaTime);
 
             Debug.Log(Vector3.Distance(enemy.transform.position, player.transform.position));
-            if (Vector3.Distance(enemy.transform.position, player.transform.position) <= 2.5f)
+            if (Vector3.Distance(enemy.transform.position, player.transform.position) <= 2.0f)
             {
-                enemy.GetComponent<EnemyAttack>().Attack(1);
-                TeleportEnemy(enemySpawner.transform.position);
+                _isTakingDamage = true;
+                LookAtEnemy();
+                TimelinesManager.instance.PlayTimeLine(TimelinesManager.instance.TakeDamageTimeline);
             }
         }
     }
 
-
-
+    public void ResetEnemyPosition()
+    {
+        //enemy.GetComponent<EnemyAttack>().Attack(1);
+        _isTakingDamage = false;
+        TeleportEnemy(enemySpawner.transform.position);
+    }
 }
