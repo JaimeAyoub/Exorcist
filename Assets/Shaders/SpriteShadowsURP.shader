@@ -1,20 +1,21 @@
 // Reemplazo URP del shader Built-in "Sprites/Custom/SpriteShadows".
-// Los sprites reciben luz de Directional/Point Lights 3D y proyectan sombra real
-// usando un alpha cutout (equivalente a "alphatest:_CutOff addshadow" del surface shader original).
-//
-// Mismos nombres de Properties que el original -> si lo asignas a un Material ya existente,
-// Unity conserva la textura/tint/etc. que ya tenías cargados.
-//
-// Probado contra la API estable de URP 12-17 (Unity 2021.2 - 6000.x). Si tu proyecto usa
-// Forward+ (URP 14+) o una versión muy antigua/nueva y aparece algún error de compilación,
-// dime el error exacto y lo ajusto.
+// Soporta Normal Maps, Specular Maps y proyecta/recibe sombras reales.
+// Ajustado para pixel art: el flip de sprite ahora afecta correctamente normal + tangente.
 
-Shader "Sprites/Custom/SpriteShadowsURP"
+Shader "Sprites/Custom/SpriteShadowsURP_Lit"
 {
     Properties
     {
         [PerRendererData] _MainTex ("Sprite Texture", 2D) = "white" {}
         _Color ("Tint", Color) = (1,1,1,1)
+        
+        [Header(Normal and Specular)]
+        [Normal] _NormalMap ("Normal Map", 2D) = "bump" {}
+        _SpecMap ("Specular Map (RGB=Color, A=Smoothness)", 2D) = "white" {}
+        _SpecColor ("Specular Color", Color) = (0.5, 0.5, 0.5, 1)
+        _Smoothness ("Smoothness", Range(0, 1)) = 0.5
+
+        [Header(Settings)]
         [MaterialToggle] PixelSnap ("Pixel snap", Float) = 0
         [HideInInspector] _RendererColor ("RendererColor", Color) = (1,1,1,1)
         [HideInInspector] _Flip ("Flip", Vector) = (1,1,1,1)
@@ -49,14 +50,15 @@ Shader "Sprites/Custom/SpriteShadowsURP"
             float4 _Flip;
             float _EnableExternalAlpha;
             float _CutOff;
+            float4 _SpecColor;
+            float _Smoothness;
         CBUFFER_END
 
-        TEXTURE2D(_MainTex);
-        SAMPLER(sampler_MainTex);
-        TEXTURE2D(_AlphaTex);
-        SAMPLER(sampler_AlphaTex);
+        TEXTURE2D(_MainTex);      SAMPLER(sampler_MainTex);
+        TEXTURE2D(_AlphaTex);     SAMPLER(sampler_AlphaTex);
+        TEXTURE2D(_NormalMap);    SAMPLER(sampler_NormalMap);
+        TEXTURE2D(_SpecMap);      SAMPLER(sampler_SpecMap);
 
-        // Equivalente a UnityPixelSnap() de UnityCG.cginc (no existe en el core de URP)
         float4 SpritePixelSnap(float4 positionCS)
         {
             float2 hpc = _ScreenParams.xy * 0.5f;
@@ -79,7 +81,7 @@ Shader "Sprites/Custom/SpriteShadowsURP"
         ENDHLSL
 
         // ---------------------------------------------------------------
-        // Pase principal: sprite lit por luces 3D (direccional + puntuales)
+        // Pase principal: lit por luces 3D (difusa + especular + normal map)
         // ---------------------------------------------------------------
         Pass
         {
@@ -92,8 +94,7 @@ Shader "Sprites/Custom/SpriteShadowsURP"
 
             #pragma multi_compile_local _ PIXELSNAP_ON
             #pragma multi_compile_local _ ETC1_EXTERNAL_ALPHA
-            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
-            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
             #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
             #pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS
             #pragma multi_compile_fragment _ _SHADOWS_SOFT
@@ -103,30 +104,40 @@ Shader "Sprites/Custom/SpriteShadowsURP"
 
             struct appdata
             {
-                float4 vertex : POSITION;
-                float3 normal : NORMAL;
-                float4 color  : COLOR;
-                float2 uv     : TEXCOORD0;
+                float4 vertex  : POSITION;
+                float3 normal  : NORMAL;
+                float4 tangent : TANGENT; // Requiere que el sprite tenga tangentes (ver Secondary Textures)
+                float4 color   : COLOR;
+                float2 uv      : TEXCOORD0;
             };
 
             struct v2f
             {
-                float4 positionCS : SV_POSITION;
-                float2 uv         : TEXCOORD0;
-                float4 color      : COLOR;
-                float3 positionWS : TEXCOORD1;
-                float3 normalWS   : TEXCOORD2;
-                float4 shadowCoord: TEXCOORD3;
-                float  fogFactor  : TEXCOORD4;
+                float4 positionCS  : SV_POSITION;
+                float2 uv          : TEXCOORD0;
+                float4 color       : COLOR;
+                float4 shadowCoord : TEXCOORD1;
+                float  fogFactor   : TEXCOORD2;
+                float3 positionWS  : TEXCOORD3;
+                float3 normalWS    : TEXCOORD4;
+                float3 tangentWS   : TEXCOORD5;
+                float3 bitangentWS : TEXCOORD6;
+                float3 viewDirWS   : TEXCOORD7;
             };
 
             v2f vert(appdata v)
             {
                 v2f o = (v2f)0;
 
+                // --- FIX: el flip ahora se aplica a posición, normal Y tangente ---
+                // Sin esto, al voltear el sprite (ej. personaje mirando a la izquierda)
+                // la luz del normal map se veía como si viniera del lado equivocado.
                 v.vertex.xy *= _Flip.xy;
+                v.normal.xy *= _Flip.xy;
+                v.tangent.xy *= _Flip.xy;
 
                 VertexPositionInputs posIn = GetVertexPositionInputs(v.vertex.xyz);
+                VertexNormalInputs normalIn = GetVertexNormalInputs(v.normal, v.tangent);
 
                 o.positionCS = posIn.positionCS;
 
@@ -134,15 +145,16 @@ Shader "Sprites/Custom/SpriteShadowsURP"
                 o.positionCS = SpritePixelSnap(o.positionCS);
                 #endif
 
-                o.positionWS = posIn.positionWS;
-                // Normal "virtual" que siempre mira hacia la cámara, en vez de usar la normal
-                // real de la malla. Así la iluminación no se rompe si algún script rota el
-                // transform (p.ej. transform.LookAt hacia el jugador) por motivos de gameplay.
-                o.normalWS   = normalize(GetWorldSpaceViewDir(posIn.positionWS));
-                o.uv         = TRANSFORM_TEX(v.uv, _MainTex);
-                o.color      = v.color * _Color * _RendererColor;
+                o.positionWS  = posIn.positionWS;
+                o.normalWS    = normalIn.normalWS;
+                o.tangentWS   = normalIn.tangentWS;
+                o.bitangentWS = normalIn.bitangentWS;
+                o.viewDirWS   = GetWorldSpaceViewDir(posIn.positionWS);
+                
+                o.uv          = TRANSFORM_TEX(v.uv, _MainTex);
+                o.color       = v.color * _Color * _RendererColor;
                 o.shadowCoord = GetShadowCoord(posIn);
-                o.fogFactor  = ComputeFogFactor(posIn.positionCS.z);
+                o.fogFactor   = ComputeFogFactor(posIn.positionCS.z);
 
                 return o;
             }
@@ -152,24 +164,49 @@ Shader "Sprites/Custom/SpriteShadowsURP"
                 half4 c = SampleSpriteAlbedo(i.uv, i.color);
                 clip(c.a - _CutOff);
 
-                half3 normalWS = normalize(i.normalWS);
+                // 1. Extraer y transformar el Normal Map
+                half4 normalTex = SAMPLE_TEXTURE2D(_NormalMap, sampler_NormalMap, i.uv);
+                half3 tangentNormal = UnpackNormal(normalTex);
+                half3 normalWS = TransformTangentToWorld(tangentNormal, half3x3(i.tangentWS, i.bitangentWS, i.normalWS));
+                normalWS = normalize(normalWS);
 
+                // 2. Extraer datos Especulares
+                half4 specTex = SAMPLE_TEXTURE2D(_SpecMap, sampler_SpecMap, i.uv);
+                half3 specColor = specTex.rgb * _SpecColor.rgb;
+                half smoothness = specTex.a * _Smoothness; 
+                half3 viewDirWS = normalize(i.viewDirWS);
+
+                // 3. Iluminación Principal
                 Light mainLight = GetMainLight(i.shadowCoord);
-                half3 lighting = LightingLambert(mainLight.color * mainLight.shadowAttenuation * mainLight.distanceAttenuation, mainLight.direction, normalWS);
-                lighting += SampleSH(normalWS);
+                half3 lightColorAtten = mainLight.color * (mainLight.distanceAttenuation * mainLight.shadowAttenuation);
+                
+                half3 diffuse = LightingLambert(lightColorAtten, mainLight.direction, normalWS);
+                half3 specular = LightingSpecular(lightColorAtten, mainLight.direction, normalWS, viewDirWS, half4(specColor, 0), smoothness);
 
+                half3 totalDiffuse = diffuse;
+                half3 totalSpecular = specular;
+
+                // 4. Luces Adicionales (Point, Spot)
                 #if defined(_ADDITIONAL_LIGHTS)
                 uint additionalLightsCount = GetAdditionalLightsCount();
                 for (uint lightIndex = 0u; lightIndex < additionalLightsCount; ++lightIndex)
                 {
                     Light light = GetAdditionalLight(lightIndex, i.positionWS);
-                    half3 attenuatedColor = light.color * (light.distanceAttenuation * light.shadowAttenuation);
-                    lighting += LightingLambert(attenuatedColor, light.direction, normalWS);
+                    half3 attenColor = light.color * (light.distanceAttenuation * light.shadowAttenuation);
+                    
+                    totalDiffuse += LightingLambert(attenColor, light.direction, normalWS);
+                    totalSpecular += LightingSpecular(attenColor, light.direction, normalWS, viewDirWS, half4(specColor, 0), smoothness);
                 }
                 #endif
 
-                half3 albedo = c.rgb * c.a; // premultiplied, coherente con Blend One OneMinusSrcAlpha
-                half3 finalColor = albedo * lighting;
+                // Añadir ambiente (Global Illumination)
+                totalDiffuse += SampleSH(normalWS);
+
+                // 5. Composición final (Premultiplied Alpha)
+                half3 albedo = c.rgb * c.a; 
+                
+                // Multiplicamos totalSpecular por c.a para que las zonas transparentes no brillen
+                half3 finalColor = (albedo * totalDiffuse) + (totalSpecular * c.a);
                 finalColor = MixFog(finalColor, i.fogFactor);
 
                 return half4(finalColor, c.a);
@@ -178,8 +215,7 @@ Shader "Sprites/Custom/SpriteShadowsURP"
         }
 
         // ---------------------------------------------------------------
-        // Pase de sombra: recorta por _CutOff para que la sombra siga
-        // la silueta real del sprite (igual que alphatest:_CutOff addshadow)
+        // Pase de sombra (Sin cambios, solo recorta silueta)
         // ---------------------------------------------------------------
         Pass
         {
@@ -200,7 +236,7 @@ Shader "Sprites/Custom/SpriteShadowsURP"
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
 
-            float3 _LightDirection; // inyectado por URP para el shadow pass
+            float3 _LightDirection;
 
             struct appdata
             {
@@ -220,7 +256,6 @@ Shader "Sprites/Custom/SpriteShadowsURP"
             v2f ShadowVert(appdata v)
             {
                 v2f o;
-
                 v.vertex.xy *= _Flip.xy;
 
                 float3 positionWS = TransformObjectToWorld(v.vertex.xyz);
@@ -254,6 +289,5 @@ Shader "Sprites/Custom/SpriteShadowsURP"
             ENDHLSL
         }
     }
-
     Fallback Off
 }

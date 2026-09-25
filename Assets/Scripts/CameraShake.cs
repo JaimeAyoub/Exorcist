@@ -26,6 +26,11 @@ public class CameraShake : UnityUtils.Singleton<CameraShake>
             if (shakeTime <= 0 && _noise != null)
                 _noise.AmplitudeGain = 0f;
         }
+
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            CameraShakeTest();
+        }
     }
 
     public void CmrShake(float intensity, float time)
@@ -35,4 +40,12 @@ public class CameraShake : UnityUtils.Singleton<CameraShake>
         _noise.AmplitudeGain = intensity;
         shakeTime = time;
     }
+
+    public void CameraShakeTest()
+    {
+        CmrShake(2.5f,0.1f);
+    }
+
+
+
 }
