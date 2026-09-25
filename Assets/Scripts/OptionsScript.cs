@@ -17,13 +17,20 @@ public class OptionsScript : UnityUtils.Singleton<OptionsScript>
     public VolumeProfile volumeProfile;
 
     public Slider chromaticAberrationSlider;
-    public ChromaticAberration _chromaticAberration;
-    private FilmGrain _filmGrain;
+
     public Slider filmGrainSlider;
+    public Slider colorAdjustSlider;
+    
+    
     [Header("Opcion para sensibilidad ")] public PlayerMovement playerMovement;
     public Slider sensitivitySliderX;
     public Slider sensitivitySliderY;
     [SerializeField] private Image panelToFade;
+
+    [Header("Efectos de postprocesado")] public ChromaticAberration _chromaticAberration;
+    public FilmGrain _filmGrain;
+    public ColorAdjustments colorAdjustments;
+
 
     void Start()
     {
@@ -52,6 +59,7 @@ public class OptionsScript : UnityUtils.Singleton<OptionsScript>
             Debug.LogError("No Grain found");
         }
 
+     
         PixelationShaderSlider.maxValue = 8;
         PixelationShaderSlider.minValue = 3;
         PixelationShaderSlider.value = PixelationShaderMaterial.GetFloat("_PixelSize");
@@ -93,5 +101,13 @@ public class OptionsScript : UnityUtils.Singleton<OptionsScript>
     public void changeSensitivityinY()
     {
         playerMovement.yMouseSensitivity = sensitivitySliderY.value;
+    }
+
+    public void AnimateEffects()
+    {
+        if (colorAdjustments != null)
+        {
+               
+        }
     }
 }

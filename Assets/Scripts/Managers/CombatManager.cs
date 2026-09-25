@@ -51,6 +51,8 @@ public class CombatManager : Singleton<CombatManager>
 
     private bool _isTakingDamage;
 
+    [SerializeField] private float enemySpeedToApproach;
+
     void Start()
     {
         LookBooKAction = InputSystem.actions.FindAction("LookBook");
@@ -294,7 +296,7 @@ public class CombatManager : Singleton<CombatManager>
             Vector3 direction = (player.transform.position - enemy.transform.position).normalized;
 
             Vector3 newDirection = new Vector3(direction.x, 0, direction.z);
-            enemy.transform.position += newDirection * (2.0f * Time.deltaTime);
+            enemy.transform.position += newDirection * (enemySpeedToApproach * Time.deltaTime);
 
             Debug.Log(Vector3.Distance(enemy.transform.position, player.transform.position));
             if (Vector3.Distance(enemy.transform.position, player.transform.position) <= 2.0f)

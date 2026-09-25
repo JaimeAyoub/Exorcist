@@ -22,6 +22,13 @@ Shader "Sprites/Custom/SpriteShadowsURP_Lit"
         [PerRendererData] _AlphaTex ("External Alpha", 2D) = "white" {}
         [PerRendererData] _EnableExternalAlpha ("Enable External Alpha", Float) = 0
         _CutOff ("Alpha Cutoff", Range(0,1)) = 0.5
+
+        [Header(Erosion Dissolve Effect)]
+        _ErosionTex ("Erosion Noise (R)", 2D) = "white" {}
+        _ErosionAmount ("Erosion Amount", Range(0,1)) = 0
+        _ErosionEdgeWidth ("Erosion Edge Width", Range(0.001, 0.3)) = 0.06
+        _ErosionEdgeColor ("Erosion Edge Color", Color) = (1, 0.4, 0.05, 1)
+        _ErosionEdgeIntensity ("Erosion Edge Intensity", Range(0, 5)) = 2
     }
 
     SubShader
@@ -52,12 +59,17 @@ Shader "Sprites/Custom/SpriteShadowsURP_Lit"
             float _CutOff;
             float4 _SpecColor;
             float _Smoothness;
+            float _ErosionAmount;
+            float _ErosionEdgeWidth;
+            float4 _ErosionEdgeColor;
+            float _ErosionEdgeIntensity;
         CBUFFER_END
 
         TEXTURE2D(_MainTex);      SAMPLER(sampler_MainTex);
         TEXTURE2D(_AlphaTex);     SAMPLER(sampler_AlphaTex);
         TEXTURE2D(_NormalMap);    SAMPLER(sampler_NormalMap);
         TEXTURE2D(_SpecMap);      SAMPLER(sampler_SpecMap);
+        TEXTURE2D(_ErosionTex);   SAMPLER(sampler_ErosionTex);
 
         float4 SpritePixelSnap(float4 positionCS)
         {
@@ -136,6 +148,11 @@ Shader "Sprites/Custom/SpriteShadowsURP_Lit"
                 v.normal.xy *= _Flip.xy;
                 v.tangent.xy *= _Flip.xy;
 
+                // FIX: la normal base del sprite queda invertida respecto a la
+                // convención de LookAt/LookRotation del billboard. La negamos
+                // aquí (no al tangente) para no afectar la orientación del normal map.
+                v.normal = -v.normal;
+
                 VertexPositionInputs posIn = GetVertexPositionInputs(v.vertex.xyz);
                 VertexNormalInputs normalIn = GetVertexNormalInputs(v.normal, v.tangent);
 
@@ -163,6 +180,13 @@ Shader "Sprites/Custom/SpriteShadowsURP_Lit"
             {
                 half4 c = SampleSpriteAlbedo(i.uv, i.color);
                 clip(c.a - _CutOff);
+
+                // --- Erosion / Dissolve ---
+                half erosionNoise = SAMPLE_TEXTURE2D(_ErosionTex, sampler_ErosionTex, i.uv).r;
+                // Recorta el píxel por completo una vez que el ruido cae por debajo del umbral
+                clip(erosionNoise - _ErosionAmount);
+                // Máscara para el borde brillante: 1 justo en el límite de la erosión, 0 lejos de él
+                half edgeMask = 1 - smoothstep(0, _ErosionEdgeWidth, erosionNoise - _ErosionAmount);
 
                 // 1. Extraer y transformar el Normal Map
                 half4 normalTex = SAMPLE_TEXTURE2D(_NormalMap, sampler_NormalMap, i.uv);
@@ -207,6 +231,10 @@ Shader "Sprites/Custom/SpriteShadowsURP_Lit"
                 
                 // Multiplicamos totalSpecular por c.a para que las zonas transparentes no brillen
                 half3 finalColor = (albedo * totalDiffuse) + (totalSpecular * c.a);
+
+                // Suma el brillo del borde de erosión (efecto "quemado"/energía)
+                finalColor += _ErosionEdgeColor.rgb * edgeMask * _ErosionEdgeIntensity * c.a;
+
                 finalColor = MixFog(finalColor, i.fogFactor);
 
                 return half4(finalColor, c.a);
@@ -284,6 +312,10 @@ Shader "Sprites/Custom/SpriteShadowsURP_Lit"
             {
                 half4 c = SampleSpriteAlbedo(i.uv, i.color);
                 clip(c.a - _CutOff);
+
+                half erosionNoise = SAMPLE_TEXTURE2D(_ErosionTex, sampler_ErosionTex, i.uv).r;
+                clip(erosionNoise - _ErosionAmount);
+
                 return 0;
             }
             ENDHLSL

@@ -11,17 +11,31 @@ public abstract class EnemyHealthBase : MonoBehaviour
 
     public SoundData damageSound;
 
-    private Material erotionMaterial;
+    [Header("Erosion Effect (al morir)")]
+    [Tooltip("Nombre de la propiedad de erosión en el shader")]
+    public string erosionProperty = "_ErosionAmount";
+    public float erosionDuration = 1.5f;
+
+    private Material erosionMaterial;
+    private bool isDead = false; // Evita que Death() se ejecute más de una vez
 
     private void Start()
     {
         currentHealth = maxHealth;
-        erotionMaterial = GetComponentInChildren<SpriteRenderer>().material;
+
+        SpriteRenderer sp = GetComponentInChildren<SpriteRenderer>();
+        if (sp != null)
+        {
+            // .material (no .sharedMaterial) instancia el material,
+            // así el efecto de erosión no afecta a otros enemigos que compartan el mismo asset.
+            erosionMaterial = sp.material;
+            erosionMaterial.SetFloat(erosionProperty, 0f);
+        }
     }
 
     public void TakeDamage(int damageAmount)
     {
-        if (currentHealth <= 0) return;
+        if (currentHealth <= 0 || isDead) return;
 
         currentHealth -= damageAmount;
         Debug.Log("Vida del enemigo: " + currentHealth);
@@ -41,11 +55,25 @@ public abstract class EnemyHealthBase : MonoBehaviour
 
     private void Death()
     {
+        if (isDead) return; // Protección extra: no dispares Death() dos veces
+        isDead = true;
+
         UIManager.Instance.CheckEnd();
+
+        // Matar cualquier tween de daño en curso (flash rojo / shake) para que no interfiera
         if (damageTween != null && damageTween.IsActive())
             damageTween.Kill();
 
-        erotionMaterial.DOFloat(-0.2f, "_ErotionValue", 1.5f).OnComplete(() => CombatManager.Instance.EndCombat());
+        if (erosionMaterial == null)
+        {
+            // Fallback por si el SpriteRenderer no se encontró en Start()
+            CombatManager.Instance.EndCombat();
+            return;
+        }
+
+        erosionMaterial.DOFloat(1f, erosionProperty, erosionDuration)
+            .SetEase(Ease.InQuad)
+            .OnComplete(() => CombatManager.Instance.EndCombat());
     }
 
     private void DamageFlash()

@@ -3312,7 +3312,9 @@ PlayableDirector:
     value: {fileID: 2014862241}
   m_ExposedReferences:
     m_References:
+    - f3bbc39218391744888f46c2c3fea7f6: {fileID: 2014862231}
     - bfd7240ec89a3ba49a81c179e2149691: {fileID: 2014862231}
+    - e04616c6fa791b9439b4434f77330656: {fileID: 2014862231}
 --- !u!1001 &105153635
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15666,12 +15668,15 @@ MonoBehaviour:
   SonidoSlider: {fileID: 1395476171}
   volumeProfile: {fileID: 11400000, guid: cbea3553215783e40b933a560601f35d, type: 2}
   chromaticAberrationSlider: {fileID: 1045215379}
-  _chromaticAberration: {fileID: 0}
   filmGrainSlider: {fileID: 1359498332}
+  colorAdjustSlider: {fileID: 0}
   playerMovement: {fileID: 6612972261170829959}
   sensitivitySliderX: {fileID: 2114134038}
   sensitivitySliderY: {fileID: 2009826154}
   panelToFade: {fileID: 1731443713}
+  _chromaticAberration: {fileID: 0}
+  _filmGrain: {fileID: 0}
+  colorAdjustments: {fileID: 0}
 --- !u!114 &538021363
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24476,6 +24481,7 @@ MonoBehaviour:
     playOnAwake: 0
     frequentSound: 0
     walkClips: []
+  enemySpeedToApproach: 1
 --- !u!114 &870630825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26736,7 +26742,7 @@ Transform:
   m_GameObject: {fileID: 948216177}
   serializedVersion: 2
   m_LocalRotation: {x: 0.08932049, y: -0.5390835, z: 0.05763059, w: 0.8355176}
-  m_LocalPosition: {x: -0.05, y: 0.279, z: 0.484}
+  m_LocalPosition: {x: 0.933, y: 0.004, z: 2.567}
   m_LocalScale: {x: 0.32780436, y: 0.32780436, z: 0.32780436}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -56098,6 +56104,7 @@ GameObject:
   - component: {fileID: 2014862239}
   - component: {fileID: 2014862240}
   - component: {fileID: 2014862241}
+  - component: {fileID: 2014862242}
   m_Layer: 0
   m_Name: CinemachineCamera
   m_TagString: MainCamera
@@ -56282,6 +56289,28 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!95 &2014862242
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2014862230}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &2017124999
 PrefabInstance:
   m_ObjectHideFlags: 0
