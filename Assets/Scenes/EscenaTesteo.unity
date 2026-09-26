@@ -3308,8 +3308,13 @@ PlayableDirector:
     value: {fileID: 1026221170}
   - key: {fileID: -7835452396194545309, guid: 44ff20ce3bc2d664ba91b03cb49c1d4c, type: 2}
     value: {fileID: 1026221166}
+  - key: {fileID: 6773017366594988600, guid: 44ff20ce3bc2d664ba91b03cb49c1d4c, type: 2}
+    value: {fileID: 2014862241}
   m_ExposedReferences:
-    m_References: []
+    m_References:
+    - f3bbc39218391744888f46c2c3fea7f6: {fileID: 2014862231}
+    - bfd7240ec89a3ba49a81c179e2149691: {fileID: 2014862231}
+    - e04616c6fa791b9439b4434f77330656: {fileID: 2014862231}
 --- !u!1001 &105153635
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15663,12 +15668,15 @@ MonoBehaviour:
   SonidoSlider: {fileID: 1395476171}
   volumeProfile: {fileID: 11400000, guid: cbea3553215783e40b933a560601f35d, type: 2}
   chromaticAberrationSlider: {fileID: 1045215379}
-  _chromaticAberration: {fileID: 0}
   filmGrainSlider: {fileID: 1359498332}
+  colorAdjustSlider: {fileID: 0}
   playerMovement: {fileID: 6612972261170829959}
   sensitivitySliderX: {fileID: 2114134038}
   sensitivitySliderY: {fileID: 2009826154}
   panelToFade: {fileID: 1731443713}
+  _chromaticAberration: {fileID: 0}
+  _filmGrain: {fileID: 0}
+  colorAdjustments: {fileID: 0}
 --- !u!114 &538021363
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24473,6 +24481,7 @@ MonoBehaviour:
     playOnAwake: 0
     frequentSound: 0
     walkClips: []
+  enemySpeedToApproach: 1
 --- !u!114 &870630825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26733,7 +26742,7 @@ Transform:
   m_GameObject: {fileID: 948216177}
   serializedVersion: 2
   m_LocalRotation: {x: 0.08932049, y: -0.5390835, z: 0.05763059, w: 0.8355176}
-  m_LocalPosition: {x: 0.1762, y: 0.3156, z: 0.1726}
+  m_LocalPosition: {x: 0.413, y: 0.243, z: 0.34}
   m_LocalScale: {x: 0.32780436, y: 0.32780436, z: 0.32780436}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -26779,8 +26788,8 @@ Light:
   serializedVersion: 12
   m_Type: 2
   m_Color: {r: 0.33962262, g: 0.1868549, b: 0, a: 1}
-  m_Intensity: 40
-  m_Range: 8.8
+  m_Intensity: 50
+  m_Range: 157.6
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 10, y: 10}
@@ -28657,7 +28666,7 @@ Light:
   m_Type: 0
   m_Color: {r: 0.34117648, g: 0.1882353, b: 0, a: 1}
   m_Intensity: 190
-  m_Range: 19.310118
+  m_Range: 22.591515
   m_SpotAngle: 95.12217
   m_InnerSpotAngle: 51.96942
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -28718,13 +28727,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1026221166}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.8045483, y: 0.45645624, z: 0.18748172, w: 0.3304547}
-  m_LocalPosition: {x: -25.356, y: 9.143, z: -82.665}
+  m_LocalRotation: {x: 0.8013617, y: 0.45773283, z: 0.19538364, w: 0.33185133}
+  m_LocalPosition: {x: -26.32, y: 9.143, z: -80.46}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 21.136, y: 139.694, z: 113.03}
+  m_LocalEulerAnglesHint: {x: 20.671, y: 138.746, z: 112.677}
 --- !u!95 &1026221170
 Animator:
   serializedVersion: 7
@@ -35020,7 +35029,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1230804385}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 948f4100a11a5c24981795d21301da5c, type: 3}
   m_Name: 
@@ -35028,7 +35037,7 @@ MonoBehaviour:
   volumeTrigger: {fileID: 1230804388}
   volumeLayer:
     serializedVersion: 2
-    m_Bits: 16
+    m_Bits: 0
   stopNaNPropagation: 1
   finalBlitToCameraTarget: 0
   antialiasingMode: 0
@@ -47580,6 +47589,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 8017021921820673461}
+    - target: {fileID: 3070425039534658728, guid: ce9b438080f5a6a4c8990e95633ca5bd, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3194076526668939009, guid: ce9b438080f5a6a4c8990e95633ca5bd, type: 3}
       propertyPath: m_Name
       value: EnemyBase (1)
@@ -47663,6 +47676,10 @@ PrefabInstance:
     - target: {fileID: 3831227527538872822, guid: ce9b438080f5a6a4c8990e95633ca5bd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0.244
+      objectReference: {fileID: 0}
+    - target: {fileID: 4136553488226298128, guid: ce9b438080f5a6a4c8990e95633ca5bd, type: 3}
+      propertyPath: MinDistance
+      value: 0.9721842
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -56090,6 +56107,8 @@ GameObject:
   - component: {fileID: 2014862236}
   - component: {fileID: 2014862239}
   - component: {fileID: 2014862240}
+  - component: {fileID: 2014862241}
+  - component: {fileID: 2014862242}
   m_Layer: 0
   m_Name: CinemachineCamera
   m_TagString: MainCamera
@@ -56156,7 +56175,7 @@ Transform:
   - {fileID: 543450652589157663}
   - {fileID: 543450651585948348}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 179.9, z: 0}
 --- !u!114 &2014862235
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56243,7 +56262,59 @@ MonoBehaviour:
   PivotOffset: {x: 0, y: 0, z: 0}
   AmplitudeGain: 0
   FrequencyGain: 1
-  m_NoiseOffsets: {x: 0, y: 0, z: 0}
+  m_NoiseOffsets: {x: -67.70029, y: 40.47928, z: -994.44336}
+--- !u!114 &2014862241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2014862230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e52de21a22b6dd44c9cc19f810c65059, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.SignalReceiver
+  m_Events:
+    m_Signals:
+    - {fileID: 11400000, guid: 1a6bb44e636130042b0123649a041feb, type: 2}
+    m_Events:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2014862239}
+          m_TargetAssemblyTypeName: CameraShake, Assembly-CSharp
+          m_MethodName: CameraShakeTest
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+--- !u!95 &2014862242
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2014862230}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &2017124999
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -61017,7 +61088,7 @@ MeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2503788099517227861}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0

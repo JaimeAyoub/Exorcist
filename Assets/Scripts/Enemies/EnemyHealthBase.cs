@@ -11,21 +11,39 @@ public abstract class EnemyHealthBase : MonoBehaviour
 
     public SoundData damageSound;
 
-    private Material erotionMaterial;
+    [Header("Erosion Effect (al morir)")]
+    [Tooltip("Nombre de la propiedad de erosión en el shader")]
+    public string erosionProperty = "_ErosionAmount";
+    public float erosionDuration = 1.5f;
+
+    private Material erosionMaterial;
+    private bool isDead = false; // Evita que Death() se ejecute más de una vez
+
+    /// <summary>
+    /// Se dispara cuando el enemigo muere, justo al terminar el efecto de erosión.
+    /// Quien quiera reaccionar a la muerte (CombatManager, un sistema de loot, etc.)
+    /// se suscribe a este evento en vez de que este script conozca esas dependencias.
+    /// </summary>
+    public event Action OnEnemyDeath;
 
     private void Start()
     {
         currentHealth = maxHealth;
-        var sr = GetComponentInChildren<SpriteRenderer>();
-        if (sr != null)
-            erotionMaterial = sr.material;
-        else
-            Debug.LogWarning($"[Enemigo] '{gameObject.name}' sin SpriteRenderer hijo: sin animación de erosión.");
+
+        SpriteRenderer sp = GetComponentInChildren<SpriteRenderer>();
+        if (sp != null)
+        {
+            // .material (no .sharedMaterial) instancia el material,
+            // así el efecto de erosión no afecta a otros enemigos que compartan el mismo asset.
+            erosionMaterial = sp.material;
+            erosionMaterial.SetFloat(erosionProperty, 0f);
+        }
+
     }
 
     public void TakeDamage(int damageAmount)
     {
-        if (currentHealth <= 0) return;
+        if (currentHealth <= 0 || isDead) return;
 
         currentHealth -= damageAmount;
         Debug.Log("Vida del enemigo: " + currentHealth);
@@ -34,8 +52,6 @@ public abstract class EnemyHealthBase : MonoBehaviour
         PlayDamageSound();
         if (currentHealth <= 0)
             Death();
-        else
-            CombatManager.Instance.IsCombatEnd();
     }
 
     private void PlayDamageSound()
@@ -46,20 +62,26 @@ public abstract class EnemyHealthBase : MonoBehaviour
 
     private void Death()
     {
-        Debug.Log($"[Enemigo] Muerte de '{gameObject.name}'. Terminando combate...");
+
+        if (isDead) return; // Protección extra: no dispares Death() dos veces
+        isDead = true;
         UIManager.Instance.CheckEnd();
+
+        // Matar cualquier tween de daño en curso (flash rojo / shake) para que no interfiera
         if (damageTween != null && damageTween.IsActive())
             damageTween.Kill();
 
-        // Fail-safe: si no hay material de erosión, terminar el combate igual.
-        if (erotionMaterial == null)
+
+        if (erosionMaterial == null)
         {
-            Debug.LogWarning("[Enemigo] Sin material de erosión: fin de combate directo.");
-            CombatManager.Instance.EndCombat();
+            // Fallback por si el SpriteRenderer no se encontró en Start()
+            OnEnemyDeath?.Invoke();
             return;
         }
 
-        erotionMaterial.DOFloat(-0.2f, "_ErotionValue", 1.5f).OnComplete(() => CombatManager.Instance.EndCombat());
+        erosionMaterial.DOFloat(1f, erosionProperty, erosionDuration)
+            .SetEase(Ease.InQuad)
+            .OnComplete(() => OnEnemyDeath?.Invoke());
     }
 
     private void DamageFlash()

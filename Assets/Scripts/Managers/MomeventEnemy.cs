@@ -37,11 +37,17 @@ public class MomeventEnemy : MonoBehaviour
     void LookAtPlayer()
     {
         Vector3 targetPosition = player.transform.position;
-        
         targetPosition.y = transform.position.y;
 
+        // En vez de mirar HACIA el jugador, orientamos el forward
+        // en dirección OPUESTA al jugador, para que la cara frontal
+        // del sprite (normal -Z local) termine apuntando hacia él.
+        Vector3 directionAwayFromPlayer = transform.position - targetPosition;
 
-        transform.LookAt(targetPosition);
+        if (directionAwayFromPlayer.sqrMagnitude > 0.0001f)
+        {
+            transform.rotation = Quaternion.LookRotation(directionAwayFromPlayer, Vector3.up);
+        }
     }
 
     public void Destroy()
