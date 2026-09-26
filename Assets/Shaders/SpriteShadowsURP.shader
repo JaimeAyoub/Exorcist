@@ -151,7 +151,7 @@ Shader "Sprites/Custom/SpriteShadowsURP_Lit"
                 // FIX: la normal base del sprite queda invertida respecto a la
                 // convención de LookAt/LookRotation del billboard. La negamos
                 // aquí (no al tangente) para no afectar la orientación del normal map.
-                v.normal = -v.normal;
+                //v.normal = -v.normal;
 
                 VertexPositionInputs posIn = GetVertexPositionInputs(v.vertex.xyz);
                 VertexNormalInputs normalIn = GetVertexNormalInputs(v.normal, v.tangent);

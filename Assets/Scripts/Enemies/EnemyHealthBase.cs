@@ -19,6 +19,13 @@ public abstract class EnemyHealthBase : MonoBehaviour
     private Material erosionMaterial;
     private bool isDead = false; // Evita que Death() se ejecute más de una vez
 
+    /// <summary>
+    /// Se dispara cuando el enemigo muere, justo al terminar el efecto de erosión.
+    /// Quien quiera reaccionar a la muerte (CombatManager, un sistema de loot, etc.)
+    /// se suscribe a este evento en vez de que este script conozca esas dependencias.
+    /// </summary>
+    public event Action OnEnemyDeath;
+
     private void Start()
     {
         currentHealth = maxHealth;
@@ -44,8 +51,6 @@ public abstract class EnemyHealthBase : MonoBehaviour
         PlayDamageSound();
         if (currentHealth <= 0)
             Death();
-        else
-            CombatManager.Instance.IsCombatEnd();
     }
 
     private void PlayDamageSound()
@@ -67,13 +72,13 @@ public abstract class EnemyHealthBase : MonoBehaviour
         if (erosionMaterial == null)
         {
             // Fallback por si el SpriteRenderer no se encontró en Start()
-            CombatManager.Instance.EndCombat();
+            OnEnemyDeath?.Invoke();
             return;
         }
 
         erosionMaterial.DOFloat(1f, erosionProperty, erosionDuration)
             .SetEase(Ease.InQuad)
-            .OnComplete(() => CombatManager.Instance.EndCombat());
+            .OnComplete(() => OnEnemyDeath?.Invoke());
     }
 
     private void DamageFlash()

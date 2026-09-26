@@ -53,6 +53,10 @@ public class CombatManager : Singleton<CombatManager>
 
     [SerializeField] private float enemySpeedToApproach;
 
+    // Referencia cacheada al componente de salud del enemigo actual,
+    // para poder desuscribirnos de su evento al terminar el combate.
+    private EnemyHealthBase _currentEnemyHealth;
+
     void Start()
     {
         LookBooKAction = InputSystem.actions.FindAction("LookBook");
@@ -101,6 +105,14 @@ public class CombatManager : Singleton<CombatManager>
 
         player.GetComponentInChildren<PlayerAttack>().target = enemy;
 
+        // Nos suscribimos al evento de muerte del enemigo en vez de que
+        // el propio enemigo llame directamente a CombatManager.
+        _currentEnemyHealth = enemy.GetComponentInChildren<EnemyHealthBase>();
+        if (_currentEnemyHealth != null)
+            _currentEnemyHealth.OnEnemyDeath += EnemyDeath;
+        else
+            Debug.LogWarning("El enemigo no tiene un EnemyHealthBase; EnemyDeath no se disparará.");
+
         SetUpCombat();
         isTransitioning = false;
     }
@@ -116,6 +128,7 @@ public class CombatManager : Singleton<CombatManager>
 
     private IEnumerator EndCombatRoutine()
     {
+        CameraHolder.transform.DOKill();
         if (OptionsScript.Instance.volumeProfile.TryGet(out OptionsScript.Instance._chromaticAberration))
         {
             OptionsScript.Instance._chromaticAberration.intensity.value = _currentAberration;
@@ -125,6 +138,15 @@ public class CombatManager : Singleton<CombatManager>
         yield return new WaitForSecondsRealtime(0.5f);
 
         isCombat = false;
+
+        // Desuscribirse antes de destruir el enemigo (buena práctica, evita
+        // que el evento quede "colgando" si algo más lo referenciara).
+        if (_currentEnemyHealth != null)
+        {
+            _currentEnemyHealth.OnEnemyDeath -= EnemyDeath;
+            _currentEnemyHealth = null;
+        }
+
         Destroy(enemy);
         inputHandler.SetGameplay();
         inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
@@ -168,26 +190,24 @@ public class CombatManager : Singleton<CombatManager>
         }
     }
 
-    public bool IsCombatEnd()
+
+    private void EnemyDeath()
     {
-        if (player.GetComponentInChildren<PlayerHealth>().currentHealth <= 0)
-        {
-            Debug.Log("Derrota");
-            //AudioManager.instance.StopSFX();
-            _isPlayerAlive = false;
-            EndCombat();
-            return true;
-        }
+        Debug.Log("Victoriaa");
+        _isPlayerAlive = true;
 
-        if (enemy.GetComponent<EnemyHealthBase>().currentHealth <= 0)
-        {
-            Debug.Log("Victoria");
-            EndCombat();
-            //AudioManager.instance.StopSFX();
-            return true;
-        }
+        EndCombat();
+    }
 
-        return false;
+    private void PlayerDeath()
+    {
+        Debug.Log("Derrota");
+        //AudioManager.instance.StopSFX();
+        _isPlayerAlive = false;
+        EndCombat();
+
+
+
     }
 
 
