@@ -56,6 +56,7 @@
         "temp/": true,
         "Temp/": true
     },
+<<<<<<< Updated upstream
     "files.associations": {
         "*.asset": "yaml",
         "*.meta": "yaml",
@@ -67,5 +68,7 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
+=======
+>>>>>>> Stashed changes
     "dotnet.defaultSolution": "Exorcist.slnx"
 }
