@@ -16,7 +16,11 @@ public abstract class EnemyHealthBase : MonoBehaviour
     private void Start()
     {
         currentHealth = maxHealth;
-        erotionMaterial = GetComponentInChildren<SpriteRenderer>().material;
+        var sr = GetComponentInChildren<SpriteRenderer>();
+        if (sr != null)
+            erotionMaterial = sr.material;
+        else
+            Debug.LogWarning($"[Enemigo] '{gameObject.name}' sin SpriteRenderer hijo: sin animación de erosión.");
     }
 
     public void TakeDamage(int damageAmount)
@@ -36,14 +40,24 @@ public abstract class EnemyHealthBase : MonoBehaviour
 
     private void PlayDamageSound()
     {
+        if (damageSound == null) return;
         SoundManager.Instance.CreateSound().WithSoundData(damageSound).Play();
     }
 
     private void Death()
     {
+        Debug.Log($"[Enemigo] Muerte de '{gameObject.name}'. Terminando combate...");
         UIManager.Instance.CheckEnd();
         if (damageTween != null && damageTween.IsActive())
             damageTween.Kill();
+
+        // Fail-safe: si no hay material de erosión, terminar el combate igual.
+        if (erotionMaterial == null)
+        {
+            Debug.LogWarning("[Enemigo] Sin material de erosión: fin de combate directo.");
+            CombatManager.Instance.EndCombat();
+            return;
+        }
 
         erotionMaterial.DOFloat(-0.2f, "_ErotionValue", 1.5f).OnComplete(() => CombatManager.Instance.EndCombat());
     }

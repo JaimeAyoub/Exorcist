@@ -125,7 +125,8 @@ public class CombatManager : Singleton<CombatManager>
         isCombat = false;
         Destroy(enemy);
         inputHandler.SetGameplay();
-        inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
+        inputHandler.ExactCharEvent -= letterSpawner.HandleTypedChar;
+        inputHandler.SubmitEvent -= letterSpawner.HandleSubmit;
 
         TeleportPlayer(_currentPositionPlayer);
         Debug.Log("PlayerRegresado");
@@ -252,8 +253,10 @@ public class CombatManager : Singleton<CombatManager>
         letterSpawner.EmptyAll();
         letterSpawner.FillCharQueue();
         UIManager.Instance.ActivateCanvas(UIManager.Instance._combatCanvas);
-        inputHandler.KeyTypedEvent -= letterSpawner.UpdateScreenText;
-        inputHandler.KeyTypedEvent += letterSpawner.UpdateScreenText;
+        inputHandler.ExactCharEvent -= letterSpawner.HandleTypedChar;
+        inputHandler.SubmitEvent -= letterSpawner.HandleSubmit;
+        inputHandler.ExactCharEvent += letterSpawner.HandleTypedChar;
+        inputHandler.SubmitEvent += letterSpawner.HandleSubmit;
     }
 
     private void LookAtBook()

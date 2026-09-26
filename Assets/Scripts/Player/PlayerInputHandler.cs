@@ -53,6 +53,12 @@ public class PlayerInputHandler : MonoBehaviour
     public static event Action StopMovementEvent;
     public event Action<char> KeyTypedEvent;
 
+    // Typing exacto (case-sensitive) para combate por palabras.
+    // Usa Keyboard.onTextInput: entrega el caracter real (mayúsculas,
+    // minúsculas, espacios, comas, tildes, etc.) en vez del nombre del control.
+    public event Action<char> ExactCharEvent;
+    public event Action SubmitEvent;
+
     // UI Events
     public event Action ResumeEvent;
 
@@ -152,6 +158,8 @@ public class PlayerInputHandler : MonoBehaviour
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
         SceneManager.activeSceneChanged += OnActiveSceneChanged;
+        if (Keyboard.current != null)
+            Keyboard.current.onTextInput += HandleTextInput;
         SetGameplay();
     }
 
@@ -160,7 +168,32 @@ public class PlayerInputHandler : MonoBehaviour
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
         SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+        if (Keyboard.current != null)
+            Keyboard.current.onTextInput -= HandleTextInput;
         playerControls.FindActionMap(playerActionMapName).Disable();
+    }
+
+    private void Update()
+    {
+        // Enter por polling: no existe como binding de texto
+        // y onTextInput no lo reporta de forma fiable en todas las plataformas.
+        // Solo cuando el mapa Typing está activo (mirar al libro lo desactiva).
+        if (_typingAction == null || !_typingAction.enabled) return;
+        var kb = Keyboard.current;
+        if (kb == null) return;
+        if (kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame)
+            SubmitEvent?.Invoke();
+    }
+
+    /// <summary>
+    /// Caracter exacto pulsado (respeta mayúsculas, espacios y puntuación).
+    /// Los controles (Enter, etc.) se ignoran aquí: van por Update.
+    /// </summary>
+    private void HandleTextInput(char c)
+    {
+        if (c == '\n' || c == '\r' || c == '\b' || char.IsControl(c)) return;
+        if (_typingAction == null || !_typingAction.enabled) return;
+        ExactCharEvent?.Invoke(c);
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)

@@ -140,7 +140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GulaHealth
   currentHealth: 0
-  maxHealth: 5
+  maxHealth: 3
   damageSound:
     clip: {fileID: 8300000, guid: 81a3a72e5a176e3478377a876959da35, type: 3}
     mixerGroup: {fileID: 0}
