@@ -8,7 +8,7 @@ public class PlayerCollision : MonoBehaviour
     public GameObject collisionEnemy;
     void Start()
     {
-        AudioManager.instance.PlayBGM(SoundType.FONDO, 1f);
+       // AudioManager.instance.PlayBGM(SoundType.FONDO, 1f);
     }
 
     // Update is called once per frame
@@ -18,11 +18,13 @@ public class PlayerCollision : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Enemy") && !CombatManager.instance.isCombat)
+        if (other.CompareTag("Enemy") && !CombatManager.Instance.isCombat)
         {
             AudioManager.instance.StopSFX();
+            TimelinesManager.Instance.PlayTimeLine(TimelinesManager.Instance.StartCombatTimeline);
             collisionEnemy =  other.gameObject;
-            CombatManager.instance.StartCombat();
+            collisionEnemy.GetComponent<EnemyAttack>().isInCombat = true;
+            CombatManager.Instance.StartCombat();
         }
     }
 }

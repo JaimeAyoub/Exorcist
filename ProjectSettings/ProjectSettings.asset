@@ -525,7 +525,10 @@ PlayerSettings:
       m_Height: 720
       m_Kind: 1
       m_SubKind: 
-  m_BuildTargetBatching: []
+  m_BuildTargetBatching:
+  - m_BuildTarget: Standalone
+    m_StaticBatching: 1
+    m_DynamicBatching: 0
   m_BuildTargetShaderSettings: []
   m_BuildTargetGraphicsJobs: []
   m_BuildTargetGraphicsJobMode: []
@@ -833,7 +836,7 @@ PlayerSettings:
   webWasm2023: 0
   webEnableSubmoduleStrippingCompatibility: 0
   scriptingDefineSymbols:
-    Android: DOTWEEN;UNITY_POST_PROCESSING_STACK_V2
+    Android: DOTWEEN;UNITY_POST_PROCESSING_STACK_V2;STEAMAUDIO_ENABLED
     EmbeddedLinux: DOTWEEN;UNITY_POST_PROCESSING_STACK_V2
     GameCoreScarlett: DOTWEEN;UNITY_POST_PROCESSING_STACK_V2
     GameCoreXboxOne: DOTWEEN;UNITY_POST_PROCESSING_STACK_V2
@@ -845,12 +848,12 @@ PlayerSettings:
     PS5: DOTWEEN;UNITY_POST_PROCESSING_STACK_V2
     QNX: DOTWEEN;UNITY_POST_PROCESSING_STACK_V2
     ReservedCFE: DOTWEEN;UNITY_POST_PROCESSING_STACK_V2
-    Standalone: DOTWEEN;UNITY_POST_PROCESSING_STACK_V2
+    Standalone: DOTWEEN;UNITY_POST_PROCESSING_STACK_V2;STEAMAUDIO_ENABLED
     VisionOS: DOTWEEN;UNITY_POST_PROCESSING_STACK_V2
-    WebGL: DOTWEEN;UNITY_POST_PROCESSING_STACK_V2
+    WebGL: DOTWEEN;UNITY_POST_PROCESSING_STACK_V2;STEAMAUDIO_ENABLED
     Windows Store Apps: DOTWEEN
     XboxOne: DOTWEEN;UNITY_POST_PROCESSING_STACK_V2
-    iPhone: DOTWEEN
+    iPhone: DOTWEEN;STEAMAUDIO_ENABLED
     tvOS: DOTWEEN;UNITY_POST_PROCESSING_STACK_V2
   additionalCompilerArguments: {}
   platformArchitecture: {}

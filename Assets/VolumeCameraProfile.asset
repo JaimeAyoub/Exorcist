@@ -50,6 +50,9 @@ MonoBehaviour:
   highQualityFiltering:
     m_OverrideState: 0
     m_Value: 0
+  filter:
+    m_OverrideState: 0
+    m_Value: 0
   downscale:
     m_OverrideState: 0
     m_Value: 0
@@ -84,7 +87,7 @@ MonoBehaviour:
     m_Value: 38.3
   colorFilter:
     m_OverrideState: 1
-    m_Value: {r: 1, g: 1, b: 1, a: 1}
+    m_Value: {r: 0.509434, g: 0.509434, b: 0.509434, a: 1}
   hueShift:
     m_OverrideState: 0
     m_Value: 0

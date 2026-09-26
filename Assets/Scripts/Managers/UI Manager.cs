@@ -142,10 +142,7 @@ public class UIManager : UnityUtils.Singleton<UIManager>
         }
     }
 
-    public bool IsNoteOpen()
-    {
-        return _isNoteOpen;
-    }
+
 
     public void ShowTextDoor()
     {
@@ -172,8 +169,5 @@ public class UIManager : UnityUtils.Singleton<UIManager>
         }
     }
 
-    public void OnCloseNoteButton()
-    {
-        CloseNote();
-    }
+
 }

@@ -1,45 +1,47 @@
 
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using UnityUtils;
 
 public class GameManager : Singleton<GameManager>
 {
-    public bool isPlayerSound;
-    public SoundData walkSoundData;
-    
-    private void OnEnable()
-    {
-        PlayerInputHandler.MovementEvent += PlayWalkSound;
-        PlayerInputHandler.StopMovementEvent += StopMoveSound;
-    }
 
-
-    private void OnDisable()
+    public Material DitherMat;
+    public void EnableCursor()
     {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        Time.timeScale = 0;
         
-        PlayerInputHandler.MovementEvent -= PlayWalkSound;
-        PlayerInputHandler.StopMovementEvent -= StopMoveSound;
-    }
-    private void StopMoveSound()
-    {
-        StopAllCoroutines();
     }
 
-    private void PlayWalkSound()
+    public void DisableCursor()
     {
-        SoundManager.Instance.CreateSound().WithSoundData(walkSoundData).WithRandomPitch().StepSound().Play();
+        Time.timeScale = 1;
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+       
+    }
+    
+    public void SetTimeScale(float timeScale)
+    {
+        Time.timeScale = timeScale;
     }
 
-    void Awake()
+    public void StartDither()
     {
-        base.Awake();
+        if(DitherMat != null)
+            DitherMat.DOFloat(0.01f,"_ColorResolution",0.5f).SetUpdate(true);
     }
-    void Start()
+
+    public void ResetDitherToDefault()
     {
-        AudioManager.instance.PlayBGM(SoundType.FONDO, 0.5f);
+        if(DitherMat != null)
+            DitherMat.DOFloat(16.0f,"_ColorResolution",1.0f).SetUpdate(true);
     }
-    
-    
-    
+
+
+
 }

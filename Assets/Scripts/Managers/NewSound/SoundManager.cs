@@ -14,6 +14,7 @@ public class SoundManager : PersistentSingleton<SoundManager>
     [SerializeField] private int defaultCapacity = 10;
     [SerializeField] private int maxPoolSize = 100;
     [SerializeField] private int maxSoundInstances = 30;
+    private SoundEmitter _currentBGM;
 
     private void Start()
     {
@@ -51,6 +52,10 @@ public class SoundManager : PersistentSingleton<SoundManager>
     {
         _soundEmitterPool.Release(soundEmitter);
     }
+    
+    
+
+
 
     private void InitializePool()
     {
@@ -86,4 +91,6 @@ public class SoundManager : PersistentSingleton<SoundManager>
     {
         Destroy(emitter.gameObject);
     }
+    
+    
 }

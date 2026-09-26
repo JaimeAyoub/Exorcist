@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using TMPro;
 
 [RequireComponent(typeof(Canvas))]
 [DisallowMultipleComponent]
@@ -10,6 +11,7 @@ public class MenuController : MonoBehaviour
     [SerializeField] private Page initialPage;
     [SerializeField] private Page menuPage;
     [SerializeField] private GameObject firstFocusItem;
+    [SerializeField] private Page notePage;
 
   //  [SerializeField] private PlayerInputHandler playerInputHandler;
 
@@ -154,4 +156,28 @@ public class MenuController : MonoBehaviour
             _stackVisualization.Add(stackArray[i]);
         }
     }
+
+    public void PushNotePage(string textToShow)
+    {
+        notePage.Enter(true);
+
+        TextMeshProUGUI noteTextUI = notePage.GetComponentInChildren<TextMeshProUGUI>();
+        noteTextUI.text = textToShow;
+        if (_pageStack.Count > 0)
+        {
+            var currentPage = _pageStack.Peek();
+
+            if (currentPage.exitOnNewPagePush)
+            {
+                currentPage.Exit(false);
+            }
+        }
+        if (!_pageStack.Contains(notePage))
+        {
+            _pageStack.Push(notePage);
+        }
+        
+        UpdateStackVisualisation();
+    }
+    
 }
