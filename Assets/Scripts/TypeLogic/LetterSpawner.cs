@@ -71,7 +71,7 @@ public class LetterSpawner : MonoBehaviour
         LetterSpritesMap = new Dictionary<char, Sprite>();
         foreach (Sprite sprite in letterSpriteArray)
         {
-            char key = char.ToUpper(sprite.name[0]);
+            char key = sprite.name[0];
             LetterSpritesMap[key] = sprite;
         }
     }
@@ -118,7 +118,8 @@ public class LetterSpawner : MonoBehaviour
         {
             sr.sprite = sprite;
             sr.material.SetTexture("_LetterText", sprite.texture);
-        }
+        }else
+            Debug.LogWarning("No hay sprite para: " + c);
 
         _letterObjects.Add(letterObj);
     }
@@ -400,7 +401,7 @@ public class LetterSpawner : MonoBehaviour
         letter.SetActive(false);
 
         var sr = letter.GetComponent<SpriteRenderer>();
-        if (LetterSpritesMap.TryGetValue(char.ToUpper(currentChar), out Sprite sprite))
+        if (LetterSpritesMap.TryGetValue(currentChar, out Sprite sprite))
         {
             sr.sprite = sprite;
 

@@ -61393,6 +61393,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: e225525324c2ea24db2ed18dcd61a5f2, type: 3}
   - {fileID: 21300000, guid: eaaa0073f8d09214cbfa9e9a31f6590a, type: 3}
   - {fileID: 21300000, guid: 2feeaf0798078fd4288aa91d5d6bacac, type: 3}
+  - {fileID: 21300000, guid: a91478583d61e92409f994550a5ac112, type: 3}
   spaceBetweenLetters: 0.15
   vfxBook: {fileID: 3357787788069614735, guid: 64c51539f180d354ca7c8ba53e4686d7, type: 3}
   vfxHit: {fileID: 4912714109062061031, guid: ca19af1804927e041a4064dc71c83bf6, type: 3}
