@@ -114,7 +114,7 @@ public class LetterSpawner : MonoBehaviour
         var sr = letterObj.GetComponent<SpriteRenderer>();
         sr.material = new Material(sr.material);
 
-        if (LetterSpritesMap.TryGetValue(char.ToUpper(c), out Sprite sprite))
+        if (LetterSpritesMap.TryGetValue(c, out Sprite sprite))
         {
             sr.sprite = sprite;
             sr.material.SetTexture("_LetterText", sprite.texture);
