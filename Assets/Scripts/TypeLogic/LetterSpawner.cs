@@ -5,6 +5,7 @@ using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.VFX;
 
 public class LetterSpawner : MonoBehaviour
@@ -15,6 +16,7 @@ public class LetterSpawner : MonoBehaviour
     [Header("Variables para el texto")] public TextAsset textAsset; // Texto que se leerá
     public List<char> textToCharList; // Lista de caracteres del texto
     public Queue<char> QueueTextToScreen; // Letras en pantalla
+    public RectTransform letterTypedContainer;
     private int _iteratorText; // Posición actual en el texto
 
 
@@ -30,7 +32,7 @@ public class LetterSpawner : MonoBehaviour
     public VisualEffect vfxMiss;
 
     [Header("Variables para la aparicion de las letras doradas en el libro")]
-    public GameObject bookLocation; //Donde apareceran las letras doradas
+    public Canvas letterTyped;
 
     public GameObject prefabLetterInBook; //GameObject con el sprite renderer y shader dorado
     private List<GameObject> _lettersInBook; //Lista donde guardamos las letras que hay en el libro
@@ -100,16 +102,15 @@ public class LetterSpawner : MonoBehaviour
         int index = 0;
         foreach (var c in QueueTextToScreen)
         {
-            SpawnLetter(c, index, prefabLetter.transform.position);
+            SpawnLetter(c, index);
             index++;
         }
     }
 
-    private void SpawnLetter(char c, int index, Vector3 position)
+    private void SpawnLetter(char c, int index)
     {
         GameObject letterObj = Instantiate(prefabLetter, transform);
         letterObj.transform.localPosition = new Vector3(index * spaceBetweenLetters, 0, 0);
-
 
         var sr = letterObj.GetComponent<SpriteRenderer>();
         sr.material = new Material(sr.material);
@@ -118,7 +119,8 @@ public class LetterSpawner : MonoBehaviour
         {
             sr.sprite = sprite;
             sr.material.SetTexture("_LetterText", sprite.texture);
-        }else
+        }
+        else
             Debug.LogWarning("No hay sprite para: " + c);
 
         _letterObjects.Add(letterObj);
@@ -134,7 +136,7 @@ public class LetterSpawner : MonoBehaviour
     public void HandleTypedChar(char keyTyped)
     {
         if (CombatManager.Instance == null || !CombatManager.Instance.isCombat) return;
-        if (IsAutoSeparator(keyTyped)) return; // Separadores automáticos: ignorar.
+        if (IsAutoSeparator(keyTyped)) return;
         if (QueueTextToScreen.Count == 0 || _letterObjects.Count == 0) return;
         if (CountCompleteWords(_typedBuffer) >= maxWordsPerSubmit) return;
 
@@ -173,6 +175,7 @@ public class LetterSpawner : MonoBehaviour
             CameraShake.Instance.CmrShake(0.55f, 0.50f);
             SpawnVFX(SpawnVFXBarra.transform.position, vfxMiss);
         }
+        
     }
 
     /// <summary>
@@ -372,58 +375,77 @@ public class LetterSpawner : MonoBehaviour
         {
             char nextChar = textToCharList[nextIndex];
             QueueTextToScreen.Enqueue(nextChar);
-            SpawnLetter(nextChar, _letterObjects.Count, prefabLetter.transform.position);
+            SpawnLetter(nextChar, _letterObjects.Count);
             Debug.Log($"Se agregó la letra: {nextChar}");
         }
     }
 
 
-    private void AddTextInBook(GameObject letterToAdd, int index)
+      private void AddTextInBook(GameObject letterToAdd, int index)
     {
         if (!CombatManager.Instance.isCombat || index >= textToCharList.Count || _letterObjects.Count == 0)
         {
-            Destroy(letterToAdd);
+            if (letterToAdd != null) Destroy(letterToAdd);
             return;
         }
 
         char currentChar = textToCharList[index];
 
-        // NOTA: el daño ya NO es por párrafo. Las letras solo se acumulan en el
-        // libro y vuelan al enemigo en FlyBookToEnemy() al pulsar Enter.
+        // Letra dorada UI dentro del cuadro. NO se usa SetActive(false): un
+        // objeto inactivo lo ignora el LayoutGroup. Se oculta con Image.enabled.
+        GameObject letter = Instantiate(prefabLetterInBook, letterTypedContainer);
+        var img = PrepareImage(letter);
+        img.enabled = false;
 
-        GameObject letter = Instantiate(prefabLetterInBook, bookLocation.transform);
-
-        letter.transform.localPosition = new Vector3(
-            _letterCount * spaceBetweenLetters,
-            0f,
-            0f
-        );
-        letter.SetActive(false);
-
-        var sr = letter.GetComponent<SpriteRenderer>();
         if (LetterSpritesMap.TryGetValue(currentChar, out Sprite sprite))
         {
-            sr.sprite = sprite;
-
-
-            if (sr.material.HasProperty("_LetterTexture"))
-            {
-                sr.material.SetTexture("_LetterTexture", sprite.texture);
-            }
-        }
-
-        if (letterToAdd != null && letter != null)
-        {
-            letterToAdd.transform.DOMove(letter.transform.position, 0.5f)
-                .OnComplete(() =>
-                {
-                    if (letterToAdd != null) Destroy(letterToAdd);
-                    if (letter != null) letter.SetActive(true);
-                    SpawnVFX(letter.transform.position, vfxBook);
-                });
+            img.sprite = sprite;
+            if (img.material.HasProperty("_LetterTexture"))
+                img.material.SetTexture("_LetterTexture", sprite.texture);
         }
 
         _lettersInBook.Add(letter);
+
+        // El hueco solo es válido tras recalcular el layout.
+        LayoutRebuilder.ForceRebuildLayoutImmediate(letterTypedContainer);
+
+        if (letterToAdd == null)
+        {
+            img.enabled = true;
+            return;
+        }
+
+        var cam = Camera.main;
+        Vector3 startWorld = letterToAdd.transform.position;
+        // Profundidad de la letra respecto a la cámara (para convertir pantalla -> mundo).
+        float depth = cam.WorldToScreenPoint(startWorld).z;
+        Vector3 lastTarget = startWorld;
+
+        DOVirtual.Float(0f, 1f, 0.5f, t =>
+            {
+                if (letterToAdd == null || letter == null) return;
+                Vector3 slotScreen = letter.transform.position; // Overlay: píxeles
+                lastTarget = cam.ScreenToWorldPoint(new Vector3(slotScreen.x, slotScreen.y, depth));
+                letterToAdd.transform.position = Vector3.Lerp(startWorld, lastTarget, t);
+            })
+            .SetTarget(letterToAdd.transform)
+            .OnComplete(() =>
+            {
+                if (letterToAdd != null) Destroy(letterToAdd);
+                if (letter != null)
+                {
+                    img.enabled = true;
+                    SpawnVFX(lastTarget, vfxBook);
+                }
+            });
+        
+    }
+    private Image PrepareImage(GameObject go)
+    {
+        var img = go.GetComponent<Image>();
+        img.material = new Material(img.material); // instancia propia
+        img.raycastTarget = false;
+        return img;
     }
 
     private void SpawnVFX(Vector3 postion, VisualEffect vfx)
