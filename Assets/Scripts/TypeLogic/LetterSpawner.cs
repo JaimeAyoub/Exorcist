@@ -278,10 +278,6 @@ public class LetterSpawner : MonoBehaviour
         var flying = _lettersInBook.GetRange(0, toFly);
         _lettersInBook.RemoveRange(0, toFly);
         _letterCount = Mathf.Max(0, _letterCount - toFly);
-        for (int i = 0; i < _lettersInBook.Count; i++)
-            if (_lettersInBook[i] != null)
-                _lettersInBook[i].transform.localPosition =
-                    new Vector3(i * spaceBetweenLetters, 0f, 0f);
 
         // Sin letras que volar (desync defensivo): aplicar daño directo.
         if (flying.Count == 0)
@@ -290,13 +286,26 @@ public class LetterSpawner : MonoBehaviour
             return;
         }
 
+        // Fuera del LayoutGroup: las que quedan se reacomodan solas.
+        foreach (var l in flying)
+        {
+            if (l == null) continue;
+            if (l.TryGetComponent(out LetterShake shake)) shake.StopShake();
+            Detach(l);
+        }
+
+        // Overlay: el enemigo está en mundo, las letras en píxeles de pantalla.
+        Vector3 enemyScreen = enemy != null
+            ? Camera.main.WorldToScreenPoint(enemy.transform.position)
+            : Vector3.zero;
+
         Sequence seq = DOTween.Sequence();
         foreach (var letters in flying)
         {
             if (enemy != null && letters != null)
             {
                 seq.Join(
-                    letters.transform.DOMove(enemy.transform.position, 0.5f)
+                    letters.transform.DOMove(enemyScreen, 0.5f)
                         .SetEase(Ease.InFlash)
                         .OnComplete(() => { if (letters != null) Destroy(letters); })
                 );
@@ -307,7 +316,15 @@ public class LetterSpawner : MonoBehaviour
             }
         }
 
+        
         seq.OnComplete(() => DealDamageToEnemy(hits));
+    }
+    private void Detach(GameObject go)
+    {
+        if (go == null) return;
+        go.transform.SetParent(letterTyped.transform, true);
+        go.transform.SetAsLastSibling(); // dibujar encima del resto
+        
     }
 
     /// <summary>
@@ -381,7 +398,8 @@ public class LetterSpawner : MonoBehaviour
     }
 
 
-      private void AddTextInBook(GameObject letterToAdd, int index)
+    
+    private void AddTextInBook(GameObject letterToAdd, int index)
     {
         if (!CombatManager.Instance.isCombat || index >= textToCharList.Count || _letterObjects.Count == 0)
         {
@@ -421,7 +439,7 @@ public class LetterSpawner : MonoBehaviour
         float depth = cam.WorldToScreenPoint(startWorld).z;
         Vector3 lastTarget = startWorld;
 
-        DOVirtual.Float(0f, 1f, 0.5f, t =>
+        DOVirtual.Float(0f, 1f, 0.1f, t =>
             {
                 if (letterToAdd == null || letter == null) return;
                 Vector3 slotScreen = letter.transform.position; // Overlay: píxeles
@@ -435,7 +453,8 @@ public class LetterSpawner : MonoBehaviour
                 if (letter != null)
                 {
                     img.enabled = true;
-                    SpawnVFX(lastTarget, vfxBook);
+                    if (letter.TryGetComponent(out LetterShake shake)) shake.StartShake();
+                    img.GetComponent<RectTransform>().DOScale(1.5f,0.15f).SetLoops(2, LoopType.Yoyo);
                 }
             });
         

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8606799159206635890}
   - component: {fileID: 2385418612195326881}
   - component: {fileID: 7379226903711179994}
+  - component: {fileID: 8398066452593027039}
   m_Layer: 0
   m_Name: LetterGoldPrefab
   m_TagString: Untagged
@@ -91,8 +92,24 @@ MonoBehaviour:
   m_IgnoreLayout: 0
   m_MinWidth: -1
   m_MinHeight: -1
-  m_PreferredWidth: 40
-  m_PreferredHeight: 40
+  m_PreferredWidth: 160
+  m_PreferredHeight: 160
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &8398066452593027039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7887031956349699423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08d2040fd1e343c4fbc517b1f9998715, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LetterShake
+  visual: {fileID: 0}
+  angle: 5
+  positionAmount: 2
+  speed: 18
