@@ -52,8 +52,9 @@ public class SoundEmitter : MonoBehaviour
         _audioSource.playOnAwake = sData.playOnAwake;
     }
 
-    public void WithRandomPitch(float min = -0.05f, float max = 0.05f)
+    public void WithRandomPitch(float min = -0.05f, float max = 0.15f)
     {
+        _audioSource.pitch = 1;
         _audioSource.pitch += Random.Range(min, max);
     }
 

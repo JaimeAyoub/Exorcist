@@ -35161,7 +35161,7 @@ Transform:
   m_GameObject: {fileID: 1230804385}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 10.52, y: 2.8240933, z: 25.4}
+  m_LocalPosition: {x: 56.7, y: 2.8240933, z: 25.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -56502,7 +56502,7 @@ Transform:
   m_GameObject: {fileID: 2014862230}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
-  m_LocalPosition: {x: 10.52, y: 2.8240933, z: 25.4}
+  m_LocalPosition: {x: 56.7, y: 2.8240933, z: 25.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -61265,7 +61265,7 @@ Transform:
   m_GameObject: {fileID: 8017021921820673461}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 10.52, y: 1.393, z: 25.4}
+  m_LocalPosition: {x: 56.7, y: 1.393, z: 25.4}
   m_LocalScale: {x: 1, y: 1.2586573, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -61296,19 +61296,24 @@ MonoBehaviour:
   xMouseSensitivity: 2
   yMouseSensitivity: 2
   upDownLookRange: 80
-  walkStepInterval: 0.5
+  walkStepInterval: 0.55
   sprintStepInterval: 0.3
   footstepVolume: 0.7
   characterController: {fileID: 3636762663980668188}
   playerInputHandler: {fileID: 3287963540104463032}
   cameraHolder: {fileID: 1247995924904158713}
   pasosSFX:
-    clip: {fileID: 8300000, guid: 030e1f170ba91f742a32fea488021e37, type: 3}
-    mixerGroup: {fileID: 0}
+    clip: {fileID: 8300000, guid: 3bad74035ca4c234d950af44620d5d2b, type: 3}
+    mixerGroup: {fileID: 24300002, guid: 23ca522689e0230418127323f212a1e0, type: 2}
     loop: 0
     playOnAwake: 0
     frequentSound: 0
-    walkClips: []
+    walkClips:
+    - {fileID: 8300000, guid: becbe09e64ff5db4b814d3a7f953da7e, type: 3}
+    - {fileID: 8300000, guid: 82abc1721c028e441bc6a9e2e93ebbc9, type: 3}
+    - {fileID: 8300000, guid: 55e3c22e92c4167478d19e4ca7fd9a52, type: 3}
+    - {fileID: 8300000, guid: 29b3f1787eef4c14aafe75910be49c32, type: 3}
+    - {fileID: 8300000, guid: 32ff5ea0253b5fc418ce1647d6282182, type: 3}
   mainCamera: {fileID: 2014862231}
 --- !u!4 &6692739641548017947
 Transform:
