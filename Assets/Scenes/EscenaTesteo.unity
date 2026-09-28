@@ -59353,7 +59353,7 @@ GameObject:
   - component: {fileID: 2116475262}
   - component: {fileID: 2116475261}
   m_Layer: 5
-  m_Name: ImageToFade (1)
+  m_Name: FondoLetras
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -59368,14 +59368,14 @@ RectTransform:
   m_GameObject: {fileID: 2116475259}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.7584578, y: 0.35222244, z: 0.19569}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.54617536, y: 0.25364, z: 0.14091893}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1905809867}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -328.99997}
+  m_AnchoredPosition: {x: 0, y: -378}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2116475261
@@ -59398,8 +59398,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 0eb7643471339c34a905a48a208c47d4, type: 3}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 3ec4ccd9dfa7aa145ad00839128fd267, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
