@@ -1,7 +1,8 @@
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityUtils;
 
-public class CameraShake : UnityUtils.Singleton<CameraShake>
+public class CameraShake : Singleton<CameraShake>
 {
     private CinemachineCamera _cinemachineCamera;
     private CinemachineBasicMultiChannelPerlin _noise;
@@ -9,27 +10,20 @@ public class CameraShake : UnityUtils.Singleton<CameraShake>
 
     private void Awake()
     {
-        _cinemachineCamera = this.gameObject.GetComponent<CinemachineCamera>();
+        _cinemachineCamera = gameObject.GetComponent<CinemachineCamera>();
         if (_cinemachineCamera != null)
             _noise = _cinemachineCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();
         else
-        {
             Debug.LogError("Cinemachine Camera not found");
-        }
     }
 
-    void Update()
+    private void Update()
     {
         if (shakeTime > 0)
         {
             shakeTime -= Time.deltaTime;
             if (shakeTime <= 0 && _noise != null)
                 _noise.AmplitudeGain = 0f;
-        }
-
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            CameraShakeTest();
         }
     }
 
@@ -40,12 +34,4 @@ public class CameraShake : UnityUtils.Singleton<CameraShake>
         _noise.AmplitudeGain = intensity;
         shakeTime = time;
     }
-
-    public void CameraShakeTest()
-    {
-        CmrShake(2.5f,0.1f);
-    }
-
-
-
 }

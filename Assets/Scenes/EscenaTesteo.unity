@@ -23842,6 +23842,13 @@ MonoBehaviour:
     playOnAwake: 0
     frequentSound: 0
     walkClips: []
+  noMoreletters:
+    clip: {fileID: 0}
+    mixerGroup: {fileID: 0}
+    loop: 0
+    playOnAwake: 0
+    frequentSound: 0
+    walkClips: []
   letterTypedSound: []
 --- !u!4 &837265233
 Transform:
@@ -53475,7 +53482,7 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 1230804387}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -61575,6 +61582,13 @@ MonoBehaviour:
   letterSound:
     clip: {fileID: 8300000, guid: e902432a6f9b0b5449f43efb4622ac3d, type: 3}
     mixerGroup: {fileID: 0}
+    loop: 0
+    playOnAwake: 0
+    frequentSound: 0
+    walkClips: []
+  noMoreletters:
+    clip: {fileID: 8300000, guid: 2d9880e6f69bc934189ad11956f1b709, type: 3}
+    mixerGroup: {fileID: 24300002, guid: 7f38ea52603ad2644ab30b0fa2812253, type: 2}
     loop: 0
     playOnAwake: 0
     frequentSound: 0

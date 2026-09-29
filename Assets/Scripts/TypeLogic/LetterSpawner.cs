@@ -48,6 +48,7 @@ public class LetterSpawner : MonoBehaviour
     public TextMeshProUGUI typedWordsText;
 
     [Header("Sonidos")] public SoundData letterSound;
+    public SoundData noMoreletters;
     public List<SoundData> letterTypedSound;
     public Dictionary<char, Sprite> LetterSpritesMap; // Diccionario de sprites
     public Queue<char> QueueTextToScreen; // Letras en pantalla
@@ -142,7 +143,28 @@ public class LetterSpawner : MonoBehaviour
         if (CombatManager.Instance == null || !CombatManager.Instance.isCombat) return;
         if (IsAutoSeparator(keyTyped)) return;
         if (QueueTextToScreen.Count == 0 || _letterObjects.Count == 0) return;
-        if (CountCompleteWords(_typedBuffer) >= maxWordsPerSubmit) return;
+        if (CountCompleteWords(_typedBuffer) >= maxWordsPerSubmit)
+
+        {
+            SoundManager.Instance.CreateSound().WithSoundData(noMoreletters).WithRandomPitch().Play();
+            foreach (var letter in _lettersInBook)
+            {
+                var letterRectTransform = letter.GetComponentInChildren<RectTransform>();
+                if (letterRectTransform != null)
+                {
+                    letterRectTransform.DOKill();
+                    letterRectTransform.localRotation =
+                        Quaternion.identity;
+                    letterRectTransform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                    letterRectTransform.DOScaleX(2.5f, 0.05f).SetLoops(2, LoopType.Yoyo);
+                    letterRectTransform.DOScaleY(1.5f, 0.2f);
+                    letterRectTransform.DOShakeRotation(0.1f, 45f, 5);
+                }
+            }
+
+
+            return;
+        }
 
         AutoSkipSeparators();
         if (QueueTextToScreen.Count == 0 || _letterObjects.Count == 0) return;
@@ -173,18 +195,31 @@ public class LetterSpawner : MonoBehaviour
                 _letterObjects[i].transform.localPosition = new Vector3(i * spaceBetweenLetters, 0, 0);
 
             RefreshWordPreview();
-            if (lastWordsTyped != CountCompleteWords(_typedBuffer))
+            var currentWords = CountCompleteWords(_typedBuffer);
+            if (lastWordsTyped != currentWords)
             {
-                lastWordsTyped = CountCompleteWords(_typedBuffer);
-                if (lastWordsTyped >= 3)
-                    lastWordsTyped = 0;
+                lastWordsTyped = currentWords;
+
+                // Pulso dorado: cada vez que se completa una palabra nueva (1, 2 o 3)
                 foreach (var letter in _lettersInBook)
                 {
                     var letterImage = letter.GetComponentInChildren<Image>();
-                    if (letterImage != null)
-                        if (letterImage.material.HasProperty("_Lerpvalue"))
-                            letterImage.material.DOFloat(1.0f, "_Lerpvalue", 1.5f);
+                    if (letterImage != null && letterImage.material.HasProperty("_Lerpvalue"))
+                        letterImage.material.DOFloat(1.0f, "_Lerpvalue", 1.5f);
                 }
+
+                // Remate extra: solo al llegar al máximo de palabras por envío
+                if (currentWords >= maxWordsPerSubmit)
+                    foreach (var letter in _lettersInBook)
+                    {
+                        var letterRectTransform = letter.GetComponentInChildren<RectTransform>();
+                        if (letterRectTransform != null)
+                        {
+                            letterRectTransform.DOScaleX(1.05f, 0.1f);
+                            letterRectTransform.DOScaleY(1.3f, 0.1f);
+                            letterRectTransform.DOShakeRotation(0.2f);
+                        }
+                    }
             }
         }
         else // tecla incorrecta (incluye case incorrecto)
