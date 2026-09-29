@@ -1,31 +1,28 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
-using NUnit.Framework;
-using NUnit.Framework.Interfaces;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.VFX;
+using UnityUtils;
+using Random = UnityEngine.Random;
 
 public class LetterSpawner : MonoBehaviour
 {
-    [SerializeField] private PlayerInputHandler playerInputHandler;
     private const int NumberOfCharsInScreen = 7;
+    [SerializeField] private PlayerInputHandler playerInputHandler;
 
     [Header("Variables para el texto")] public TextAsset textAsset; // Texto que se leerá
     public List<char> textToCharList; // Lista de caracteres del texto
-    public Queue<char> QueueTextToScreen; // Letras en pantalla
     public RectTransform letterTypedContainer;
-    private int _iteratorText; // Posición actual en el texto
 
 
     [Header("Variables para el la aparicion de las letras")]
     public GameObject prefabLetter; // Prefab de letra
 
     public Sprite[] letterSpriteArray; // Sprites de letras
-    public Dictionary<char, Sprite> LetterSpritesMap; // Diccionario de sprites
-    private List<GameObject> _letterObjects; // Prefabs en pantalla
     public float spaceBetweenLetters; //Variable para la separacion entre letras
     public VisualEffect vfxBook; //El efecto que quieres que aparezca
     public VisualEffect vfxHit; //El efecto que quieres que aparezca
@@ -35,7 +32,6 @@ public class LetterSpawner : MonoBehaviour
     public Canvas letterTyped;
 
     public GameObject prefabLetterInBook; //GameObject con el sprite renderer y shader dorado
-    private List<GameObject> _lettersInBook; //Lista donde guardamos las letras que hay en el libro
     [SerializeField] public int lettersInParagraph; //LEGACY: ya no hace daño por párrafo (daño = palabras + Enter)
     public int _letterCount; //Variable para saber cuantas letras hemos escrito.
     public GameObject SpawnVFXBarra;
@@ -43,26 +39,29 @@ public class LetterSpawner : MonoBehaviour
     [Header("Combate por palabras (Enter = daño)")]
     [Tooltip("Máximo de palabras completas que se envían con un Enter. 1 palabra = 1 hit.")]
     public int maxWordsPerSubmit = 3;
-    private string _typedBuffer = ""; //Texto tecleado desde el último Enter (case-sensitive)
 
     [Header("UI opcional: preview con case exacto")]
     [Tooltip("Si se asigna, muestra las próximas palabras objetivo con mayúsculas exactas.")]
     public TextMeshProUGUI targetWordsText;
+
     [Tooltip("Si se asigna, muestra lo que el jugador lleva tecleado.")]
     public TextMeshProUGUI typedWordsText;
 
     [Header("Sonidos")] public SoundData letterSound;
-
-    private void OnEnable()
-    {
-        // playerInputHandler.KeyTypedEvent += UpdateScreenText;
-    }
+    public List<SoundData> letterTypedSound;
+    public Dictionary<char, Sprite> LetterSpritesMap; // Diccionario de sprites
+    public Queue<char> QueueTextToScreen; // Letras en pantalla
+    private int _iteratorText; // Posición actual en el texto
+    private List<GameObject> _letterObjects; // Prefabs en pantalla
+    private List<GameObject> _lettersInBook; //Lista donde guardamos las letras que hay en el libro
+    private string _typedBuffer = ""; //Texto tecleado desde el último Enter (case-sensitive)
+    private int lastWordsTyped;
 
     private void Awake()
     {
         // Normalizar: saltos de línea/tabs -> espacio, sin espacios en bordes.
         // Se conserva case y puntuación: la validación es case-sensitive exacta.
-        string raw = textAsset != null ? textAsset.text : "";
+        var raw = textAsset != null ? textAsset.text : "";
         raw = raw.Replace("\r\n", " ").Replace('\n', ' ').Replace('\r', ' ').Replace('\t', ' ').Trim();
         if (string.IsNullOrEmpty(raw)) raw = "Amen";
         textToCharList = raw.ToList();
@@ -71,26 +70,29 @@ public class LetterSpawner : MonoBehaviour
         _lettersInBook = new List<GameObject>();
 
         LetterSpritesMap = new Dictionary<char, Sprite>();
-        foreach (Sprite sprite in letterSpriteArray)
+        foreach (var sprite in letterSpriteArray)
         {
-            char key = sprite.name[0];
+            var key = sprite.name[0];
             LetterSpritesMap[key] = sprite;
         }
     }
 
-    void Start()
+    private void Start()
     {
         // FillCharQueue();
     }
 
+
+    private void OnEnable()
+    {
+        // playerInputHandler.KeyTypedEvent += UpdateScreenText;
+    }
+
     public void FillCharQueue()
     {
-        int initialCount = Mathf.Min(NumberOfCharsInScreen, textToCharList.Count);
+        var initialCount = Mathf.Min(NumberOfCharsInScreen, textToCharList.Count);
 
-        for (int i = 0; i < initialCount; i++)
-        {
-            QueueTextToScreen.Enqueue(textToCharList[i]);
-        }
+        for (var i = 0; i < initialCount; i++) QueueTextToScreen.Enqueue(textToCharList[i]);
 
         StartUpdateText();
         AutoSkipSeparators();
@@ -99,7 +101,7 @@ public class LetterSpawner : MonoBehaviour
 
     private void StartUpdateText()
     {
-        int index = 0;
+        var index = 0;
         foreach (var c in QueueTextToScreen)
         {
             SpawnLetter(c, index);
@@ -109,29 +111,31 @@ public class LetterSpawner : MonoBehaviour
 
     private void SpawnLetter(char c, int index)
     {
-        GameObject letterObj = Instantiate(prefabLetter, transform);
+        var letterObj = Instantiate(prefabLetter, transform);
         letterObj.transform.localPosition = new Vector3(index * spaceBetweenLetters, 0, 0);
 
         var sr = letterObj.GetComponent<SpriteRenderer>();
         sr.material = new Material(sr.material);
 
-        if (LetterSpritesMap.TryGetValue(c, out Sprite sprite))
+        if (LetterSpritesMap.TryGetValue(c, out var sprite))
         {
             sr.sprite = sprite;
             sr.material.SetTexture("_LetterText", sprite.texture);
         }
         else
+        {
             Debug.LogWarning("No hay sprite para: " + c);
+        }
 
         _letterObjects.Add(letterObj);
     }
 
     /// <summary>
-    /// Letra exacta tecleada (vía Keyboard.onTextInput). Comparación
-    /// case-sensitive contra el texto esperado. Espacios, comas, puntos, etc.
-    /// NO hay que teclearlos: se auto-avanzan como separadores (los textos
-    /// no se modifican) y pulsar esas teclas no hace nada.
-    /// Acumula en el libro sin hacer daño; el daño se envía con Enter.
+    ///     Letra exacta tecleada (vía Keyboard.onTextInput). Comparación
+    ///     case-sensitive contra el texto esperado. Espacios, comas, puntos, etc.
+    ///     NO hay que teclearlos: se auto-avanzan como separadores (los textos
+    ///     no se modifican) y pulsar esas teclas no hace nada.
+    ///     Acumula en el libro sin hacer daño; el daño se envía con Enter.
     /// </summary>
     public void HandleTypedChar(char keyTyped)
     {
@@ -143,12 +147,12 @@ public class LetterSpawner : MonoBehaviour
         AutoSkipSeparators();
         if (QueueTextToScreen.Count == 0 || _letterObjects.Count == 0) return;
 
-        char currentChar = QueueTextToScreen.Peek();
+        var currentChar = QueueTextToScreen.Peek();
 
         if (keyTyped == currentChar) // tecla correcta (case-sensitive)
         {
-            int indexForBook = _iteratorText;
-            GameObject letterObj = _letterObjects[0];
+            var indexForBook = _iteratorText;
+            var letterObj = _letterObjects[0];
 
             AddTextInBook(letterObj, indexForBook);
 
@@ -156,31 +160,45 @@ public class LetterSpawner : MonoBehaviour
             _letterObjects.RemoveAt(0);
 
             SoundManager.Instance.CreateSound().WithSoundData(letterSound).Play();
+
             _typedBuffer += keyTyped;
             _letterCount++;
             _iteratorText++;
 
+
             AddQueueIfAvailable();
             AutoSkipSeparators();
 
-            for (int i = 0; i < _letterObjects.Count; i++)
+            for (var i = 0; i < _letterObjects.Count; i++)
                 _letterObjects[i].transform.localPosition = new Vector3(i * spaceBetweenLetters, 0, 0);
 
             RefreshWordPreview();
+            if (lastWordsTyped != CountCompleteWords(_typedBuffer))
+            {
+                lastWordsTyped = CountCompleteWords(_typedBuffer);
+                if (lastWordsTyped >= 3)
+                    lastWordsTyped = 0;
+                foreach (var letter in _lettersInBook)
+                {
+                    var letterImage = letter.GetComponentInChildren<Image>();
+                    if (letterImage != null)
+                        if (letterImage.material.HasProperty("_Lerpvalue"))
+                            letterImage.material.DOFloat(1.0f, "_Lerpvalue", 1.5f);
+                }
+            }
         }
         else // tecla incorrecta (incluye case incorrecto)
         {
-            SpriteRenderer sp = _letterObjects[0].GetComponent<SpriteRenderer>();
+            var sp = _letterObjects[0].GetComponent<SpriteRenderer>();
             sp.DOColor(Color.red, 0.125f).SetLoops(2, LoopType.Yoyo);
             CameraShake.Instance.CmrShake(0.55f, 0.50f);
             SpawnVFX(SpawnVFXBarra.transform.position, vfxMiss);
         }
-        
     }
 
     /// <summary>
-    /// Separadores que el jugador NO teclea: se auto-avanzan (espacios, comas,
-    /// puntos...). Los textos no se modifican; solo cambia la validación.
+    ///     Separadores que el jugador NO teclea: se auto-avanzan (espacios, comas,
+    ///     puntos...). Los textos no se modifican; solo cambia la validación.
     /// </summary>
     private static bool IsAutoSeparator(char c)
     {
@@ -188,21 +206,22 @@ public class LetterSpawner : MonoBehaviour
     }
 
     /// <summary>
-    /// Consume automáticamente los separadores del texto esperado.
-    /// Se destruye su letra en pantalla sin pasar por el libro (no hay sprites
-    /// de separador) y se añade el caracter al buffer para delimitar palabras.
-    /// El buffer siempre es text[cursor - buffer.Length .. cursor].
+    ///     Consume automáticamente los separadores del texto esperado.
+    ///     Se destruye su letra en pantalla sin pasar por el libro (no hay sprites
+    ///     de separador) y se añade el caracter al buffer para delimitar palabras.
+    ///     El buffer siempre es text[cursor - buffer.Length .. cursor].
     /// </summary>
     private void AutoSkipSeparators()
     {
         while (QueueTextToScreen.Count > 0 && IsAutoSeparator(QueueTextToScreen.Peek()))
         {
-            char sep = QueueTextToScreen.Dequeue();
+            var sep = QueueTextToScreen.Dequeue();
             if (_letterObjects.Count > 0)
             {
                 Destroy(_letterObjects[0]);
                 _letterObjects.RemoveAt(0);
             }
+
             _typedBuffer += sep;
             _iteratorText++;
             AddQueueIfAvailable();
@@ -210,49 +229,53 @@ public class LetterSpawner : MonoBehaviour
     }
 
     /// <summary>
-    /// Enter/Return: envía las palabras COMPLETAS del buffer.
-    /// 1 palabra = 1 hit, 2 palabras = 2 hits, 3 palabras = 3 hits.
-    /// La última palabra a medias NO se envía: queda en el buffer.
+    ///     Enter/Return: envía las palabras COMPLETAS del buffer.
+    ///     1 palabra = 1 hit, 2 palabras = 2 hits, 3 palabras = 3 hits.
+    ///     La última palabra a medias NO se envía: queda en el buffer.
     /// </summary>
     public void HandleSubmit()
     {
         if (CombatManager.Instance == null || !CombatManager.Instance.isCombat) return;
 
-        int complete = CountCompleteWords(_typedBuffer);
+        var complete = CountCompleteWords(_typedBuffer);
         // Si la oración se acabó, la última palabra (sin espacio final
         // posible) cuenta como completa.
         if (_iteratorText >= textToCharList.Count
             && _typedBuffer.Length > 0
             && _typedBuffer[_typedBuffer.Length - 1] != ' ')
             complete++;
-        int hits = Mathf.Min(complete, maxWordsPerSubmit);
+        var hits = Mathf.Min(complete, maxWordsPerSubmit);
         if (hits <= 0) return; // Nada completo todavía: se conserva el buffer.
 
         // Prefijo consumido; los espacios automáticos no tienen letra en el
         // libro, así que solo vuelan las letras no-espacio del prefijo.
-        string consumed = RemoveSubmittedWords(hits);
-        int bookLettersToFly = consumed.Count(c => c != ' ');
+        var consumed = RemoveSubmittedWords(hits);
+        var bookLettersToFly = consumed.Count(c => c != ' ');
         FlyBookToEnemy(hits, bookLettersToFly);
+        lastWordsTyped = 0;
         RefreshWordPreview();
     }
 
-    /// <summary>Palabras completas en el buffer: tokens separados por espacio,
-    /// sin contar una posible última palabra a medias (sin espacio final).</summary>
+    /// <summary>
+    ///     Palabras completas en el buffer: tokens separados por espacio,
+    ///     sin contar una posible última palabra a medias (sin espacio final).
+    /// </summary>
     private int CountCompleteWords(string s)
     {
         if (string.IsNullOrEmpty(s)) return 0;
-        var tokens = s.Split(new[] { ' ' }, System.StringSplitOptions.RemoveEmptyEntries);
+        var tokens = s.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
         if (tokens.Length == 0) return 0;
+
         return s[s.Length - 1] == ' ' ? tokens.Length : tokens.Length - 1;
     }
 
     /// <summary>
-    /// Elimina del buffer las primeras <paramref name="wordCount"/> palabras
-    /// completas (con sus espacios separadores). Devuelve el prefijo consumido.
+    ///     Elimina del buffer las primeras <paramref name="wordCount" /> palabras
+    ///     completas (con sus espacios separadores). Devuelve el prefijo consumido.
     /// </summary>
     private string RemoveSubmittedWords(int wordCount)
     {
-        string s = _typedBuffer;
+        var s = _typedBuffer;
         int idx = 0, words = 0;
         while (words < wordCount && idx < s.Length)
         {
@@ -261,20 +284,22 @@ public class LetterSpawner : MonoBehaviour
             if (idx < s.Length && s[idx] == ' ') idx++;
             words++;
         }
+
         _typedBuffer = s.Substring(idx);
         return s.Substring(0, idx);
     }
 
     /// <summary>
-    /// Vuela al enemigo solo las letras doradas de las palabras enviadas
-    /// y aplica el daño (1 por palabra). El resto del libro se recoloca.
+    ///     Vuela al enemigo solo las letras doradas de las palabras enviadas
+    ///     y aplica el daño (1 por palabra). El resto del libro se recoloca.
     /// </summary>
     private void FlyBookToEnemy(int hits, int bookLettersToFly)
     {
         var enemy = CombatManager.Instance.enemy;
-        Debug.Log($"[Typeo] Enter: {hits} palabra(s) -> {hits} hit(s). Enemigo: {(enemy != null ? enemy.name : "NULL")}");
+        Debug.Log(
+            $"[Typeo] Enter: {hits} palabra(s) -> {hits} hit(s). Enemigo: {(enemy != null ? enemy.name : "NULL")}");
 
-        int toFly = Mathf.Min(bookLettersToFly, _lettersInBook.Count);
+        var toFly = Mathf.Min(bookLettersToFly, _lettersInBook.Count);
         var flying = _lettersInBook.GetRange(0, toFly);
         _lettersInBook.RemoveRange(0, toFly);
         _letterCount = Mathf.Max(0, _letterCount - toFly);
@@ -295,50 +320,48 @@ public class LetterSpawner : MonoBehaviour
         }
 
         // Overlay: el enemigo está en mundo, las letras en píxeles de pantalla.
-        Vector3 enemyScreen = enemy != null
+        var enemyScreen = enemy != null
             ? Camera.main.WorldToScreenPoint(enemy.transform.position)
             : Vector3.zero;
 
-        Sequence seq = DOTween.Sequence();
+        var seq = DOTween.Sequence();
         foreach (var letters in flying)
-        {
             if (enemy != null && letters != null)
-            {
                 seq.Join(
                     letters.transform.DOMove(enemyScreen, 0.5f)
                         .SetEase(Ease.InFlash)
-                        .OnComplete(() => { if (letters != null) Destroy(letters); })
+                        .OnComplete(() =>
+                        {
+                            if (letters != null) Destroy(letters);
+                        })
                 );
-            }
-            else if (letters != null)
-            {
-                Destroy(letters);
-            }
-        }
+            else if (letters != null) Destroy(letters);
 
-        
+
         seq.OnComplete(() => DealDamageToEnemy(hits));
     }
+
     private void Detach(GameObject go)
     {
         if (go == null) return;
         go.transform.SetParent(letterTyped.transform, true);
         go.transform.SetAsLastSibling(); // dibujar encima del resto
-        
     }
 
     /// <summary>
-    /// Aplica el daño al enemigo con chequeos y logs. Si falta PlayerAttack,
-    /// daña directamente el EnemyHealthBase para no perder el hit.
+    ///     Aplica el daño al enemigo con chequeos y logs. Si falta PlayerAttack,
+    ///     daña directamente el EnemyHealthBase para no perder el hit.
     /// </summary>
     private void DealDamageToEnemy(int hits)
     {
         var cm = CombatManager.Instance;
         if (cm == null || cm.enemy == null || cm.player == null)
         {
-            Debug.LogError($"[Typeo] Daño cancelado: enemy={(cm != null && cm.enemy != null ? "ok" : "NULL")}, player={(cm != null && cm.player != null ? "ok" : "NULL")}");
+            Debug.LogError(
+                $"[Typeo] Daño cancelado: enemy={(cm != null && cm.enemy != null ? "ok" : "NULL")}, player={(cm != null && cm.player != null ? "ok" : "NULL")}");
             return;
         }
+
         if (hits <= 0) return;
 
         var health = cm.enemy.GetComponent<EnemyHealthBase>();
@@ -347,6 +370,7 @@ public class LetterSpawner : MonoBehaviour
             Debug.LogError($"[Typeo] El enemigo '{cm.enemy.name}' no tiene EnemyHealthBase. Daño perdido.");
             return;
         }
+
         Debug.Log($"[Typeo] Daño {hits} a '{cm.enemy.name}' (vida antes: {health.currentHealth})");
         SpawnVFX(cm.enemy.transform.position, vfxHit);
 
@@ -367,30 +391,32 @@ public class LetterSpawner : MonoBehaviour
     private string GetUpcomingWords(int wordCount)
     {
         if (textToCharList == null || _iteratorText >= textToCharList.Count) return "";
-        int idx = _iteratorText;
+        var idx = _iteratorText;
         while (idx < textToCharList.Count && textToCharList[idx] == ' ') idx++;
         int start = idx, words = 0;
         while (idx < textToCharList.Count && words < wordCount)
-        {
             if (textToCharList[idx] == ' ')
             {
                 while (idx < textToCharList.Count && textToCharList[idx] == ' ') idx++;
                 if (idx < textToCharList.Count) words++;
             }
-            else idx++;
-        }
-        int len = Mathf.Min(idx, textToCharList.Count) - start;
+            else
+            {
+                idx++;
+            }
+
+        var len = Mathf.Min(idx, textToCharList.Count) - start;
         return len > 0 ? new string(textToCharList.GetRange(start, len).ToArray()) : "";
     }
 
 
     private void AddQueueIfAvailable()
     {
-        int nextIndex = _iteratorText + NumberOfCharsInScreen - 1;
+        var nextIndex = _iteratorText + NumberOfCharsInScreen - 1;
 
         if (nextIndex < textToCharList.Count)
         {
-            char nextChar = textToCharList[nextIndex];
+            var nextChar = textToCharList[nextIndex];
             QueueTextToScreen.Enqueue(nextChar);
             SpawnLetter(nextChar, _letterObjects.Count);
             Debug.Log($"Se agregó la letra: {nextChar}");
@@ -398,7 +424,6 @@ public class LetterSpawner : MonoBehaviour
     }
 
 
-    
     private void AddTextInBook(GameObject letterToAdd, int index)
     {
         if (!CombatManager.Instance.isCombat || index >= textToCharList.Count || _letterObjects.Count == 0)
@@ -407,15 +432,22 @@ public class LetterSpawner : MonoBehaviour
             return;
         }
 
-        char currentChar = textToCharList[index];
+        var currentChar = textToCharList[index];
 
         // Letra dorada UI dentro del cuadro. NO se usa SetActive(false): un
         // objeto inactivo lo ignora el LayoutGroup. Se oculta con Image.enabled.
-        GameObject letter = Instantiate(prefabLetterInBook, letterTypedContainer);
+        var letter = Instantiate(prefabLetterInBook, letterTypedContainer);
         var img = PrepareImage(letter);
         img.enabled = false;
+        if (!letterTypedSound.IsNullOrEmpty())
 
-        if (LetterSpritesMap.TryGetValue(currentChar, out Sprite sprite))
+        {
+            var randomSoundindex = Random.Range(0, letterTypedSound.Count);
+            SoundManager.Instance.CreateSound().WithSoundData(letterTypedSound[randomSoundindex]).WithRandomPitch()
+                .Play();
+        }
+
+        if (LetterSpritesMap.TryGetValue(currentChar, out var sprite))
         {
             img.sprite = sprite;
             if (img.material.HasProperty("_LetterTexture"))
@@ -434,15 +466,15 @@ public class LetterSpawner : MonoBehaviour
         }
 
         var cam = Camera.main;
-        Vector3 startWorld = letterToAdd.transform.position;
+        var startWorld = letterToAdd.transform.position;
         // Profundidad de la letra respecto a la cámara (para convertir pantalla -> mundo).
-        float depth = cam.WorldToScreenPoint(startWorld).z;
-        Vector3 lastTarget = startWorld;
+        var depth = cam.WorldToScreenPoint(startWorld).z;
+        var lastTarget = startWorld;
 
         DOVirtual.Float(0f, 1f, 0.1f, t =>
             {
                 if (letterToAdd == null || letter == null) return;
-                Vector3 slotScreen = letter.transform.position; // Overlay: píxeles
+                var slotScreen = letter.transform.position; // Overlay: píxeles
                 lastTarget = cam.ScreenToWorldPoint(new Vector3(slotScreen.x, slotScreen.y, depth));
                 letterToAdd.transform.position = Vector3.Lerp(startWorld, lastTarget, t);
             })
@@ -453,15 +485,17 @@ public class LetterSpawner : MonoBehaviour
                 if (letter != null)
                 {
                     img.enabled = true;
+
+
                     if (letter.TryGetComponent(out LetterShake shake)) shake.StartShake();
-                    img.GetComponent<RectTransform>().DOScale(1.5f,0.15f).SetLoops(2, LoopType.Yoyo);
+                    img.GetComponent<RectTransform>().DOScale(1.5f, 0.05f).SetLoops(2, LoopType.Yoyo);
                 }
             });
-        
     }
+
     private Image PrepareImage(GameObject go)
     {
-        var img = go.GetComponent<Image>();
+        var img = go.GetComponentInChildren<Image>();
         img.material = new Material(img.material); // instancia propia
         img.raycastTarget = false;
         return img;
@@ -478,23 +512,19 @@ public class LetterSpawner : MonoBehaviour
     public void EmptyAll()
     {
         foreach (var go in _letterObjects)
-        {
             if (go != null)
             {
                 go.transform.DOKill();
                 Destroy(go);
             }
-        }
 
 
         foreach (var go in _lettersInBook)
-        {
             if (go != null)
             {
                 go.transform.DOKill();
                 Destroy(go);
             }
-        }
 
         QueueTextToScreen.Clear();
         _letterObjects.Clear();
@@ -502,6 +532,7 @@ public class LetterSpawner : MonoBehaviour
         _iteratorText = 0;
         _letterCount = 0;
         _typedBuffer = "";
+        lastWordsTyped = 0;
         RefreshWordPreview();
     }
 }
