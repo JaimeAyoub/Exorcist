@@ -9,6 +9,9 @@ public class SoundEmitter : MonoBehaviour
     private AudioSource _audioSource;
     private Coroutine _playingCoroutine;
 
+    /// <summary>Acceso al AudioSource por si hay que aplicarle efectos en runtime (p.ej. lowpass).</summary>
+    public AudioSource AudioSource => _audioSource;
+
     private void Awake()
     {
         _audioSource = gameObject.GetOrAdd<AudioSource>();
@@ -19,10 +22,15 @@ public class SoundEmitter : MonoBehaviour
         if(_playingCoroutine != null)
         {
             StopCoroutine(_playingCoroutine);
+            _playingCoroutine = null;
         }
 
         _audioSource.Play();
-        _playingCoroutine = StartCoroutine(WaitForSoundToEnd());
+
+        // Los loops son persistentes (música/latidos): no vuelven solos al pool,
+        // hay que llamar a Stop() explícitamente.
+        if (!_audioSource.loop)
+            _playingCoroutine = StartCoroutine(WaitForSoundToEnd());
     }
 
     private IEnumerator WaitForSoundToEnd()
@@ -40,7 +48,10 @@ public class SoundEmitter : MonoBehaviour
         }
 
         _audioSource.Stop();
-        SoundManager.Instance.ReturnToPool(this);
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.ReturnToPool(this);
+        else
+            gameObject.SetActive(false);
     }
 
     public void Initialize(SoundData sData)
@@ -50,6 +61,9 @@ public class SoundEmitter : MonoBehaviour
         _audioSource.outputAudioMixerGroup = sData.mixerGroup;
         _audioSource.loop = sData.loop;
         _audioSource.playOnAwake = sData.playOnAwake;
+        _audioSource.pitch = 1f;
+        // El pool reutiliza sources: si alguien les hizo fade, restaura el volumen.
+        _audioSource.volume = 1f;
     }
 
     public void WithRandomPitch(float min = -0.05f, float max = 0.15f)

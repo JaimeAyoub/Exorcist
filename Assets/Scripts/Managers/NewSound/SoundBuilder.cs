@@ -40,9 +40,10 @@ public class SoundBuilder
         return this;
     }
     
-    public void Play()
+    public SoundEmitter Play()
     {
-        if (!_soundManager.CanPlaySound(_soundData)) return;
+        if (_soundData == null || _soundData.clip == null) return null;
+        if (!_soundManager.CanPlaySound(_soundData)) return null;
 
         var soundEmitter = _soundManager.Get();
         soundEmitter.Initialize(_soundData);
@@ -64,5 +65,6 @@ public class SoundBuilder
             soundEmitter.WalkSound();
         }
         soundEmitter.Play();
+        return soundEmitter;
     }
 }
