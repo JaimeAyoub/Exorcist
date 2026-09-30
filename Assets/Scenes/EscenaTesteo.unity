@@ -11352,6 +11352,10 @@ MonoBehaviour:
   MainMenu: {fileID: 0}
   TutorialPanel: {fileID: 0}
   comicImage: {fileID: 0}
+  audioSource: {fileID: 0}
+  hoverClip: {fileID: 0}
+  clickClip: {fileID: 0}
+  sfxVolume: 1
 --- !u!4 &364889000
 Transform:
   m_ObjectHideFlags: 0
@@ -61512,7 +61516,7 @@ MonoBehaviour:
   playerInputHandler: {fileID: 3287963540104463032}
   textAsset: {fileID: 4900000, guid: 6a7248f219e972f4ca9c1944b10eaa91, type: 3}
   textToCharList: 
-  letterTypedContainer: {fileID: 105897954}
+  letterTypedContainer: {fileID: 0}
   prefabLetter: {fileID: 262800517}
   letterSpriteArray:
   - {fileID: 21300000, guid: 07d434a005de7f141869bf91b38848fb, type: 3}
@@ -61567,11 +61571,12 @@ MonoBehaviour:
   - {fileID: 21300000, guid: eaaa0073f8d09214cbfa9e9a31f6590a, type: 3}
   - {fileID: 21300000, guid: 2feeaf0798078fd4288aa91d5d6bacac, type: 3}
   - {fileID: 21300000, guid: a91478583d61e92409f994550a5ac112, type: 3}
+  - {fileID: 21300000, guid: 6d1298690c4e144569636cb72d2c3d19, type: 3}
   spaceBetweenLetters: 0.15
   vfxBook: {fileID: 3357787788069614735, guid: 64c51539f180d354ca7c8ba53e4686d7, type: 3}
   vfxHit: {fileID: 4912714109062061031, guid: ca19af1804927e041a4064dc71c83bf6, type: 3}
   vfxMiss: {fileID: 5408711748532382962, guid: be4cb58e12983994bb7900a08219a579, type: 3}
-  letterTyped: {fileID: 1905809870}
+  letterTyped: {fileID: 670763859}
   prefabLetterInBook: {fileID: 661606700}
   lettersInParagraph: 20
   _letterCount: 0
@@ -61587,31 +61592,13 @@ MonoBehaviour:
     frequentSound: 0
     walkClips: []
   noMoreletters:
-    clip: {fileID: 8300000, guid: 2d9880e6f69bc934189ad11956f1b709, type: 3}
-    mixerGroup: {fileID: 24300002, guid: 7f38ea52603ad2644ab30b0fa2812253, type: 2}
+    clip: {fileID: 0}
+    mixerGroup: {fileID: 0}
     loop: 0
     playOnAwake: 0
     frequentSound: 0
     walkClips: []
-  letterTypedSound:
-  - clip: {fileID: 8300000, guid: c53366e6b48c1b342905f3953380383b, type: 3}
-    mixerGroup: {fileID: 24300002, guid: 6409a132572b3ae45a68d6cbceb84e0c, type: 2}
-    loop: 0
-    playOnAwake: 0
-    frequentSound: 0
-    walkClips: []
-  - clip: {fileID: 8300000, guid: a5443be91670a8440915b90b210fa2c2, type: 3}
-    mixerGroup: {fileID: 24300002, guid: 6409a132572b3ae45a68d6cbceb84e0c, type: 2}
-    loop: 0
-    playOnAwake: 0
-    frequentSound: 0
-    walkClips: []
-  - clip: {fileID: 8300000, guid: 2d9880e6f69bc934189ad11956f1b709, type: 3}
-    mixerGroup: {fileID: 24300002, guid: 6409a132572b3ae45a68d6cbceb84e0c, type: 2}
-    loop: 0
-    playOnAwake: 0
-    frequentSound: 0
-    walkClips: []
+  letterTypedSound: []
 --- !u!4 &7279915992734466391
 Transform:
   m_ObjectHideFlags: 0

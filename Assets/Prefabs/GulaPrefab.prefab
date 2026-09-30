@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 7333873786950278138}
   m_Layer: 0
   m_Name: GulaPrefab
-  m_TagString: Enemy
+  m_TagString: Gula
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
