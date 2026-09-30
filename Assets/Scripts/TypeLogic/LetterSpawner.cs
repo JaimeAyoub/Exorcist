@@ -56,6 +56,23 @@ public class LetterSpawner : MonoBehaviour
         // playerInputHandler.KeyTypedEvent += UpdateScreenText;
     }
 
+    [Header("Gula: se come una letra por palabra")]
+    [Tooltip("Si el enemigo actual es Gula, devora una letra aleatoria por palabra. Esa letra no hay que teclearla: se auto-avanza y se muestra como '_' ocupando su espacio.")]
+    public bool devourOneLetterPerWord = true;
+    [Tooltip("Palabras más cortas que esto no son devoradas (para no hacerlas imposibles de leer).")]
+    public int minWordLengthToDevour = 3;
+    [Tooltip("Sprite de '_' para la letra devorada. Si se deja vacío se busca un sprite '_' en letterSpriteArray y, como fallback, se aplasta/tiñe el sprite real a modo de guión.")]
+    public Sprite devouredSprite;
+    [Tooltip("Sonido opcional al devorar/auto-avanzar la letra comida.")]
+    public SoundData gulaDevourSound;
+    [Tooltip("Tinte aplicado a la letra devorada cuando no hay sprite '_' disponible.")]
+    public Color devouredTint = new Color(0.25f, 0.25f, 0.25f, 1f);
+
+    // Índices globales (en textToCharList) devorados por Gula + cola paralela de índices para saber qué letra en pantalla está devorada.
+    private readonly HashSet<int> _devouredIndices = new HashSet<int>();
+    private Queue<int> _queueTextIndices;
+    public bool GulaActive { get; private set; }
+
     private void Awake()
     {
         // Normalizar: saltos de línea/tabs -> espacio, sin espacios en bordes.
@@ -65,6 +82,7 @@ public class LetterSpawner : MonoBehaviour
         if (string.IsNullOrEmpty(raw)) raw = "Amen";
         textToCharList = raw.ToList();
         QueueTextToScreen = new Queue<char>();
+        _queueTextIndices = new Queue<int>();
         _letterObjects = new List<GameObject>();
         _lettersInBook = new List<GameObject>();
 
@@ -83,38 +101,80 @@ public class LetterSpawner : MonoBehaviour
 
     public void FillCharQueue()
     {
+<<<<<<< Updated upstream
         int initialCount = Mathf.Min(NumberOfCharsInScreen, textToCharList.Count);
 
         for (int i = 0; i < initialCount; i++)
         {
             QueueTextToScreen.Enqueue(textToCharList[i]);
+=======
+        BuildDevouredSet();
+
+        var initialCount = Mathf.Min(NumberOfCharsInScreen, textToCharList.Count);
+
+        for (var i = 0; i < initialCount; i++)
+        {
+            QueueTextToScreen.Enqueue(textToCharList[i]);
+            _queueTextIndices.Enqueue(i);
+>>>>>>> Stashed changes
         }
 
         StartUpdateText();
         AutoSkipSeparators();
+        AutoSkipDevoured();
         RefreshWordPreview();
     }
 
     private void StartUpdateText()
     {
+<<<<<<< Updated upstream
         int index = 0;
         foreach (var c in QueueTextToScreen)
         {
             SpawnLetter(c, index, prefabLetter.transform.position);
+=======
+        var index = 0;
+        var textIndex = 0;
+        foreach (var c in QueueTextToScreen)
+        {
+            var ti = _queueTextIndices.Count > index ? _queueTextIndices.ElementAt(index) : textIndex;
+            SpawnLetter(c, index, ti);
+>>>>>>> Stashed changes
             index++;
+            textIndex++;
         }
     }
 
+<<<<<<< Updated upstream
     private void SpawnLetter(char c, int index, Vector3 position)
     {
         GameObject letterObj = Instantiate(prefabLetter, transform);
+=======
+    private void SpawnLetter(char c, int index, int textIndex = -1)
+    {
+        var letterObj = Instantiate(prefabLetter, transform);
+        // El hueco siempre se conserva: la letra devorada ocupa su mismo espacio.
+>>>>>>> Stashed changes
         letterObj.transform.localPosition = new Vector3(index * spaceBetweenLetters, 0, 0);
 
 
         var sr = letterObj.GetComponent<SpriteRenderer>();
-        sr.material = new Material(sr.material);
+        if (sr != null)
+            sr.material = new Material(sr.material);
 
+<<<<<<< Updated upstream
         if (LetterSpritesMap.TryGetValue(char.ToUpper(c), out Sprite sprite))
+=======
+        var isDevoured = textIndex >= 0 && _devouredIndices.Contains(textIndex);
+        if (isDevoured)
+        {
+            ApplyDevouredVisualWorld(letterObj, sr, c);
+            _letterObjects.Add(letterObj);
+            return;
+        }
+
+        if (sr != null && LetterSpritesMap.TryGetValue(c, out var sprite))
+>>>>>>> Stashed changes
         {
             sr.sprite = sprite;
             sr.material.SetTexture("_LetterText", sprite.texture);
@@ -138,18 +198,25 @@ public class LetterSpawner : MonoBehaviour
         if (CountCompleteWords(_typedBuffer) >= maxWordsPerSubmit) return;
 
         AutoSkipSeparators();
+        AutoSkipDevoured();
         if (QueueTextToScreen.Count == 0 || _letterObjects.Count == 0) return;
 
         char currentChar = QueueTextToScreen.Peek();
 
         if (keyTyped == currentChar) // tecla correcta (case-sensitive)
         {
+<<<<<<< Updated upstream
             int indexForBook = _iteratorText;
             GameObject letterObj = _letterObjects[0];
+=======
+            var indexForBook = _queueTextIndices.Count > 0 ? _queueTextIndices.Peek() : _iteratorText;
+            var letterObj = _letterObjects[0];
+>>>>>>> Stashed changes
 
             AddTextInBook(letterObj, indexForBook);
 
             QueueTextToScreen.Dequeue();
+            if (_queueTextIndices.Count > 0) _queueTextIndices.Dequeue();
             _letterObjects.RemoveAt(0);
 
             SoundManager.Instance.CreateSound().WithSoundData(letterSound).Play();
@@ -159,6 +226,7 @@ public class LetterSpawner : MonoBehaviour
 
             AddQueueIfAvailable();
             AutoSkipSeparators();
+            AutoSkipDevoured();
 
             for (int i = 0; i < _letterObjects.Count; i++)
                 _letterObjects[i].transform.localPosition = new Vector3(i * spaceBetweenLetters, 0, 0);
@@ -193,7 +261,12 @@ public class LetterSpawner : MonoBehaviour
     {
         while (QueueTextToScreen.Count > 0 && IsAutoSeparator(QueueTextToScreen.Peek()))
         {
+<<<<<<< Updated upstream
             char sep = QueueTextToScreen.Dequeue();
+=======
+            var sep = QueueTextToScreen.Dequeue();
+            if (_queueTextIndices.Count > 0) _queueTextIndices.Dequeue();
+>>>>>>> Stashed changes
             if (_letterObjects.Count > 0)
             {
                 Destroy(_letterObjects[0]);
@@ -203,6 +276,152 @@ public class LetterSpawner : MonoBehaviour
             _iteratorText++;
             AddQueueIfAvailable();
         }
+    }
+
+    // ---------- Gula: letra devorada ----------
+
+    /// <summary>
+    /// Combate actual contra Gula: se acepta tag "Gula", nombre con "Gula"
+    /// o componente GulaHealth (no depende solo del tag por si falta en TagManager).
+    /// </summary>
+    public bool IsGulaCombat()
+    {
+        var cm = CombatManager.Instance;
+        if (cm == null || cm.enemy == null) return false;
+        var enemy = cm.enemy;
+        if (enemy.GetComponent<GulaHealth>() != null) return true;
+        if (enemy.GetComponentInChildren<GulaHealth>() != null) return true;
+        // Comparación directa (no CompareTag) para no lanzar excepción si el tag aún no existe.
+        try
+        {
+            if (enemy.tag == "Gula") return true;
+        }
+        catch (UnityException) { /* tag sin definir: se ignora, manda el componente */ }
+        if (enemy.name.Contains("Gula")) return true;
+        return false;
+    }
+
+    /// <summary>
+    /// Elige una letra aleatoria por palabra para que Gula se la coma.
+    /// Se guarda por índice global en textToCharList. Las palabras cortas se respetan.
+    /// </summary>
+    private void BuildDevouredSet()
+    {
+        _devouredIndices.Clear();
+        GulaActive = devourOneLetterPerWord && IsGulaCombat();
+        if (!GulaActive || textToCharList == null) return;
+
+        var i = 0;
+        while (i < textToCharList.Count)
+        {
+            if (IsAutoSeparator(textToCharList[i])) { i++; continue; }
+            var start = i;
+            while (i < textToCharList.Count && !IsAutoSeparator(textToCharList[i])) i++;
+            var len = i - start;
+            if (len < Mathf.Max(1, minWordLengthToDevour)) continue;
+
+            // Interior aleatorio para que la palabra siga legible (para len==3, la del medio).
+            int pick;
+            if (len <= 3) pick = start + len / 2;
+            else pick = Random.Range(start + 1, i - 1);
+            _devouredIndices.Add(pick);
+            Debug.Log($"[Gula] Devorada letra '{textToCharList[pick]}' índice {pick} de palabra len {len}");
+        }
+    }
+
+    private bool IsDevouredFront()
+    {
+        return GulaActive
+               && QueueTextToScreen.Count > 0
+               && _queueTextIndices.Count > 0
+               && _devouredIndices.Contains(_queueTextIndices.Peek());
+    }
+
+    /// <summary>
+    /// Consume sin input las letras devoradas que lleguen al frente.
+    /// Deja su hueco (misma posición) y crea su eco dorado como '_' en el libro,
+    /// sumando el caracter real al buffer para que la palabra siga completándose con Enter.
+    /// </summary>
+    private void AutoSkipDevoured()
+    {
+        if (!GulaActive) return;
+        var guard = 0;
+        while (IsDevouredFront() && guard++ < NumberOfCharsInScreen + 4)
+        {
+            var realChar = QueueTextToScreen.Dequeue();
+            var devouredIndex = _queueTextIndices.Count > 0 ? _queueTextIndices.Dequeue() : _iteratorText;
+            var letterObj = _letterObjects.Count > 0 ? _letterObjects[0] : null;
+            if (_letterObjects.Count > 0) _letterObjects.RemoveAt(0);
+
+            // Eco en el libro con visual de '_' pero cuenta como letra real para daño/palabras.
+            AddTextInBook(letterObj, devouredIndex, true);
+
+            _typedBuffer += realChar;
+            _letterCount++;
+            _iteratorText++;
+
+            if (gulaDevourSound != null && gulaDevourSound.clip != null)
+                SoundManager.Instance.CreateSound().WithSoundData(gulaDevourSound).WithRandomPitch().Play();
+
+            AddQueueIfAvailable();
+
+            for (var k = 0; k < _letterObjects.Count; k++)
+                _letterObjects[k].transform.localPosition = new Vector3(k * spaceBetweenLetters, 0, 0);
+
+            // Las devoradas nunca son separadores, pero por si encadenan con espacios:
+            AutoSkipSeparators();
+        }
+        RefreshWordPreview();
+    }
+
+    /// <summary>Mundo (SpriteRenderer): '_' si hay sprite, si no fallback tipo guión.</summary>
+    private void ApplyDevouredVisualWorld(GameObject letterObj, SpriteRenderer sr, char realChar)
+    {
+        if (sr == null) return;
+        if (TryGetDevouredSprite(realChar, out var dash))
+        {
+            sr.sprite = dash;
+            sr.material.SetTexture("_LetterText", dash.texture);
+            sr.color = Color.white;
+            return;
+        }
+        // Fallback sin asset '_': se oculta la letra real y se deja una barra (escala Y aplastada + tinte).
+        if (LetterSpritesMap.TryGetValue(realChar, out var real))
+        {
+            sr.sprite = real;
+            sr.material.SetTexture("_LetterText", real.texture);
+        }
+        sr.color = devouredTint;
+        letterObj.transform.localScale = new Vector3(1f, 0.22f, 1f);
+    }
+
+    /// <summary>Libro (UI Image): '_' si hay sprite, si no fallback tipo guión.</summary>
+    private void ApplyDevouredVisualBook(Image img)
+    {
+        if (img == null) return;
+        if (TryGetDevouredSprite('_', out var dash))
+        {
+            img.sprite = dash;
+            if (img.material != null && img.material.HasProperty("_LetterTexture"))
+                img.material.SetTexture("_LetterTexture", dash.texture);
+            img.color = Color.white;
+            return;
+        }
+        img.color = devouredTint;
+        var rt = img.GetComponent<RectTransform>();
+        if (rt != null) rt.localScale = new Vector3(1f, 0.3f, 1f);
+    }
+
+    private bool TryGetDevouredSprite(char fallbackReal, out Sprite dash)
+    {
+        if (devouredSprite != null) { dash = devouredSprite; return true; }
+        if (LetterSpritesMap != null)
+        {
+            if (LetterSpritesMap.TryGetValue('_', out dash) && dash != null) return true;
+            if (LetterSpritesMap.TryGetValue('-', out dash) && dash != null) return true;
+        }
+        dash = null;
+        return false;
     }
 
     /// <summary>
@@ -306,6 +525,19 @@ public class LetterSpawner : MonoBehaviour
         seq.OnComplete(() => DealDamageToEnemy(hits));
     }
 
+<<<<<<< Updated upstream
+=======
+    private void Detach(GameObject go)
+    {
+        if (go == null) return;
+        var parent = letterTyped != null ? letterTyped.transform
+            : (letterTypedContainer != null ? letterTypedContainer.transform : null);
+        if (parent == null) { Destroy(go); return; }
+        go.transform.SetParent(parent, true);
+        go.transform.SetAsLastSibling(); // dibujar encima del resto
+    }
+
+>>>>>>> Stashed changes
     /// <summary>
     /// Aplica el daño al enemigo con chequeos y logs. Si falta PlayerAttack,
     /// daña directamente el EnemyHealthBase para no perder el hit.
@@ -342,7 +574,7 @@ public class LetterSpawner : MonoBehaviour
         if (targetWordsText != null) targetWordsText.text = GetUpcomingWords(3);
     }
 
-    /// <summary>Próximas N palabras esperadas desde el cursor (case exacto).</summary>
+    /// <summary>Próximas N palabras esperadas desde el cursor (case exacto). Gula muestra '_' en devoradas.</summary>
     private string GetUpcomingWords(int wordCount)
     {
         if (textToCharList == null || _iteratorText >= textToCharList.Count) return "";
@@ -356,10 +588,26 @@ public class LetterSpawner : MonoBehaviour
                 while (idx < textToCharList.Count && textToCharList[idx] == ' ') idx++;
                 if (idx < textToCharList.Count) words++;
             }
+<<<<<<< Updated upstream
             else idx++;
         }
         int len = Mathf.Min(idx, textToCharList.Count) - start;
         return len > 0 ? new string(textToCharList.GetRange(start, len).ToArray()) : "";
+=======
+            else
+            {
+                idx++;
+            }
+
+        var len = Mathf.Min(idx, textToCharList.Count) - start;
+        if (len <= 0) return "";
+        var chars = textToCharList.GetRange(start, len).ToArray();
+        if (GulaActive)
+            for (var k = 0; k < chars.Length; k++)
+                if (_devouredIndices.Contains(start + k) && !IsAutoSeparator(chars[k]))
+                    chars[k] = '_';
+        return new string(chars);
+>>>>>>> Stashed changes
     }
 
 
@@ -371,21 +619,32 @@ public class LetterSpawner : MonoBehaviour
         {
             char nextChar = textToCharList[nextIndex];
             QueueTextToScreen.Enqueue(nextChar);
+<<<<<<< Updated upstream
             SpawnLetter(nextChar, _letterObjects.Count, prefabLetter.transform.position);
+=======
+            _queueTextIndices.Enqueue(nextIndex);
+            SpawnLetter(nextChar, _letterObjects.Count, nextIndex);
+>>>>>>> Stashed changes
             Debug.Log($"Se agregó la letra: {nextChar}");
         }
     }
 
 
-    private void AddTextInBook(GameObject letterToAdd, int index)
+    private void AddTextInBook(GameObject letterToAdd, int index, bool isDevoured = false)
     {
-        if (!CombatManager.Instance.isCombat || index >= textToCharList.Count || _letterObjects.Count == 0)
+        // Las devoradas ya salieron de _letterObjects, así que no se exige _letterObjects.Count > 0 en ese caso.
+        if (!CombatManager.Instance.isCombat || index >= textToCharList.Count || (!isDevoured && _letterObjects.Count == 0))
         {
             Destroy(letterToAdd);
             return;
         }
 
+<<<<<<< Updated upstream
         char currentChar = textToCharList[index];
+=======
+        var currentChar = textToCharList[index];
+        isDevoured = isDevoured || _devouredIndices.Contains(index);
+>>>>>>> Stashed changes
 
         // NOTA: el daño ya NO es por párrafo. Las letras solo se acumulan en el
         // libro y vuelan al enemigo en FlyBookToEnemy() al pulsar Enter.
@@ -422,6 +681,9 @@ public class LetterSpawner : MonoBehaviour
                 });
         }
 
+        // Gula: el eco en el libro muestra '_' pero ocupa el mismo hueco del LayoutGroup.
+        if (isDevoured) ApplyDevouredVisualBook(img);
+
         _lettersInBook.Add(letter);
     }
 
@@ -455,8 +717,11 @@ public class LetterSpawner : MonoBehaviour
         }
 
         QueueTextToScreen.Clear();
+        _queueTextIndices?.Clear();
         _letterObjects.Clear();
         _lettersInBook.Clear();
+        _devouredIndices.Clear();
+        GulaActive = false;
         _iteratorText = 0;
         _letterCount = 0;
         _typedBuffer = "";
