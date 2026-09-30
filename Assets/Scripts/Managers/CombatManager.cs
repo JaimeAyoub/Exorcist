@@ -150,7 +150,7 @@ public class CombatManager : Singleton<CombatManager>
 
         TeleportPlayer(_currentPositionPlayer);
         Debug.Log("PlayerRegresado");
-        player.transform.rotation = _currentRotationPlayer;
+        //player.transform.rotation = _currentRotationPlayer;
 
         var cc = player.GetComponent<CharacterController>();
         if (cc != null)
