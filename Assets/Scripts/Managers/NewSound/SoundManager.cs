@@ -71,7 +71,11 @@ public class SoundManager : PersistentSingleton<SoundManager>
 
     SoundEmitter CreateSoundEmitter()
     {
-        SoundEmitter soundEmitter = Instantiate(soundEmitterPrefab);
+        // Fallback: si no hay prefab asignado (p.ej. SoundManager autocreado porque
+        // no existe en la escena), se crea un emitter procedural para no romper el audio.
+        SoundEmitter soundEmitter = soundEmitterPrefab != null
+            ? Instantiate(soundEmitterPrefab)
+            : new GameObject("SoundEmitter (auto)").AddComponent<SoundEmitter>();
         soundEmitter.gameObject.SetActive(false);
         return soundEmitter;
     }

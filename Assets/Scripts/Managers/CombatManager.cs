@@ -46,7 +46,10 @@ public class CombatManager : Singleton<CombatManager>
     public CinemachineCamera camera;
     public InputAction LookBooKAction;
 
+    // Legacy: la música de combate ahora la lleva CombatAudioController
+    // (música + latidos + lowpass). Se mantiene el campo por compatibilidad.
     public SoundData BGMMusic;
+    public PlayerHealth playerHealth;
     private bool _isPlayerAlive;
 
     private bool _isTakingDamage;
@@ -89,6 +92,10 @@ public class CombatManager : Singleton<CombatManager>
         isTransitioning = true;
 
         SoundManager.Instance.CreateSound().WithSoundData(TriggerSound).Play();
+        // Empieza la transición: el ambiente se apaga con fade durante la animación.
+        var combatAudio = CombatAudioController.TryGetInstance();
+        if (combatAudio != null)
+            combatAudio.BeginCombatTransition();
         inputHandler.EnableTyping();
     }
 
@@ -138,6 +145,11 @@ public class CombatManager : Singleton<CombatManager>
         yield return new WaitForSecondsRealtime(0.5f);
 
         isCombat = false;
+
+        // Corta música de combate y latidos.
+        var combatAudio = CombatAudioController.TryGetInstance();
+        if (combatAudio != null)
+            combatAudio.StopCombatAudio();
 
         // Desuscribirse antes de destruir el enemigo (buena práctica, evita
         // que el evento quede "colgando" si algo más lo referenciara).
@@ -239,6 +251,15 @@ public class CombatManager : Singleton<CombatManager>
     public void SetUpCombat()
     {
         isCombat = true;
+
+        // Audio de combate: música siempre + latidos según vida (vía mixers).
+        if (playerHealth == null && player != null)
+            playerHealth = player.GetComponent<PlayerHealth>();
+        var combatAudio = CombatAudioController.TryGetInstance();
+        if (combatAudio != null && playerHealth != null)
+            combatAudio.StartCombatAudio(playerHealth);
+        else
+            Debug.LogWarning("CombatAudioController o PlayerHealth no asignados: combate sin música/latidos. Arrastra las referencias en el inspector.");
         //SoundManager.Instance.CreateSound().WithSoundData(BGMMusic).Play();
 
         if (player == null) Debug.LogError("¡PLAYER es null!");
@@ -288,7 +309,6 @@ public class CombatManager : Singleton<CombatManager>
         {
             CameraHolder.transform.DOKill();
 
-            SoundManager.Instance.CreateSound().WithSoundData(BGMMusic).Play();
             Vector3 currentCameraRotation = CameraHolder.transform.rotation.eulerAngles;
             Vector3 newCameraRotation =
                 new Vector3(baseRotationXCamera + 45.0f, currentCameraRotation.y, currentCameraRotation.z);
@@ -333,7 +353,18 @@ public class CombatManager : Singleton<CombatManager>
 
     public void ResetEnemyPosition()
     {
-        //enemy.GetComponent<EnemyAttack>().Attack(1);
+        // El enemigo golpea al jugador (1 de daño) antes de volver a su sitio.
+        // Sin esto el jugador nunca pierde vida ni muere.
+        if (enemy != null)
+        {
+            EnemyAttack enemyAttack = enemy.GetComponent<EnemyAttack>();
+            if (enemyAttack == null)
+                enemyAttack = enemy.GetComponentInChildren<EnemyAttack>();
+            if (enemyAttack != null)
+                enemyAttack.Attack(1);
+            else
+                Debug.LogWarning("El enemigo no tiene EnemyAttack; el jugador no recibe daño.");
+        }
         _isTakingDamage = false;
         TeleportEnemy(enemySpawner.transform.position);
     }

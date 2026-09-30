@@ -22,15 +22,24 @@ public class PlayerHealth : MonoBehaviour
     
     [Header("Sonidos")] public SoundData DamageSound;
 
+    /// <summary>
+    /// Se invoca cada vez que la vida cambia: (vidaActual, vidaMaxima).
+    /// Lo usa CombatAudioController para cambiar latidos y lowpass.
+    /// </summary>
+    public event System.Action<int, int> OnHealthChanged;
+
     void Start()
     {
-        maxHealth = 6;
+        // Valor de prueba para testear el audio de combate (latidos/lowpass).
+        maxHealth = 3;
         currentHealth = maxHealth;
         if (_volumeProfile.TryGet(out vignette))
         {
             vignette.intensity.value = _defaultVignetteIntensity;
             _defaultVignetteColor = vignette.color.value;
         }
+
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
     // Update is called once per frame
@@ -78,6 +87,7 @@ public class PlayerHealth : MonoBehaviour
             });
 
         ChangeSprite();
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
         if (currentHealth <= 0)
             Death();
     }

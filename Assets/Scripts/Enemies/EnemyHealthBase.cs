@@ -9,6 +9,7 @@ public abstract class EnemyHealthBase : MonoBehaviour
 
     private Tween damageTween;
 
+    [Tooltip("Sonido al perder vida (p.ej. BaseEnemy.mp3 en el enemigo base). Suena en cada golpe.")]
     public SoundData damageSound;
 
     [Header("Erosion Effect (al morir)")]
@@ -56,8 +57,10 @@ public abstract class EnemyHealthBase : MonoBehaviour
 
     private void PlayDamageSound()
     {
-        if (damageSound == null) return;
-        SoundManager.Instance.CreateSound().WithSoundData(damageSound).Play();
+        // Cada vez que pierde vida suena (Enemigo Base, GulaHit, etc. según prefab).
+        if (damageSound == null || damageSound.clip == null) return;
+        if (SoundManager.Instance == null) return;
+        SoundManager.Instance.CreateSound().WithSoundData(damageSound).WithRandomPitch().Play();
     }
 
     private void Death()

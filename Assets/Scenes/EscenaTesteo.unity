@@ -23854,6 +23854,17 @@ MonoBehaviour:
     frequentSound: 0
     walkClips: []
   letterTypedSound: []
+  devourOneLetterPerWord: 1
+  minWordLengthToDevour: 3
+  devouredSprite: {fileID: 0}
+  gulaDevourSound:
+    clip: {fileID: 0}
+    mixerGroup: {fileID: 0}
+    loop: 0
+    playOnAwake: 0
+    frequentSound: 0
+    walkClips: []
+  devouredTint: {r: 0.25, g: 0.25, b: 0.25, a: 1}
 --- !u!4 &837265233
 Transform:
   m_ObjectHideFlags: 0
@@ -24792,6 +24803,7 @@ MonoBehaviour:
     playOnAwake: 0
     frequentSound: 0
     walkClips: []
+  playerHealth: {fileID: 4550853069771285809}
   enemySpeedToApproach: 1
 --- !u!114 &870630825
 MonoBehaviour:
@@ -60399,6 +60411,7 @@ GameObject:
   - component: {fileID: 4857122541292451558}
   - component: {fileID: 618010272736425984}
   - component: {fileID: 4653573457212825731}
+  - component: {fileID: 9038904673526867825}
   m_Layer: 6
   m_Name: AudioManager
   m_TagString: Untagged
@@ -61599,6 +61612,17 @@ MonoBehaviour:
     frequentSound: 0
     walkClips: []
   letterTypedSound: []
+  devourOneLetterPerWord: 1
+  minWordLengthToDevour: 3
+  devouredSprite: {fileID: 0}
+  gulaDevourSound:
+    clip: {fileID: 0}
+    mixerGroup: {fileID: 0}
+    loop: 0
+    playOnAwake: 0
+    frequentSound: 0
+    walkClips: []
+  devouredTint: {r: 0.25, g: 0.25, b: 0.25, a: 1}
 --- !u!4 &7279915992734466391
 Transform:
   m_ObjectHideFlags: 0
@@ -61923,6 +61947,56 @@ Transform:
   m_Children: []
   m_Father: {fileID: 9088735711226153031}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9038904673526867825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 110152244042205417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e028405e96a4fd881049e066463ce55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CombatAudioController
+  ambientSound:
+    clip: {fileID: 8300000, guid: ee39c1768da656bc384c4a10329621b6, type: 3}
+    mixerGroup: {fileID: 24300002, guid: f4af810e6a3cbfea18ee77cf50395409, type: 2}
+    loop: 1
+    playOnAwake: 0
+    frequentSound: 0
+    walkClips: []
+  ambientVolume: 1
+  combatMusic:
+    clip: {fileID: 8300000, guid: 8636c06c6018bce41a85a4adbb8268b0, type: 3}
+    mixerGroup: {fileID: 24300002, guid: fdaee8b8caaa43a59444428898443fd2, type: 2}
+    loop: 0
+    playOnAwake: 0
+    frequentSound: 0
+    walkClips: []
+  heartbeatNormal:
+    clip: {fileID: 8300000, guid: 2c13f82b79f038d5ab5a00d90c906044, type: 3}
+    mixerGroup: {fileID: 24300002, guid: ef49d7457660f864783b3859d5ff6f61, type: 2}
+    loop: 0
+    playOnAwake: 0
+    frequentSound: 0
+    walkClips: []
+  heartbeatFast:
+    clip: {fileID: 8300000, guid: 3a12ccf8a78767acbbd37c25ae67bf62, type: 3}
+    mixerGroup: {fileID: 24300002, guid: 1fe828149d631969a8fae11c5a815c8d, type: 2}
+    loop: 0
+    playOnAwake: 0
+    frequentSound: 0
+    walkClips: []
+  lowHealthThreshold: 1
+  combatMusicMixer: {fileID: 24100000, guid: fdaee8b8caaa43a59444428898443fd2, type: 2}
+  combatMusicCutoffParam: MusicaCombateLowpass
+  normalSnapshot: {fileID: 24500006, guid: fdaee8b8caaa43a59444428898443fd2, type: 2}
+  lowHealthSnapshot: {fileID: 24500008, guid: fdaee8b8caaa43a59444428898443fd2, type: 2}
+  snapshotTransitionTime: 1
+  healthyCutoff: 22000
+  lowHealthCutoff: 600
+  cutoffTransitionTime: 1
 --- !u!4 &9088735711226153031
 Transform:
   m_ObjectHideFlags: 0
