@@ -30,8 +30,8 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3194076526668939009}
   m_LocalRotation: {x: 0.00032135824, y: 0.00016290351, z: 0.0021259089, w: 0.9999977}
-  m_LocalPosition: {x: 0, y: 0, z: -9.53}
-  m_LocalScale: {x: 1.1856, y: 1.1856, z: 1.1856}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 4, y: 4, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4692166588487328586}
@@ -39,7 +39,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0.037, y: 0.019, z: 0.244}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -4.182, y: 2.139}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &709479138656329289
@@ -55,6 +55,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  isInCombat: 0
 --- !u!136 &2397334692099887620
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -74,8 +75,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 2.02
-  m_Height: 2
+  m_Radius: 0.44
+  m_Height: 0.94
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &2689797817641159155
@@ -127,6 +128,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   distanceToFloat: 0
   player: {fileID: 0}
+  soundEnemy:
+    clip: {fileID: 0}
+    mixerGroup: {fileID: 0}
+    loop: 0
+    playOnAwake: 0
+    frequentSound: 0
+    walkClips: []
 --- !u!114 &7333873786950278138
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148,6 +156,8 @@ MonoBehaviour:
     playOnAwake: 0
     frequentSound: 0
     walkClips: []
+  erosionProperty: _ErosionAmount
+  erosionDuration: 1.5
 --- !u!1 &7277433024272809850
 GameObject:
   m_ObjectHideFlags: 0
@@ -159,6 +169,7 @@ GameObject:
   - component: {fileID: 4692166588487328586}
   - component: {fileID: 8955140265872948669}
   - component: {fileID: 3706984087807544180}
+  - component: {fileID: 2493553330784046183}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -182,7 +193,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -0.002, y: -0.385}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!212 &8955140265872948669
@@ -211,7 +222,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  - {fileID: 2100000, guid: dc8f2af03cfa8c848af7326c6168a48e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -234,7 +245,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 104283338, guid: 12933d4293ea60043b2dcd82910d3ff4, type: 3}
+  m_Sprite: {fileID: 1336979700, guid: 685e1e127b735e748bfd79d9d93afc36, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -266,3 +277,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2493553330784046183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7277433024272809850}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 542aeb4cb9265224c8ba585cb40977f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NormalMapsAnimation
+  pairs:
+  - colorSprite: {fileID: 1336979700, guid: 685e1e127b735e748bfd79d9d93afc36, type: 3}
+    normalMap: {fileID: 0}
+  - colorSprite: {fileID: 0}
+    normalMap: {fileID: 0}
+  normalMapProperty: _NormalMap

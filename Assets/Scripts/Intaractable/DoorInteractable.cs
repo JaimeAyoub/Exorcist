@@ -1,18 +1,16 @@
-using System;
 using DG.Tweening;
-using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class DoorInteractable : Interactable
 {
     public bool isOpen;
     public GameObject pivot;
+    [SerializeField] private bool needKey;
+    [SerializeField] private GameObject father;
 
     private Vector3 _closedRotation;
-    private Vector3 _openRotation;
     private Tween _currentTween;
-
+    private Vector3 _openRotation;
 
     private void Start()
     {
@@ -24,16 +22,38 @@ public class DoorInteractable : Interactable
 
     public override void Interact()
     {
+        if (!needKey)
+        {
+            OpenOrClose();
+        }
+        else
+        {
+            if (GameManager.Instance.hasKey)
+            {
+                OpenOrClose();
+                GameManager.Instance.removeKey();
+                RaiseMessageChanged("Press E to Interact");
+            }
+            else
+            {
+                RaiseMessageChanged("Falta llave");
+            }
+        }
+    }
+
+
+    private void OpenOrClose()
+    {
         _currentTween?.Kill();
 
         if (!isOpen)
         {
-            _currentTween = pivot.transform.DORotate(_openRotation, 0.2f, RotateMode.Fast);
+            _currentTween = pivot.transform.DORotate(_openRotation, 0.2f);
             isOpen = true;
         }
         else
         {
-            _currentTween = pivot.transform.DORotate(_closedRotation, 0.2f, RotateMode.Fast);
+            _currentTween = pivot.transform.DORotate(_closedRotation, 0.2f);
             isOpen = false;
         }
     }

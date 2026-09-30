@@ -1,37 +1,32 @@
 using System;
-using UnityEngine;
 using DG.Tweening;
+using UnityEngine;
 
 public abstract class EnemyHealthBase : MonoBehaviour
 {
     public int currentHealth;
     public int maxHealth;
 
-    private Tween damageTween;
+    [SerializeField] private bool shouldDrop;
 
     [Tooltip("Sonido al perder vida (p.ej. BaseEnemy.mp3 en el enemigo base). Suena en cada golpe.")]
     public SoundData damageSound;
 
-    [Header("Erosion Effect (al morir)")]
-    [Tooltip("Nombre de la propiedad de erosión en el shader")]
+    [Header("Erosion Effect (al morir)")] [Tooltip("Nombre de la propiedad de erosión en el shader")]
     public string erosionProperty = "_ErosionAmount";
+
     public float erosionDuration = 1.5f;
 
-    private Material erosionMaterial;
-    private bool isDead = false; // Evita que Death() se ejecute más de una vez
+    private Tween damageTween;
 
-    /// <summary>
-    /// Se dispara cuando el enemigo muere, justo al terminar el efecto de erosión.
-    /// Quien quiera reaccionar a la muerte (CombatManager, un sistema de loot, etc.)
-    /// se suscribe a este evento en vez de que este script conozca esas dependencias.
-    /// </summary>
-    public event Action OnEnemyDeath;
+    private Material erosionMaterial;
+    private bool isDead; // Evita que Death() se ejecute más de una vez
 
     private void Start()
     {
         currentHealth = maxHealth;
 
-        SpriteRenderer sp = GetComponentInChildren<SpriteRenderer>();
+        var sp = GetComponentInChildren<SpriteRenderer>();
         if (sp != null)
         {
             // .material (no .sharedMaterial) instancia el material,
@@ -39,8 +34,14 @@ public abstract class EnemyHealthBase : MonoBehaviour
             erosionMaterial = sp.material;
             erosionMaterial.SetFloat(erosionProperty, 0f);
         }
-
     }
+
+    /// <summary>
+    ///     Se dispara cuando el enemigo muere, justo al terminar el efecto de erosión.
+    ///     Quien quiera reaccionar a la muerte (CombatManager, un sistema de loot, etc.)
+    ///     se suscribe a este evento en vez de que este script conozca esas dependencias.
+    /// </summary>
+    public event Action OnEnemyDeath;
 
     public void TakeDamage(int damageAmount)
     {
@@ -65,7 +66,6 @@ public abstract class EnemyHealthBase : MonoBehaviour
 
     private void Death()
     {
-
         if (isDead) return; // Protección extra: no dispares Death() dos veces
         isDead = true;
         UIManager.Instance.CheckEnd();
@@ -89,7 +89,7 @@ public abstract class EnemyHealthBase : MonoBehaviour
 
     private void DamageFlash()
     {
-        SpriteRenderer enemysp = GetComponentInChildren<SpriteRenderer>();
+        var enemysp = GetComponentInChildren<SpriteRenderer>();
         if (enemysp == null) return;
 
         if (damageTween != null && damageTween.IsActive())
