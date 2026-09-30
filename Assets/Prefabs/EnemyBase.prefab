@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RegularEnemyHealth
   currentHealth: 0
-  maxHealth: 3
+  maxHealth: 12
   damageSound:
     clip: {fileID: 8300000, guid: 4cd3f36b794e9a247abfc752240d8f4b, type: 3}
     mixerGroup: {fileID: 0}
@@ -158,6 +158,8 @@ MonoBehaviour:
     playOnAwake: 0
     frequentSound: 0
     walkClips: []
+  erosionProperty: _ErosionAmount
+  erosionDuration: 1.5
 --- !u!114 &3402706032112730837
 MonoBehaviour:
   m_ObjectHideFlags: 0
