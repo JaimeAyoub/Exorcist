@@ -46,6 +46,7 @@ public class SoundBuilder
         if (!_soundManager.CanPlaySound(_soundData)) return null;
 
         var soundEmitter = _soundManager.Get();
+        if (soundEmitter == null) return null;
         soundEmitter.Initialize(_soundData);
         soundEmitter.transform.position = _position;
         soundEmitter.transform.parent = SoundManager.Instance.transform;

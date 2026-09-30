@@ -51,7 +51,6 @@ public class CombatManager : Singleton<CombatManager>
     // para poder desuscribirnos de su evento al terminar el combate.
     private EnemyHealthBase _currentEnemyHealth;
     private Quaternion _currentRotationPlayer;
-    private bool _isPlayerAlive;
 
 
     //Cosas para el nuevo combate
