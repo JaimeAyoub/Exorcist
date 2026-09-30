@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityUtils;
@@ -15,6 +16,11 @@ public class ChangeScene : MonoBehaviour
     public CanvasGroup TutorialPanel;
     public Image comicImage;
 
+    public AudioSource audioSource;
+    public AudioClip hoverClip;
+    public AudioClip clickClip;
+    [Range(0f, 1f)] public float sfxVolume = 1f;
+
     public enum SceneToChange
     {
         MainMenu,
@@ -22,9 +28,21 @@ public class ChangeScene : MonoBehaviour
         GameOver,
         Credits,
     };
-    //Los indices de las escenas son: 0 es MainMeu, 1 es el nivel y 2 es el Game Over
+
     void Start()
     {
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
+        }
+        audioSource.playOnAwake = false;
+
+        foreach (Button b in FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        {
+            RegisterButton(b);
+        }
+
         imageToFade.enabled = true;
         FadeOut();
         if (SceneManager.GetActiveScene().buildIndex == 1) return;
@@ -32,7 +50,30 @@ public class ChangeScene : MonoBehaviour
         Cursor.visible = true;
     }
 
+    void RegisterButton(Button b)
+    {
+        EventTrigger trigger = b.GetComponent<EventTrigger>();
+        if (trigger == null) trigger = b.gameObject.AddComponent<EventTrigger>();
 
+        EventTrigger.Entry entry = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
+        entry.callback.AddListener(_ =>
+        {
+            if (b.interactable) PlayHover();
+        });
+        trigger.triggers.Add(entry);
+
+        b.onClick.AddListener(PlayClick);
+    }
+
+    public void PlayHover()
+    {
+        if (hoverClip != null) audioSource.PlayOneShot(hoverClip, sfxVolume);
+    }
+
+    public void PlayClick()
+    {
+        if (clickClip != null) audioSource.PlayOneShot(clickClip, sfxVolume);
+    }
 
     void FadeOut()
     {
@@ -52,7 +93,6 @@ public class ChangeScene : MonoBehaviour
             TutorialPanel.blocksRaycasts = true;
         });
     }
-
 
     public void SelectSceneT(int sceneIndex)
     {
@@ -82,8 +122,6 @@ public class ChangeScene : MonoBehaviour
                 break;
         }
     }
-
- 
 
     public void ShowComic()
     {
