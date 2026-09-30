@@ -140,7 +140,8 @@ public class LetterSpawner : MonoBehaviour
     /// </summary>
     public void HandleTypedChar(char keyTyped)
     {
-        if (CombatManager.Instance == null || !CombatManager.Instance.isCombat) return;
+        if (CombatManager.Instance == null || !CombatManager.Instance.isCombat ||
+            CombatManager.Instance._isTakingDamage) return;
         if (IsAutoSeparator(keyTyped)) return;
         if (QueueTextToScreen.Count == 0 || _letterObjects.Count == 0) return;
         if (CountCompleteWords(_typedBuffer) >= maxWordsPerSubmit)
@@ -270,7 +271,8 @@ public class LetterSpawner : MonoBehaviour
     /// </summary>
     public void HandleSubmit()
     {
-        if (CombatManager.Instance == null || !CombatManager.Instance.isCombat) return;
+        if (CombatManager.Instance == null || !CombatManager.Instance.isCombat ||
+            CombatManager.Instance._isTakingDamage) return;
 
         var complete = CountCompleteWords(_typedBuffer);
         // Si la oración se acabó, la última palabra (sin espacio final
