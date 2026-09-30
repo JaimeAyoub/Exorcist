@@ -33,6 +33,7 @@ public class DoorInteractable : Interactable
                 OpenOrClose();
                 GameManager.Instance.removeKey();
                 RaiseMessageChanged("Press E to Interact");
+                needKey = false;
             }
             else
             {

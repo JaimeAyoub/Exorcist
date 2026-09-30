@@ -150,7 +150,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RegularEnemyHealth
   currentHealth: 0
-  maxHealth: 12
+  maxHealth: 6
+  shouldDrop: 0
   damageSound:
     clip: {fileID: 8300000, guid: 4cd3f36b794e9a247abfc752240d8f4b, type: 3}
     mixerGroup: {fileID: 0}
