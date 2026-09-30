@@ -16,8 +16,9 @@ public class SoundManager : PersistentSingleton<SoundManager>
     [SerializeField] private int maxSoundInstances = 30;
     private SoundEmitter _currentBGM;
 
-    private void Start()
+    protected override void Awake()
     {
+        base.Awake();
         InitializePool();
     }
 
@@ -45,11 +46,18 @@ public class SoundManager : PersistentSingleton<SoundManager>
 
     public SoundEmitter Get()
     {
+        EnsurePool();
         return _soundEmitterPool.Get();
     }
 
     public void ReturnToPool(SoundEmitter soundEmitter)
     {
+        if (_soundEmitterPool == null || soundEmitter == null)
+        {
+            if (soundEmitter != null)
+                soundEmitter.gameObject.SetActive(false);
+            return;
+        }
         _soundEmitterPool.Release(soundEmitter);
     }
     
@@ -57,8 +65,15 @@ public class SoundManager : PersistentSingleton<SoundManager>
 
 
 
+    private void EnsurePool()
+    {
+        if (_soundEmitterPool == null)
+            InitializePool();
+    }
+
     private void InitializePool()
     {
+        if (_soundEmitterPool != null) return;
         _soundEmitterPool = new ObjectPool<SoundEmitter>(
             CreateSoundEmitter,
             OnTakeFromPool,

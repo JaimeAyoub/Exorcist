@@ -1,11 +1,10 @@
-using Unity.Cinemachine;
 using UnityEngine;
-using UnityEngine.InputSystem.Controls;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
+using UnityUtils;
 
-public class OptionsScript : UnityUtils.Singleton<OptionsScript>
+public class OptionsScript : Singleton<OptionsScript>
 {
     [Header("Opciones Shader para pixelear la pantalla")]
     public Material PixelationShaderMaterial;
@@ -20,8 +19,8 @@ public class OptionsScript : UnityUtils.Singleton<OptionsScript>
 
     public Slider filmGrainSlider;
     public Slider colorAdjustSlider;
-    
-    
+
+
     [Header("Opcion para sensibilidad ")] public PlayerMovement playerMovement;
     public Slider sensitivitySliderX;
     public Slider sensitivitySliderY;
@@ -32,11 +31,11 @@ public class OptionsScript : UnityUtils.Singleton<OptionsScript>
     public ColorAdjustments colorAdjustments;
 
 
-    void Start()
+    private void Start()
     {
         if (volumeProfile.TryGet(out _chromaticAberration))
         {
-            _chromaticAberration.intensity.value = chromaticAberrationSlider.value;
+            //_chromaticAberration.intensity.value = chromaticAberrationSlider.value;
         }
 
         if (playerMovement != null)
@@ -51,16 +50,10 @@ public class OptionsScript : UnityUtils.Singleton<OptionsScript>
         }
 
         if (volumeProfile.TryGet(out _filmGrain))
-        {
-            _filmGrain.intensity.value = filmGrainSlider.value;
-        }
-        else
-        {
-            Debug.LogError("No Grain found");
-        }
+            //_filmGrain.intensity.value = filmGrainSlider.value;
 
-     
-        PixelationShaderSlider.maxValue = 8;
+
+            PixelationShaderSlider.maxValue = 8;
         PixelationShaderSlider.minValue = 3;
         PixelationShaderSlider.value = PixelationShaderMaterial.GetFloat("_PixelSize");
     }
@@ -88,7 +81,7 @@ public class OptionsScript : UnityUtils.Singleton<OptionsScript>
 
     public void ChangeAlphaPanel()
     {
-        Color currentColor = panelToFade.color;
+        var currentColor = panelToFade.color;
         currentColor.a = 0.0f;
         panelToFade.color = currentColor;
     }
@@ -107,7 +100,6 @@ public class OptionsScript : UnityUtils.Singleton<OptionsScript>
     {
         if (colorAdjustments != null)
         {
-               
         }
     }
 }

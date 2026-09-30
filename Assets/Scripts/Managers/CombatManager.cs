@@ -1,12 +1,10 @@
 using System.Collections;
-using System.Threading;
-using UnityEngine;
-using UnityEngine.UI;
 using DG.Tweening;
 using Unity.Cinemachine;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Playables;
-using UnityEngine.Rendering.Universal;
+using UnityEngine.UI;
 using UnityUtils;
 
 public class CombatManager : Singleton<CombatManager>
@@ -15,7 +13,7 @@ public class CombatManager : Singleton<CombatManager>
     public LetterSpawner letterSpawner;
     public GameObject player;
     public GameObject enemy;
-    public bool isCombat = false;
+    public bool isCombat;
 
 
     public GameObject playerSpawner;
@@ -24,10 +22,6 @@ public class CombatManager : Singleton<CombatManager>
     public Image imageToFade;
 
     public Vector3 _currentPositionPlayer;
-    private Quaternion _currentRotationPlayer;
-    private bool isTransitioning;
-
-    private float _currentAberration;
     public GameObject book;
     public GameObject candle;
     public Image DamageVignette;
@@ -36,12 +30,6 @@ public class CombatManager : Singleton<CombatManager>
     public PlayableDirector sequenceCombat;
     public CanvasGroup sequence;
     public SoundData TriggerSound;
-
-    //Cosas para el nuevo combate
-
-    private float baseRotationXCamera;
-    private float timeForChangeLook;
-    private bool canChangeLook = true;
     public bool isLookingAtBook;
     public CinemachineCamera camera;
     public InputAction LookBooKAction;
@@ -49,20 +37,22 @@ public class CombatManager : Singleton<CombatManager>
     // Legacy: la música de combate ahora la lleva CombatAudioController
     // (música + latidos + lowpass). Se mantiene el campo por compatibilidad.
     public SoundData BGMMusic;
-    public PlayerHealth playerHealth;
-    private bool _isPlayerAlive;
 
-    private bool _isTakingDamage;
+    public PlayerHealth playerHealth;
+
+
+    public bool _isTakingDamage;
 
     [SerializeField] private float enemySpeedToApproach;
+
+    private float _currentAberration;
 
     // Referencia cacheada al componente de salud del enemigo actual,
     // para poder desuscribirnos de su evento al terminar el combate.
     private EnemyHealthBase _currentEnemyHealth;
+    private Quaternion _currentRotationPlayer;
+    private bool _isPlayerAlive;
 
-<<<<<<< Updated upstream
-    void Start()
-=======
     //Cosas para el nuevo combate
 
     private float baseRotationXCamera;
@@ -74,16 +64,15 @@ public class CombatManager : Singleton<CombatManager>
     private bool _wasLookingAtBook;
 
     private void Start()
->>>>>>> Stashed changes
     {
         LookBooKAction = InputSystem.actions.FindAction("LookBook");
 
-        Color c = DamageVignette.color;
+        var c = DamageVignette.color;
         c.a = 0f;
         DamageVignette.color = c;
     }
 
-    void Update()
+    private void Update()
     {
         if (!isCombat) return;
 
@@ -157,9 +146,7 @@ public class CombatManager : Singleton<CombatManager>
     {
         CameraHolder.transform.DOKill();
         if (OptionsScript.Instance.volumeProfile.TryGet(out OptionsScript.Instance._chromaticAberration))
-        {
             OptionsScript.Instance._chromaticAberration.intensity.value = _currentAberration;
-        }
 
         imageToFade.DOFade(1f, 0.5f).SetUpdate(true);
         yield return new WaitForSecondsRealtime(0.5f);
@@ -188,7 +175,7 @@ public class CombatManager : Singleton<CombatManager>
         Debug.Log("PlayerRegresado");
         player.transform.rotation = _currentRotationPlayer;
 
-        CharacterController cc = player.GetComponent<CharacterController>();
+        var cc = player.GetComponent<CharacterController>();
         if (cc != null)
             cc.enabled = true;
 
@@ -211,15 +198,11 @@ public class CombatManager : Singleton<CombatManager>
         else
         {
             inputHandler.SetUI();
-            ChangeScene sceneChange = FindFirstObjectByType<ChangeScene>();
+            var sceneChange = FindFirstObjectByType<ChangeScene>();
             if (sceneChange)
-            {
                 sceneChange.SelectSceneT(2);
-            }
             else
-            {
                 Debug.Log("No hay SceneChange en la escena weon");
-            }
         }
     }
 
@@ -238,9 +221,6 @@ public class CombatManager : Singleton<CombatManager>
         //AudioManager.instance.StopSFX();
         _isPlayerAlive = false;
         EndCombat();
-
-
-
     }
 
 
@@ -265,7 +245,9 @@ public class CombatManager : Singleton<CombatManager>
             Debug.Log("Enemigo tepeado");
         }
         else
+        {
             Debug.LogWarning("Enemy not found");
+        }
     }
 
     public void SetUpCombat()
@@ -280,7 +262,8 @@ public class CombatManager : Singleton<CombatManager>
         if (combatAudio != null && playerHealth != null)
             combatAudio.StartCombatAudio(playerHealth);
         else
-            Debug.LogWarning("CombatAudioController o PlayerHealth no asignados: combate sin música/latidos. Arrastra las referencias en el inspector.");
+            Debug.LogWarning(
+                "CombatAudioController o PlayerHealth no asignados: combate sin música/latidos. Arrastra las referencias en el inspector.");
         //SoundManager.Instance.CreateSound().WithSoundData(BGMMusic).Play();
 
         if (player == null) Debug.LogError("¡PLAYER es null!");
@@ -293,7 +276,7 @@ public class CombatManager : Singleton<CombatManager>
         if (letterSpawner == null) Debug.LogError("¡letterSpawner es null!");
         if (UIManager.Instance == null) Debug.LogError("¡UIManager.Instance es null!");
 
-        CharacterController cc = player.GetComponent<CharacterController>();
+        var cc = player.GetComponent<CharacterController>();
         if (cc != null)
             cc.enabled = false;
 
@@ -330,8 +313,9 @@ public class CombatManager : Singleton<CombatManager>
         {
             CameraHolder.transform.DOKill();
 
-            Vector3 currentCameraRotation = CameraHolder.transform.rotation.eulerAngles;
-            Vector3 newCameraRotation =
+            SoundManager.Instance.CreateSound().WithSoundData(BGMMusic).Play();
+            var currentCameraRotation = CameraHolder.transform.rotation.eulerAngles;
+            var newCameraRotation =
                 new Vector3(baseRotationXCamera + 45.0f, currentCameraRotation.y, currentCameraRotation.z);
             CameraHolder.transform.DORotate(newCameraRotation, 0.3f);
             letterSpawner.gameObject.SetActive(true);
@@ -345,8 +329,8 @@ public class CombatManager : Singleton<CombatManager>
         if (CameraHolder != null)
         {
             CameraHolder.transform.DOKill();
-            Vector3 currentCameraRotation = CameraHolder.transform.rotation.eulerAngles;
-            Vector3 newCameraRotation =
+            var currentCameraRotation = CameraHolder.transform.rotation.eulerAngles;
+            var newCameraRotation =
                 new Vector3(baseRotationXCamera, currentCameraRotation.y, currentCameraRotation.z);
 
             CameraHolder.transform.DORotate(newCameraRotation, 0.3f);
@@ -357,9 +341,9 @@ public class CombatManager : Singleton<CombatManager>
     {
         if (player)
         {
-            Vector3 direction = (player.transform.position - enemy.transform.position).normalized;
+            var direction = (player.transform.position - enemy.transform.position).normalized;
 
-            Vector3 newDirection = new Vector3(direction.x, 0, direction.z);
+            var newDirection = new Vector3(direction.x, 0, direction.z);
             enemy.transform.position += newDirection * (enemySpeedToApproach * Time.deltaTime);
 
             Debug.Log(Vector3.Distance(enemy.transform.position, player.transform.position));
@@ -378,7 +362,7 @@ public class CombatManager : Singleton<CombatManager>
         // Sin esto el jugador nunca pierde vida ni muere.
         if (enemy != null)
         {
-            EnemyAttack enemyAttack = enemy.GetComponent<EnemyAttack>();
+            var enemyAttack = enemy.GetComponent<EnemyAttack>();
             if (enemyAttack == null)
                 enemyAttack = enemy.GetComponentInChildren<EnemyAttack>();
             if (enemyAttack != null)
@@ -386,6 +370,7 @@ public class CombatManager : Singleton<CombatManager>
             else
                 Debug.LogWarning("El enemigo no tiene EnemyAttack; el jugador no recibe daño.");
         }
+
         _isTakingDamage = false;
         TeleportEnemy(enemySpawner.transform.position);
     }
