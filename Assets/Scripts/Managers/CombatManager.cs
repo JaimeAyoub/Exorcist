@@ -39,7 +39,6 @@ public class CombatManager : Singleton<CombatManager>
     public SoundData BGMMusic;
 
     public PlayerHealth playerHealth;
-    private bool _isPlayerAlive;
 
 
     public bool _isTakingDamage;
@@ -53,6 +52,7 @@ public class CombatManager : Singleton<CombatManager>
     private EnemyHealthBase _currentEnemyHealth;
     private Quaternion _currentRotationPlayer;
     private bool _isPlayerAlive;
+
 
     //Cosas para el nuevo combate
 
@@ -253,7 +253,8 @@ public class CombatManager : Singleton<CombatManager>
         if (combatAudio != null && playerHealth != null)
             combatAudio.StartCombatAudio(playerHealth);
         else
-            Debug.LogWarning("CombatAudioController o PlayerHealth no asignados: combate sin música/latidos. Arrastra las referencias en el inspector.");
+            Debug.LogWarning(
+                "CombatAudioController o PlayerHealth no asignados: combate sin música/latidos. Arrastra las referencias en el inspector.");
         //SoundManager.Instance.CreateSound().WithSoundData(BGMMusic).Play();
 
         if (player == null) Debug.LogError("¡PLAYER es null!");
@@ -306,7 +307,6 @@ public class CombatManager : Singleton<CombatManager>
             SoundManager.Instance.CreateSound().WithSoundData(BGMMusic).Play();
             var currentCameraRotation = CameraHolder.transform.rotation.eulerAngles;
             var newCameraRotation =
-
                 new Vector3(baseRotationXCamera + 45.0f, currentCameraRotation.y, currentCameraRotation.z);
             CameraHolder.transform.DORotate(newCameraRotation, 0.3f);
             letterSpawner.gameObject.SetActive(true);
@@ -353,7 +353,7 @@ public class CombatManager : Singleton<CombatManager>
         // Sin esto el jugador nunca pierde vida ni muere.
         if (enemy != null)
         {
-            EnemyAttack enemyAttack = enemy.GetComponent<EnemyAttack>();
+            var enemyAttack = enemy.GetComponent<EnemyAttack>();
             if (enemyAttack == null)
                 enemyAttack = enemy.GetComponentInChildren<EnemyAttack>();
             if (enemyAttack != null)
@@ -361,6 +361,7 @@ public class CombatManager : Singleton<CombatManager>
             else
                 Debug.LogWarning("El enemigo no tiene EnemyAttack; el jugador no recibe daño.");
         }
+
         _isTakingDamage = false;
         TeleportEnemy(enemySpawner.transform.position);
     }
