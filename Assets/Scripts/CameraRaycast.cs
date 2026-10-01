@@ -11,6 +11,9 @@ public class CameraRaycast : Singleton<CameraRaycast>
     public MenuController menuController;
     public Page PressEPage;
 
+
+    [SerializeField] private float raycastDistance;
+
     private Interactable _currentInteractable;
     private InputAction interactAction;
 
@@ -38,49 +41,56 @@ public class CameraRaycast : Singleton<CameraRaycast>
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawRay(virtualCamera.transform.position, virtualCamera.transform.forward * 5.0f);
+        Gizmos.DrawRay(virtualCamera.transform.position, virtualCamera.transform.forward * raycastDistance);
     }
 
 
     private void TryInteract()
     {
         RaycastHit hit;
-        if (Physics.Raycast(virtualCamera.transform.position, virtualCamera.transform.forward, out hit, 5.0f,
-                layerMask))
+        if (Physics.Raycast(virtualCamera.transform.position, virtualCamera.transform.forward, out hit,
+                raycastDistance, layerMask))
             if (hit.collider.TryGetComponent(out Interactable interactable))
-            {
-                _currentInteractable = interactable;
-                _currentInteractable.Interact();
-            }
-        //menuController.PopPage();
+                interactable.Interact();
     }
 
     private void ShowInteractableMessage()
     {
         RaycastHit hit;
-        if (Physics.Raycast(virtualCamera.transform.position, virtualCamera.transform.forward, out hit, 5.0f,
-                layerMask))
-        {
-            if (hit.collider.TryGetComponent(out Interactable interactable) && !isShowingMessage)
-                if (menuController != null && PressEPage != null)
+        var hasValidInteractable = false;
+
+        if (Physics.Raycast(virtualCamera.transform.position, virtualCamera.transform.forward, out hit,
+                raycastDistance, layerMask))
+            if (hit.collider.TryGetComponent(out Interactable interactable))
+            {
+                hasValidInteractable = true;
+
+                if (interactable != _currentInteractable && menuController != null && PressEPage != null)
                 {
+                    UnsubscribeCurrent();
+
                     _currentInteractable = interactable;
                     PressEPage.GetComponentInChildren<TextMeshProUGUI>().text = _currentInteractable.messageToShow;
                     menuController.PushPage(PressEPage);
                     _currentInteractable.OnMessageChanged += ChangeMessageToShow;
                     isShowingMessage = true;
                 }
-        }
-        else
-        {
-            if (_currentInteractable != null)
-            {
-                _currentInteractable.OnMessageChanged -= ChangeMessageToShow;
-                _currentInteractable = null;
             }
 
+        if (!hasValidInteractable && isShowingMessage)
+        {
+            UnsubscribeCurrent();
             menuController.PopPage();
             isShowingMessage = false;
+        }
+    }
+
+    private void UnsubscribeCurrent()
+    {
+        if (_currentInteractable != null)
+        {
+            _currentInteractable.OnMessageChanged -= ChangeMessageToShow;
+            _currentInteractable = null;
         }
     }
 
