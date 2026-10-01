@@ -53,13 +53,15 @@ public class CombatManager : Singleton<CombatManager>
     private Quaternion _currentRotationPlayer;
     private bool _isPlayerAlive;
 
-
     //Cosas para el nuevo combate
 
     private float baseRotationXCamera;
     private bool canChangeLook = true;
     private bool isTransitioning;
     private float timeForChangeLook;
+    // Flanco de bajada de cabeza: cada vez que se empieza a mirar al libro,
+    // Gula devora UNA letra (ver LetterSpawner.TryDevourOnLookDown).
+    private bool _wasLookingAtBook;
 
     private void Start()
     {
@@ -75,6 +77,12 @@ public class CombatManager : Singleton<CombatManager>
         if (!isCombat) return;
 
         isLookingAtBook = LookBooKAction.IsPressed();
+        // Rising edge: acaba de bajar la cabeza al libro.
+        if (isLookingAtBook && !_wasLookingAtBook && !_isTakingDamage)
+            if (letterSpawner != null)
+                letterSpawner.TryDevourOnLookDown();
+        _wasLookingAtBook = isLookingAtBook;
+
         if (isLookingAtBook && !_isTakingDamage)
         {
             LookAtBook();
@@ -245,6 +253,7 @@ public class CombatManager : Singleton<CombatManager>
     public void SetUpCombat()
     {
         isCombat = true;
+        _wasLookingAtBook = false;
 
         // Audio de combate: música siempre + latidos según vida (vía mixers).
         if (playerHealth == null && player != null)
