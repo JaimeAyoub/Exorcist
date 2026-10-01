@@ -26445,6 +26445,8 @@ MonoBehaviour:
   enemySpeedToApproach: 1
   missApproachDistance: 0.4
   missMinDistanceToPlayer: 1.2
+  enemyReachDistance: 2
+  graciasSceneName: Gracias_por_Jugar
 --- !u!114 &870630825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65182,7 +65184,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkSpeed: 3
-  sprintMultiplier: 1.2
+  sprintMultiplier: 1.5
   jumpForce: 5
   gravityMultiplier: 1
   xMouseSensitivity: 2
