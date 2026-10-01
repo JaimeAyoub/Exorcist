@@ -26537,7 +26537,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e028405e96a4fd881049e066463ce55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CombatAudioController
-  AutoUnparentOnAwake: 1
   ambientSound:
     clip: {fileID: 8300000, guid: ee39c1768da656bc384c4a10329621b6, type: 3}
     mixerGroup: {fileID: 24300002, guid: f4af810e6a3cbfea18ee77cf50395409, type: 2}

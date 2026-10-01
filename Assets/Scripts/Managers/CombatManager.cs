@@ -140,6 +140,7 @@ public class CombatManager : Singleton<CombatManager>
             _currentEnemyHealth.OnEnemyDeath += EnemyDeath;
         else
             Debug.LogWarning("El enemigo no tiene un EnemyHealthBase; EnemyDeath no se disparará.");
+        player.GetComponentInChildren<PlayerHealth>().OnPlayerDeath += PlayerDeath;
 
         SetUpCombat();
         isTransitioning = false;
@@ -209,6 +210,7 @@ public class CombatManager : Singleton<CombatManager>
         }
         else
         {
+            player.GetComponentInChildren<PlayerHealth>().OnPlayerDeath -= PlayerDeath;
             inputHandler.SetUI();
             var sceneChange = FindFirstObjectByType<ChangeScene>();
             if (sceneChange)

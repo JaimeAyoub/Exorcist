@@ -1,34 +1,29 @@
+using System;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.PostProcessing;
+using UnityEngine.Rendering.Universal;
 
 public class PlayerHealth : MonoBehaviour
 {
     public int currentHealth;
     public int maxHealth;
     public VolumeProfile _volumeProfile;
-    public UnityEngine.Rendering.Universal.Vignette vignette;
+    public Vignette vignette;
     public float vignetteIntensity;
     public float tweenDuration;
-    private float _defaultVignetteIntensity = 0.25f;
-    private Color _defaultVignetteColor;
 
     public float intensityCameraShake;
     public float durationCameraShake;
 
     public Sprite[] candleHealthSprites;
     public SpriteRenderer candleHealthSpriteRenderer;
-    
+
     [Header("Sonidos")] public SoundData DamageSound;
+    private readonly float _defaultVignetteIntensity = 0.25f;
+    private Color _defaultVignetteColor;
 
-    /// <summary>
-    /// Se invoca cada vez que la vida cambia: (vidaActual, vidaMaxima).
-    /// Lo usa CombatAudioController para cambiar latidos y lowpass.
-    /// </summary>
-    public event System.Action<int, int> OnHealthChanged;
-
-    void Start()
+    private void Start()
     {
         // Valor de prueba para testear el audio de combate (latidos/lowpass).
         maxHealth = 3;
@@ -43,17 +38,24 @@ public class PlayerHealth : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
     }
 
+    public event Action OnPlayerDeath;
+
+    /// <summary>
+    ///     Se invoca cada vez que la vida cambia: (vidaActual, vidaMaxima).
+    ///     Lo usa CombatAudioController para cambiar latidos y lowpass.
+    /// </summary>
+    public event Action<int, int> OnHealthChanged;
+
     public void TakeDamage(int damage)
     {
-        if (currentHealth <= 0) return;
         currentHealth -= damage;
         CameraShake.Instance.CmrShake(intensityCameraShake, durationCameraShake);
         SoundManager.Instance.CreateSound().WithSoundData(DamageSound).Play();
-      //  AudioManager.instance.PlaySFX(SoundType.PlayerDamage, 0.5f);
+        //  AudioManager.instance.PlaySFX(SoundType.PlayerDamage, 0.5f);
         DOTween.Kill("VignetteTween");
         DOTween.Kill("VignetteColorTween");
 
@@ -94,11 +96,13 @@ public class PlayerHealth : MonoBehaviour
 
     private void Death()
     {
-        UIManager.Instance.ActivateCanvas(UIManager.Instance._GameOverCanvas);
+        Debug.Log("Muerte plyaer");
+        OnPlayerDeath?.Invoke();
     }
 
-    void ChangeSprite()
+    private void ChangeSprite()
     {
-        candleHealthSpriteRenderer.sprite = currentHealth >= 0 ? candleHealthSprites[currentHealth] : candleHealthSprites[0];
+        candleHealthSpriteRenderer.sprite =
+            currentHealth >= 0 ? candleHealthSprites[currentHealth] : candleHealthSprites[0];
     }
 }
