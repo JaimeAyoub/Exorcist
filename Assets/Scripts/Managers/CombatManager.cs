@@ -157,6 +157,7 @@ public class CombatManager : Singleton<CombatManager>
 
     private IEnumerator EndCombatRoutine()
     {
+        isCombat = false;
         CameraHolder.transform.DOKill();
         if (OptionsScript.Instance.volumeProfile.TryGet(out OptionsScript.Instance._chromaticAberration))
             OptionsScript.Instance._chromaticAberration.intensity.value = _currentAberration;
