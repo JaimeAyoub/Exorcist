@@ -4,6 +4,7 @@ using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Playables;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityUtils;
 
@@ -52,6 +53,12 @@ public class CombatManager : Singleton<CombatManager>
 
     [Tooltip("Distancia mínima a la que se detiene el enemigo (no atraviesa al jugador).")]
     public float missMinDistanceToPlayer = 1.2f;
+    [Tooltip("Distancia a la que el enemigo alcanza al jugador y dispara el daño.")]
+    public float enemyReachDistance = 2.0f;
+
+    [Header("Victoria contra Gula")]
+    [Tooltip("Escena que se carga al vencer a Gula (por nombre, no por índice).")]
+    public string graciasSceneName = "Gracias_por_Jugar";
 
     private float _currentAberration;
 
@@ -65,6 +72,8 @@ public class CombatManager : Singleton<CombatManager>
     // Flanco de bajada de cabeza: cada vez que se empieza a mirar al libro,
     // Gula devora UNA letra (ver LetterSpawner.TryDevourOnLookDown).
     private bool _wasLookingAtBook;
+    // El enemigo derrotado era Gula: al terminar el combate se carga la escena final.
+    private bool _defeatedGula;
 
     //Cosas para el nuevo combate
 
@@ -201,6 +210,16 @@ public class CombatManager : Singleton<CombatManager>
         _currentPositionPlayer = Vector3.zero;
         OptionsScript.Instance.PixelationShaderMaterial.SetFloat("_PixelSize", 4.0f);
 
+        // Victoria contra Gula: en vez de volver al nivel, ir a la pantalla final.
+        if (_defeatedGula)
+        {
+            _defeatedGula = false;
+            isTransitioning = false;
+            Time.timeScale = 1f;
+            SceneManager.LoadScene(graciasSceneName);
+            yield break;
+        }
+
         if (_isPlayerAlive)
         {
             imageToFade.DOFade(0f, 0.5f).SetUpdate(true);
@@ -223,6 +242,9 @@ public class CombatManager : Singleton<CombatManager>
     {
         Debug.Log("Victoriaa");
         _isPlayerAlive = true;
+        // Se captura antes de EndCombat (ahí se destruye el enemigo).
+        _defeatedGula = enemy != null
+            && (letterSpawner != null ? letterSpawner.IsGulaCombat() : enemy.name.Contains("Gula"));
 
         EndCombat();
     }
@@ -266,6 +288,7 @@ public class CombatManager : Singleton<CombatManager>
     {
         isCombat = true;
         _wasLookingAtBook = false;
+        _defeatedGula = false;
 
         // Audio de combate: música siempre + latidos según vida (vía mixers).
         if (playerHealth == null && player != null)
@@ -381,21 +404,31 @@ public class CombatManager : Singleton<CombatManager>
                 gulaAnimator.SetBool("isWalking", true);
 
             Debug.Log(Vector3.Distance(enemy.transform.position, player.transform.position));
-            if (Vector3.Distance(enemy.transform.position, player.transform.position) <= 2.0f)
-            {
-                _isTakingDamage = true;
-                if (gulaAnimator != null)
-                    gulaAnimator.SetBool("isTakingDamge", _isTakingDamage);
-                LookAtEnemy();
-                TimelinesManager.instance.PlayTimeLine(TimelinesManager.instance.TakeDamageTimeline);
-            }
+            CheckEnemyReachedPlayer();
         }
     }
 
     /// <summary>
-    ///     Acerca al enemigo un paso cuando el jugador falla una tecla.
-    ///     Si con el paso queda a rango (<= 2 m), el daño lo dispara el flujo
-    ///     normal al mirar al libro (ApproachToPlayer).
+    /// Dispara el daño si el enemigo ya está a rango, venga de donde venga
+    /// el movimiento (mirar al libro o pasos por fallos de tecla).
+    /// </summary>
+    private void CheckEnemyReachedPlayer()
+    {
+        if (_isTakingDamage || enemy == null || player == null) return;
+        if (Vector3.Distance(enemy.transform.position, player.transform.position) <= enemyReachDistance)
+        {
+            _isTakingDamage = true;
+            if (gulaAnimator != null)
+                gulaAnimator.SetBool("isTakingDamge", _isTakingDamage);
+            LookAtEnemy();
+            if (TimelinesManager.instance != null)
+                TimelinesManager.instance.PlayTimeLine(TimelinesManager.instance.TakeDamageTimeline);
+        }
+    }
+
+    /// <summary>
+    /// Acerca al enemigo un paso cuando el jugador falla una tecla.
+    /// Si con el paso queda a rango, dispara el daño en el acto.
     /// </summary>
     public void NudgeEnemyOnPlayerMiss()
     {
@@ -407,6 +440,7 @@ public class CombatManager : Singleton<CombatManager>
         if (dist <= missMinDistanceToPlayer) return;
         var step = Mathf.Min(missApproachDistance, dist - missMinDistanceToPlayer);
         enemy.transform.position += toPlayer.normalized * step;
+        CheckEnemyReachedPlayer();
     }
 
     public void ResetEnemyPosition()
