@@ -27,14 +27,43 @@ public class UIManager : UnityUtils.Singleton<UIManager>
 
     private void OnEnable()
     {
-        PlayerInputHandler.PauseEvent += Pause;
-        PlayerInputHandler.ResumeEvent += Pause;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        SubscribeToInputHandler();
     }
 
     private void OnDisable()
     {
-        PlayerInputHandler.PauseEvent -= Pause;
-        PlayerInputHandler.ResumeEvent -= Pause;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        UnsubscribeFromInputHandler();
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Al cargar cualquier escena nueva, el PlayerInputHandler viejo
+        // (si lo había) ya fue destruido. Hay que re-buscar el actual
+        // y volver a suscribirse a sus eventos.
+        UnsubscribeFromInputHandler();
+
+        PlayerInputHandler = FindFirstObjectByType<PlayerInputHandler>();
+        SubscribeToInputHandler();
+    }
+
+    private void SubscribeToInputHandler()
+    {
+        if (PlayerInputHandler != null)
+        {
+            PlayerInputHandler.PauseEvent += Pause;
+            PlayerInputHandler.ResumeEvent += Pause;
+        }
+    }
+
+    private void UnsubscribeFromInputHandler()
+    {
+        if (PlayerInputHandler != null)
+        {
+            PlayerInputHandler.PauseEvent -= Pause;
+            PlayerInputHandler.ResumeEvent -= Pause;
+        }
     }
 
 #pragma warning disable CS0114 
@@ -142,8 +171,6 @@ public class UIManager : UnityUtils.Singleton<UIManager>
         }
     }
 
-
-
     public void ShowTextDoor()
     {
         if (toogleDoorText != null)
@@ -168,6 +195,4 @@ public class UIManager : UnityUtils.Singleton<UIManager>
             SceneManager.LoadScene(0);
         }
     }
-
-
 }
