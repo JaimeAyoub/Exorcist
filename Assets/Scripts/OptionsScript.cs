@@ -24,6 +24,12 @@ public class OptionsScript : Singleton<OptionsScript>
     [Header("Opcion para sensibilidad ")] public PlayerMovement playerMovement;
     public Slider sensitivitySliderX;
     public Slider sensitivitySliderY;
+
+    // Mapeo único: sensibilidad = valor del slider, sin factores distintos
+    // entre Start y los callbacks (ese x20 solo en Start era el bug).
+    private const float SensitivityMin = 0f;
+    private const float SensitivityMax = 3f;
+    private const float SensitivityDefault = 1.5f; // mitad del slider
     [SerializeField] private Image panelToFade;
 
     [Header("Efectos de postprocesado")] public ChromaticAberration _chromaticAberration;
@@ -40,8 +46,8 @@ public class OptionsScript : Singleton<OptionsScript>
 
         if (playerMovement != null)
         {
-            playerMovement.xMouseSensitivity = sensitivitySliderX.value * 20;
-            playerMovement.yMouseSensitivity = sensitivitySliderY.value * 20;
+            NormalizeSensitivitySliders();
+            ApplySensitivity();
         }
 
         else
@@ -66,6 +72,7 @@ public class OptionsScript : Singleton<OptionsScript>
 
     public void ChangeSound()
     {
+        if (AudioManager.instance == null || AudioManager.instance.audioSource == null) return;
         AudioManager.instance.audioSource.volume = SonidoSlider.value;
     }
 
@@ -88,12 +95,44 @@ public class OptionsScript : Singleton<OptionsScript>
 
     public void ChangeSensitivityinX()
     {
+        if (playerMovement == null || sensitivitySliderX == null) return;
         playerMovement.xMouseSensitivity = sensitivitySliderX.value;
     }
 
     public void changeSensitivityinY()
     {
+        if (playerMovement == null || sensitivitySliderY == null) return;
         playerMovement.yMouseSensitivity = sensitivitySliderY.value;
+    }
+
+    /// <summary>Rango único + valor medio por defecto, para que el slider
+    /// nazca a la mitad sin depender de cómo quedó configurado en escena.</summary>
+    private void NormalizeSensitivitySliders()
+    {
+        if (sensitivitySliderX != null)
+        {
+            sensitivitySliderX.minValue = SensitivityMin;
+            sensitivitySliderX.maxValue = SensitivityMax;
+            if (sensitivitySliderX.value <= Mathf.Epsilon)
+                sensitivitySliderX.value = SensitivityDefault;
+        }
+
+        if (sensitivitySliderY != null)
+        {
+            sensitivitySliderY.minValue = SensitivityMin;
+            sensitivitySliderY.maxValue = SensitivityMax;
+            if (sensitivitySliderY.value <= Mathf.Epsilon)
+                sensitivitySliderY.value = SensitivityDefault;
+        }
+    }
+
+    private void ApplySensitivity()
+    {
+        if (playerMovement == null) return;
+        if (sensitivitySliderX != null)
+            playerMovement.xMouseSensitivity = sensitivitySliderX.value;
+        if (sensitivitySliderY != null)
+            playerMovement.yMouseSensitivity = sensitivitySliderY.value;
     }
 
     public void AnimateEffects()

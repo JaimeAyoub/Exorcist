@@ -91,29 +91,103 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void SubscribeActionValuesToInputEvents()
     {
-        _movementAction.performed += OnPlayerMove;
-        _movementAction.canceled += OnStopPlayerMove;
+        // Idempotente: cada LoadScene dispara sceneLoaded + activeSceneChanged,
+        // y sin este guard los callbacks se duplicaban (pausa que se abre y
+        // cierra sola) y quedaban handlers fantasma tras cambiar de escena.
+        UnsubscribeActionValuesFromInputEvents();
 
+        if (_movementAction != null)
+        {
+            _movementAction.performed += OnPlayerMove;
+            _movementAction.canceled += OnStopPlayerMove;
+        }
 
-        _rotationAction.performed += inputInfo => RotationInput = inputInfo.ReadValue<Vector2>();
-        _rotationAction.canceled += _ => RotationInput = Vector2.zero;
+        if (_rotationAction != null)
+        {
+            _rotationAction.performed += OnRotationPerformed;
+            _rotationAction.canceled += OnRotationCanceled;
+        }
 
+        if (_jumpAction != null)
+        {
+            _jumpAction.performed += OnJumpPerformed;
+            _jumpAction.canceled += OnJumpCanceled;
+        }
 
-        _jumpAction.performed += _ => JumpTriggered = true;
-        _jumpAction.canceled += _ => JumpTriggered = false;
+        if (_sprintAction != null)
+        {
+            _sprintAction.performed += OnSprintPerformed;
+            _sprintAction.canceled += OnSprintCanceled;
+        }
 
+        if (_pauseAction != null)
+            _pauseAction.performed += OnPause;
+        if (_resumeAction != null)
+            _resumeAction.performed += OnResume;
 
-        _sprintAction.performed += _ => SprintTriggered = true;
-        _sprintAction.canceled += _ => SprintTriggered = false;
-
-
-        _pauseAction.performed += OnPause;
-        _resumeAction.performed += OnResume;
-
-        _typingAction.performed += OnKeyTyped;
-        _mayusAction.performed += _ => IsInMayus = true;
-        _mayusAction.canceled += _ => IsInMayus = false;
+        if (_typingAction != null)
+            _typingAction.performed += OnKeyTyped;
+        if (_mayusAction != null)
+        {
+            _mayusAction.performed += OnMayusPerformed;
+            _mayusAction.canceled += OnMayusCanceled;
+        }
     }
+
+    private void UnsubscribeActionValuesFromInputEvents()
+    {
+        if (_movementAction != null)
+        {
+            _movementAction.performed -= OnPlayerMove;
+            _movementAction.canceled -= OnStopPlayerMove;
+        }
+
+        if (_rotationAction != null)
+        {
+            _rotationAction.performed -= OnRotationPerformed;
+            _rotationAction.canceled -= OnRotationCanceled;
+        }
+
+        if (_jumpAction != null)
+        {
+            _jumpAction.performed -= OnJumpPerformed;
+            _jumpAction.canceled -= OnJumpCanceled;
+        }
+
+        if (_sprintAction != null)
+        {
+            _sprintAction.performed -= OnSprintPerformed;
+            _sprintAction.canceled -= OnSprintCanceled;
+        }
+
+        if (_pauseAction != null)
+            _pauseAction.performed -= OnPause;
+        if (_resumeAction != null)
+            _resumeAction.performed -= OnResume;
+
+        if (_typingAction != null)
+            _typingAction.performed -= OnKeyTyped;
+        if (_mayusAction != null)
+        {
+            _mayusAction.performed -= OnMayusPerformed;
+            _mayusAction.canceled -= OnMayusCanceled;
+        }
+    }
+
+    private void OnRotationPerformed(InputAction.CallbackContext inputInfo) =>
+        RotationInput = inputInfo.ReadValue<Vector2>();
+
+    private void OnRotationCanceled(InputAction.CallbackContext _) =>
+        RotationInput = Vector2.zero;
+
+    private void OnJumpPerformed(InputAction.CallbackContext _) => JumpTriggered = true;
+    private void OnJumpCanceled(InputAction.CallbackContext _) => JumpTriggered = false;
+
+    private void OnSprintPerformed(InputAction.CallbackContext _) => SprintTriggered = true;
+    private void OnSprintCanceled(InputAction.CallbackContext _) => SprintTriggered = false;
+
+    private void OnMayusPerformed(InputAction.CallbackContext _) => IsInMayus = true;
+    private void OnMayusCanceled(InputAction.CallbackContext _) => IsInMayus = false;
 
     private void OnKeyTyped(InputAction.CallbackContext ctx)
     {
@@ -160,6 +234,9 @@ public class PlayerInputHandler : MonoBehaviour
         SceneManager.activeSceneChanged += OnActiveSceneChanged;
         if (Keyboard.current != null)
             Keyboard.current.onTextInput += HandleTextInput;
+        // Bindear aquí también: la escena inicial no dispara sceneLoaded,
+        // así que sin esto la primera escena nacía sin callbacks.
+        EnablePlayerInput();
         SetGameplay();
     }
 
@@ -170,6 +247,9 @@ public class PlayerInputHandler : MonoBehaviour
         SceneManager.activeSceneChanged -= OnActiveSceneChanged;
         if (Keyboard.current != null)
             Keyboard.current.onTextInput -= HandleTextInput;
+        // Sin esto, el handler destruido seguía recibiendo input del asset
+        // compartido y apagaba el mapa Player en la escena nueva.
+        UnsubscribeActionValuesFromInputEvents();
         playerControls.FindActionMap(playerActionMapName).Disable();
     }
 

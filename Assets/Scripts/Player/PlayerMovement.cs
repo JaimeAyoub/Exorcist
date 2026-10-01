@@ -16,8 +16,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float gravityMultiplier = 1.0f;
 
     [Header("Look Parameters")]
-    [SerializeField] public float xMouseSensitivity = 0.1f;
-    [SerializeField] public float yMouseSensitivity = 1.0f;
+    [SerializeField] public float xMouseSensitivity = 1.5f;
+    [SerializeField] public float yMouseSensitivity = 1.5f;
     [SerializeField] private float upDownLookRange = 80f;
 
     [Header("Footstep Parameters")]
