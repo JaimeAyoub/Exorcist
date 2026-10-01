@@ -191,7 +191,7 @@ public class CombatManager : Singleton<CombatManager>
         if (cc != null)
             cc.enabled = true;
 
-        UIManager.Instance.CheckEnd();
+        //UIManager.Instance.CheckEnd();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         book.SetActive(true);
@@ -353,7 +353,8 @@ public class CombatManager : Singleton<CombatManager>
         inputHandler.EnableTyping();
         if (CameraHolder != null)
         {
-            gulaAnimator.SetBool("isWalking", false);
+            if (gulaAnimator != null)
+                gulaAnimator.SetBool("isWalking", false);
             CameraHolder.transform.DOKill();
             var currentCameraRotation = CameraHolder.transform.rotation.eulerAngles;
             var newCameraRotation =
@@ -371,13 +372,15 @@ public class CombatManager : Singleton<CombatManager>
 
             var newDirection = new Vector3(direction.x, 0, direction.z);
             enemy.transform.position += newDirection * (enemySpeedToApproach * Time.deltaTime);
-            gulaAnimator.SetBool("isWalking", true);
+            if (gulaAnimator != null)
+                gulaAnimator.SetBool("isWalking", true);
 
             Debug.Log(Vector3.Distance(enemy.transform.position, player.transform.position));
             if (Vector3.Distance(enemy.transform.position, player.transform.position) <= 2.0f)
             {
                 _isTakingDamage = true;
-                gulaAnimator.SetBool("isTakingDamge", _isTakingDamage);
+                if (gulaAnimator != null)
+                    gulaAnimator.SetBool("isTakingDamge", _isTakingDamage);
                 LookAtEnemy();
                 TimelinesManager.instance.PlayTimeLine(TimelinesManager.instance.TakeDamageTimeline);
             }
@@ -417,7 +420,8 @@ public class CombatManager : Singleton<CombatManager>
         }
 
         _isTakingDamage = false;
-        gulaAnimator.SetBool("isTakingDamge", _isTakingDamage);
+        if (gulaAnimator != null)
+            gulaAnimator.SetBool("isTakingDamge", _isTakingDamage);
         if (enemy.CompareTag("Gula"))
             TeleportEnemy(gulaSpawner.transform.position);
         else
