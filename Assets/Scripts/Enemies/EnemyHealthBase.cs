@@ -68,7 +68,7 @@ public abstract class EnemyHealthBase : MonoBehaviour
     {
         if (isDead) return; // Protección extra: no dispares Death() dos veces
         isDead = true;
-        UIManager.Instance.CheckEnd();
+        // UIManager.Instance.CheckEnd();
 
         // Matar cualquier tween de daño en curso (flash rojo / shake) para que no interfiera
         if (damageTween != null && damageTween.IsActive())
