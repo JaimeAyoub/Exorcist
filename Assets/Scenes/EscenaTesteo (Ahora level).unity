@@ -65104,7 +65104,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkSpeed: 3
-  sprintMultiplier: 2
+  sprintMultiplier: 1.2
   jumpForce: 5
   gravityMultiplier: 1
   xMouseSensitivity: 2
