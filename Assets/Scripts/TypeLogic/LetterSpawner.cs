@@ -15,7 +15,9 @@ public class LetterSpawner : MonoBehaviour
     private const int NumberOfCharsInScreen = 7;
     [SerializeField] private PlayerInputHandler playerInputHandler;
 
-    [Header("Variables para el texto")] public List<TextAsset> textAssets; // Texto que se leerá
+    [Header("Variables para el texto")] public List<TextAsset> textAssets; // Textos entre los que se elige uno al azar por combate
+    [Tooltip("LEGACY: se usa si textAssets está vacía. Mantiene funcionando las escenas configuradas antes del merge (campo textAsset singular).")]
+    public TextAsset textAsset; // Texto que se leerá
     public List<char> textToCharList; // Lista de caracteres del texto
     public RectTransform letterTypedContainer;
 
@@ -50,6 +52,8 @@ public class LetterSpawner : MonoBehaviour
     [Header("Sonidos")] public SoundData letterSound;
     public SoundData noMoreletters;
     public List<SoundData> letterTypedSound;
+    [Tooltip("Sonido al fallar una tecla. Sin asignar: el fallo solo tiembla/flashea sin sonido.")]
+    public SoundData missSound;
 
     [Header("Gula: devora al mirar el libro")]
     // Cada bajada de cabeza devora UNA letra interior al azar (animación + '_' + masticar).
@@ -125,18 +129,28 @@ public class LetterSpawner : MonoBehaviour
 
     private void ChooseText()
     {
-        if (textAssets == null || textAssets.Count == 0)
+        // 1. Lista nueva: uno al azar por combate (tiene prioridad).
+        if (textAssets != null && textAssets.Count > 0)
         {
-            textToCharList = "Amen".ToList();
+            var textChoose = textAssets[Random.Range(0, textAssets.Count)];
+            var rawRandom = textChoose != null ? textChoose.text : "";
+            rawRandom = rawRandom.Replace("\r\n", " ").Replace('\n', ' ').Replace('\r', ' ').Replace('\t', ' ').Trim();
+            if (string.IsNullOrEmpty(rawRandom)) rawRandom = "Amen";
+            textToCharList = rawRandom.ToList();
             return;
         }
 
-        var randomIndex = Random.Range(0, textAssets.Count);
-        var textChoose = textAssets[randomIndex];
-        var raw = textChoose != null ? textChoose.text : "";
-        raw = raw.Replace("\r\n", " ").Replace('\n', ' ').Replace('\r', ' ').Replace('\t', ' ').Trim();
-        if (string.IsNullOrEmpty(raw)) raw = "Amen";
-        textToCharList = raw.ToList();
+        // 2. Fallback legacy: escenas con el campo textAsset singular.
+        if (textAsset != null)
+        {
+            var rawLegacy = textAsset.text ?? "";
+            rawLegacy = rawLegacy.Replace("\r\n", " ").Replace('\n', ' ').Replace('\r', ' ').Replace('\t', ' ').Trim();
+            if (string.IsNullOrEmpty(rawLegacy)) rawLegacy = "Amen";
+            textToCharList = rawLegacy.ToList();
+            return;
+        }
+
+        textToCharList = "Amen".ToList();
     }
 
     public void FillCharQueue()
@@ -303,6 +317,10 @@ public class LetterSpawner : MonoBehaviour
             sp.DOColor(Color.red, 0.125f).SetLoops(2, LoopType.Yoyo);
             CameraShake.Instance.CmrShake(0.55f, 0.50f);
             SpawnVFX(SpawnVFXBarra.transform.position, vfxMiss);
+            if (missSound != null && missSound.clip != null)
+                SoundManager.Instance.CreateSound().WithSoundData(missSound).Play();
+            if (CombatManager.Instance != null)
+                CombatManager.Instance.NudgeEnemyOnPlayerMiss();
         }
     }
 
