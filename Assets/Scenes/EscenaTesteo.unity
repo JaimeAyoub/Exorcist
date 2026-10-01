@@ -28907,7 +28907,7 @@ Light:
   serializedVersion: 12
   m_Type: 2
   m_Color: {r: 0.6037736, g: 0.470496, b: 0.13955145, a: 1}
-  m_Intensity: 12
+  m_Intensity: 6
   m_Range: 47.6
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -37378,7 +37378,7 @@ Transform:
   m_GameObject: {fileID: 1230804385}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 56.89, y: 2.8240933, z: 25.77}
+  m_LocalPosition: {x: 71.61, y: 2.8240933, z: 6.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -37923,6 +37923,10 @@ PrefabInstance:
       propertyPath: needKey
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4429702693350632136, guid: 16fca9a4ab600bc4ebc8db6e6307e1d7, type: 3}
+      propertyPath: OpenSound.clip
+      value: 
+      objectReference: {fileID: 8300000, guid: d466aed443c1aae44849d070bbe05d03, type: 3}
     - target: {fileID: 7391860141889020297, guid: 16fca9a4ab600bc4ebc8db6e6307e1d7, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.3889
@@ -50284,6 +50288,10 @@ PrefabInstance:
       propertyPath: Enemy
       value: 
       objectReference: {fileID: 1034432102}
+    - target: {fileID: 2979622518386308970, guid: 72107e7b0e1652742a84bf7cda31d107, type: 3}
+      propertyPath: pickSound.clip
+      value: 
+      objectReference: {fileID: 8300000, guid: 627e381e2c132ef4b936623774025c57, type: 3}
     - target: {fileID: 4913532397317938041, guid: 72107e7b0e1652742a84bf7cda31d107, type: 3}
       propertyPath: m_Name
       value: KeyPrefab
@@ -59922,7 +59930,7 @@ Transform:
   m_GameObject: {fileID: 2014862230}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
-  m_LocalPosition: {x: 56.89, y: 2.8240933, z: 25.77}
+  m_LocalPosition: {x: 71.61, y: 2.8240933, z: 6.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -64956,7 +64964,7 @@ Transform:
   m_GameObject: {fileID: 8017021921820673461}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 56.89, y: 1.393, z: 25.77}
+  m_LocalPosition: {x: 71.61, y: 1.393, z: 6.4}
   m_LocalScale: {x: 1, y: 1.2586573, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

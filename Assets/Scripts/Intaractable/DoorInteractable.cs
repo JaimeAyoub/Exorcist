@@ -7,6 +7,7 @@ public class DoorInteractable : Interactable
     public GameObject pivot;
     [SerializeField] private bool needKey;
     [SerializeField] private GameObject father;
+    [SerializeField] private SoundData OpenSound;
 
     private Vector3 _closedRotation;
     private Tween _currentTween;
@@ -46,10 +47,12 @@ public class DoorInteractable : Interactable
     private void OpenOrClose()
     {
         _currentTween?.Kill();
-
+        if (OpenSound != null)
+            SoundManager.Instance.CreateSound().WithSoundData(OpenSound).WithRandomPitch().Play();
         if (!isOpen)
         {
             _currentTween = pivot.transform.DORotate(_openRotation, 0.2f);
+
             isOpen = true;
         }
         else

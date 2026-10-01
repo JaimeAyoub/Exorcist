@@ -3,7 +3,9 @@ using UnityEngine;
 public class KeyInteractable : Interactable
 {
     [SerializeField] private GameObject Enemy;
+    [SerializeField] private SoundData pickSound;
     private EnemyHealthBase enemyDeath;
+
 
     public void Start()
     {
@@ -18,6 +20,7 @@ public class KeyInteractable : Interactable
     public override void Interact()
     {
         GameManager.Instance.addKey();
+        if (pickSound != null) SoundManager.Instance.CreateSound().WithSoundData(pickSound).Play();
         Debug.Log("Llave add");
         Destroy(gameObject);
     }
