@@ -18,6 +18,7 @@ public class CombatManager : Singleton<CombatManager>
 
     public GameObject playerSpawner;
     public GameObject enemySpawner;
+    public GameObject gulaSpawner;
 
     public Image imageToFade;
 
@@ -48,6 +49,7 @@ public class CombatManager : Singleton<CombatManager>
     [Header("Castigo por fallo de tecla")]
     [Tooltip("Distancia que se acerca el enemigo al jugador cada vez que falla una tecla.")]
     public float missApproachDistance = 0.4f;
+
     [Tooltip("Distancia mínima a la que se detiene el enemigo (no atraviesa al jugador).")]
     public float missMinDistanceToPlayer = 1.2f;
 
@@ -57,17 +59,21 @@ public class CombatManager : Singleton<CombatManager>
     // para poder desuscribirnos de su evento al terminar el combate.
     private EnemyHealthBase _currentEnemyHealth;
     private Quaternion _currentRotationPlayer;
+
     private bool _isPlayerAlive;
+
+    // Flanco de bajada de cabeza: cada vez que se empieza a mirar al libro,
+    // Gula devora UNA letra (ver LetterSpawner.TryDevourOnLookDown).
+    private bool _wasLookingAtBook;
 
     //Cosas para el nuevo combate
 
     private float baseRotationXCamera;
     private bool canChangeLook = true;
+
+    private Animator gulaAnimator;
     private bool isTransitioning;
     private float timeForChangeLook;
-    // Flanco de bajada de cabeza: cada vez que se empieza a mirar al libro,
-    // Gula devora UNA letra (ver LetterSpawner.TryDevourOnLookDown).
-    private bool _wasLookingAtBook;
 
     private void Start()
     {
@@ -282,6 +288,7 @@ public class CombatManager : Singleton<CombatManager>
         if (letterSpawner == null) Debug.LogError("¡letterSpawner es null!");
         if (UIManager.Instance == null) Debug.LogError("¡UIManager.Instance es null!");
 
+
         var cc = player.GetComponent<CharacterController>();
         if (cc != null)
             cc.enabled = false;
@@ -297,7 +304,19 @@ public class CombatManager : Singleton<CombatManager>
 
         OptionsScript.Instance.PixelationShaderMaterial.SetFloat("_PixelSize", 0.1f);
 
-        TeleportEnemy(enemySpawner.transform.position);
+        if (enemy.CompareTag("Gula"))
+        {
+            gulaAnimator = enemy.GetComponentInChildren<Animator>();
+            gulaAnimator.SetBool("isCombat", true);
+            if (gulaSpawner)
+                TeleportEnemy(gulaSpawner.transform.position);
+        }
+        else
+        {
+            TeleportEnemy(enemySpawner.transform.position);
+        }
+
+
         TeleportPlayer(playerSpawner.transform.position);
         inputHandler.SetCombat();
         CameraHolder.transform.rotation = Quaternion.Euler(0, 0, 0);
@@ -334,6 +353,7 @@ public class CombatManager : Singleton<CombatManager>
         inputHandler.EnableTyping();
         if (CameraHolder != null)
         {
+            gulaAnimator.SetBool("isWalking", false);
             CameraHolder.transform.DOKill();
             var currentCameraRotation = CameraHolder.transform.rotation.eulerAngles;
             var newCameraRotation =
@@ -351,11 +371,13 @@ public class CombatManager : Singleton<CombatManager>
 
             var newDirection = new Vector3(direction.x, 0, direction.z);
             enemy.transform.position += newDirection * (enemySpeedToApproach * Time.deltaTime);
+            gulaAnimator.SetBool("isWalking", true);
 
             Debug.Log(Vector3.Distance(enemy.transform.position, player.transform.position));
             if (Vector3.Distance(enemy.transform.position, player.transform.position) <= 2.0f)
             {
                 _isTakingDamage = true;
+                gulaAnimator.SetBool("isTakingDamge", _isTakingDamage);
                 LookAtEnemy();
                 TimelinesManager.instance.PlayTimeLine(TimelinesManager.instance.TakeDamageTimeline);
             }
@@ -363,9 +385,9 @@ public class CombatManager : Singleton<CombatManager>
     }
 
     /// <summary>
-    /// Acerca al enemigo un paso cuando el jugador falla una tecla.
-    /// Si con el paso queda a rango (<= 2 m), el daño lo dispara el flujo
-    /// normal al mirar al libro (ApproachToPlayer).
+    ///     Acerca al enemigo un paso cuando el jugador falla una tecla.
+    ///     Si con el paso queda a rango (<= 2 m), el daño lo dispara el flujo
+    ///     normal al mirar al libro (ApproachToPlayer).
     /// </summary>
     public void NudgeEnemyOnPlayerMiss()
     {
@@ -395,6 +417,10 @@ public class CombatManager : Singleton<CombatManager>
         }
 
         _isTakingDamage = false;
-        TeleportEnemy(enemySpawner.transform.position);
+        gulaAnimator.SetBool("isTakingDamge", _isTakingDamage);
+        if (enemy.CompareTag("Gula"))
+            TeleportEnemy(gulaSpawner.transform.position);
+        else
+            TeleportEnemy(enemySpawner.transform.position);
     }
 }

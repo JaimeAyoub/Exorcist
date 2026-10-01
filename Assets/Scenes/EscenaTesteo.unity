@@ -25340,6 +25340,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerInputHandler: {fileID: 3287963540104463032}
   textAssets: []
+  textAsset: {fileID: 0}
   textToCharList: 
   letterTypedContainer: {fileID: 0}
   prefabLetter: {fileID: 0}
@@ -25370,6 +25371,13 @@ MonoBehaviour:
     frequentSound: 0
     walkClips: []
   letterTypedSound: []
+  missSound:
+    clip: {fileID: 0}
+    mixerGroup: {fileID: 0}
+    loop: 0
+    playOnAwake: 0
+    frequentSound: 0
+    walkClips: []
   minWordLengthToDevour: 3
   devouredSprite: {fileID: 0}
   gulaDevourSound:
@@ -26323,6 +26331,7 @@ MonoBehaviour:
   isCombat: 0
   playerSpawner: {fileID: 39071851}
   enemySpawner: {fileID: 1763913177}
+  gulaSpawner: {fileID: 1963806205}
   imageToFade: {fileID: 1682202893}
   _currentPositionPlayer: {x: 0, y: 0, z: 0}
   book: {fileID: 919132148118042533}
@@ -26359,6 +26368,8 @@ MonoBehaviour:
   playerHealth: {fileID: 0}
   _isTakingDamage: 0
   enemySpeedToApproach: 1
+  missApproachDistance: 0.4
+  missMinDistanceToPlayer: 1.2
 --- !u!114 &870630825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37379,7 +37390,7 @@ Transform:
   m_GameObject: {fileID: 1230804385}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 71.61, y: 2.8240933, z: 6.4}
+  m_LocalPosition: {x: 66.28, y: 2.8240933, z: 0.89}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -57819,6 +57830,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f991987c4a6f4624a83ba7fe4155db18, type: 3}
   m_PrefabInstance: {fileID: 1963773553}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1963806205
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1963806206}
+  m_Layer: 0
+  m_Name: GulaSpawnefr
+  m_TagString: Untagged
+  m_Icon: {fileID: 419385456094870383, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1963806206
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1963806205}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.0024276325, y: 0.90172315, z: -0.0008440008, w: 0.43230644}
+  m_LocalPosition: {x: -20.610245, y: 6.368, z: -87.13232}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1969251666
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -59931,7 +59973,7 @@ Transform:
   m_GameObject: {fileID: 2014862230}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
-  m_LocalPosition: {x: 71.61, y: 2.8240933, z: 6.4}
+  m_LocalPosition: {x: 66.28, y: 2.8240933, z: 0.89}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -64965,7 +65007,7 @@ Transform:
   m_GameObject: {fileID: 8017021921820673461}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 71.61, y: 1.393, z: 6.4}
+  m_LocalPosition: {x: 66.28, y: 1.393, z: 0.89}
   m_LocalScale: {x: 1, y: 1.2586573, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -65048,6 +65090,7 @@ MonoBehaviour:
   - {fileID: 4900000, guid: ec3a9c1280598e547a82a49d3212ce3c, type: 3}
   - {fileID: 4900000, guid: aaf96b557e361e842adafd62ba29d7b6, type: 3}
   - {fileID: 4900000, guid: 71404fe9f9fb5b0458cc224794303299, type: 3}
+  textAsset: {fileID: 0}
   textToCharList: 
   letterTypedContainer: {fileID: 105897954}
   prefabLetter: {fileID: 262800517}
@@ -65144,6 +65187,13 @@ MonoBehaviour:
     frequentSound: 0
     walkClips: []
   - clip: {fileID: 8300000, guid: 2d9880e6f69bc934189ad11956f1b709, type: 3}
+    mixerGroup: {fileID: 0}
+    loop: 0
+    playOnAwake: 0
+    frequentSound: 0
+    walkClips: []
+  missSound:
+    clip: {fileID: 0}
     mixerGroup: {fileID: 0}
     loop: 0
     playOnAwake: 0
@@ -65544,6 +65594,7 @@ SceneRoots:
   - {fileID: 39071852}
   - {fileID: 1493961830}
   - {fileID: 1763913178}
+  - {fileID: 1963806206}
   - {fileID: 1587172265}
   - {fileID: 1390787499}
   - {fileID: 685948012}
