@@ -53,11 +53,11 @@ public class CombatManager : Singleton<CombatManager>
 
     [Tooltip("Distancia mínima a la que se detiene el enemigo (no atraviesa al jugador).")]
     public float missMinDistanceToPlayer = 1.2f;
+
     [Tooltip("Distancia a la que el enemigo alcanza al jugador y dispara el daño.")]
     public float enemyReachDistance = 2.0f;
 
-    [Header("Victoria contra Gula")]
-    [Tooltip("Escena que se carga al vencer a Gula (por nombre, no por índice).")]
+    [Header("Victoria contra Gula")] [Tooltip("Escena que se carga al vencer a Gula (por nombre, no por índice).")]
     public string graciasSceneName = "Gracias_por_Jugar";
 
     private float _currentAberration;
@@ -65,7 +65,11 @@ public class CombatManager : Singleton<CombatManager>
     // Referencia cacheada al componente de salud del enemigo actual,
     // para poder desuscribirnos de su evento al terminar el combate.
     private EnemyHealthBase _currentEnemyHealth;
+
     private Quaternion _currentRotationPlayer;
+
+    // El enemigo derrotado era Gula: al terminar el combate se carga la escena final.
+    private bool _defeatedGula;
 
     private bool _isPlayerAlive;
 
@@ -74,8 +78,6 @@ public class CombatManager : Singleton<CombatManager>
     // Flanco de bajada de cabeza: cada vez que se empieza a mirar al libro,
     // Gula devora UNA letra (ver LetterSpawner.TryDevourOnLookDown).
     private bool _wasLookingAtBook;
-    // El enemigo derrotado era Gula: al terminar el combate se carga la escena final.
-    private bool _defeatedGula;
 
     //Cosas para el nuevo combate
 
@@ -171,7 +173,7 @@ public class CombatManager : Singleton<CombatManager>
 
     private IEnumerator EndCombatRoutine()
     {
-        isCombat = false;
+        //isCombat = false;
         CameraHolder.transform.DOKill();
         if (OptionsScript.Instance.volumeProfile.TryGet(out OptionsScript.Instance._chromaticAberration))
             OptionsScript.Instance._chromaticAberration.intensity.value = _currentAberration;
@@ -223,6 +225,8 @@ public class CombatManager : Singleton<CombatManager>
             _defeatedGula = false;
             isTransitioning = false;
             Time.timeScale = 1f;
+
+            imageToFade.DOFade(0f, 0.5f).SetUpdate(true);
             SceneManager.LoadScene(graciasSceneName);
             yield break;
         }
@@ -231,11 +235,12 @@ public class CombatManager : Singleton<CombatManager>
         {
             if (_playerHealth != null)
             {
-                playerHealth.ResetHealth();
-                playerHealth.ExitCombatVignette();
+                _playerHealth.ResetHealth();
+                _playerHealth.ExitCombatVignette();
             }
 
             imageToFade.DOFade(0f, 0.5f).SetUpdate(true);
+            Debug.Log("Fade");
             yield return new WaitForSecondsRealtime(0.5f);
             isTransitioning = false;
         }
@@ -258,7 +263,7 @@ public class CombatManager : Singleton<CombatManager>
         _isPlayerAlive = true;
         // Se captura antes de EndCombat (ahí se destruye el enemigo).
         _defeatedGula = enemy != null
-            && (letterSpawner != null ? letterSpawner.IsGulaCombat() : enemy.name.Contains("Gula"));
+                        && (letterSpawner != null ? letterSpawner.IsGulaCombat() : enemy.name.Contains("Gula"));
 
         EndCombat();
     }
@@ -423,8 +428,8 @@ public class CombatManager : Singleton<CombatManager>
     }
 
     /// <summary>
-    /// Dispara el daño si el enemigo ya está a rango, venga de donde venga
-    /// el movimiento (mirar al libro o pasos por fallos de tecla).
+    ///     Dispara el daño si el enemigo ya está a rango, venga de donde venga
+    ///     el movimiento (mirar al libro o pasos por fallos de tecla).
     /// </summary>
     private void CheckEnemyReachedPlayer()
     {
@@ -441,8 +446,8 @@ public class CombatManager : Singleton<CombatManager>
     }
 
     /// <summary>
-    /// Acerca al enemigo un paso cuando el jugador falla una tecla.
-    /// Si con el paso queda a rango, dispara el daño en el acto.
+    ///     Acerca al enemigo un paso cuando el jugador falla una tecla.
+    ///     Si con el paso queda a rango, dispara el daño en el acto.
     /// </summary>
     public void NudgeEnemyOnPlayerMiss()
     {
