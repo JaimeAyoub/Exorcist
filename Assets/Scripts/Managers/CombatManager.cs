@@ -304,12 +304,17 @@ public class CombatManager : Singleton<CombatManager>
 
         OptionsScript.Instance.PixelationShaderMaterial.SetFloat("_PixelSize", 0.1f);
 
-        if (enemy.CompareTag("Gula"))
+        if (enemy != null && enemy.CompareTag("Gula"))
         {
             gulaAnimator = enemy.GetComponentInChildren<Animator>();
-            gulaAnimator.SetBool("isCombat", true);
-            if (gulaSpawner)
+            if (gulaAnimator != null)
+                gulaAnimator.SetBool("isCombat", true);
+            else
+                Debug.LogWarning("Gula sin Animator en hijos; animación de combate no disponible.");
+            if (gulaSpawner != null)
                 TeleportEnemy(gulaSpawner.transform.position);
+            else
+                TeleportEnemy(enemySpawner.transform.position);
         }
         else
         {
@@ -422,9 +427,9 @@ public class CombatManager : Singleton<CombatManager>
         _isTakingDamage = false;
         if (gulaAnimator != null)
             gulaAnimator.SetBool("isTakingDamge", _isTakingDamage);
-        if (enemy.CompareTag("Gula"))
+        if (enemy != null && enemy.CompareTag("Gula") && gulaSpawner != null)
             TeleportEnemy(gulaSpawner.transform.position);
-        else
+        else if (enemy != null)
             TeleportEnemy(enemySpawner.transform.position);
     }
 }
