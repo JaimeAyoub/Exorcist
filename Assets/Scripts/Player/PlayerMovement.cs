@@ -1,50 +1,51 @@
 using Unity.Cinemachine;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("Movement Speeds")]
-    [SerializeField] private float walkSpeed = 3.0f;
+    [Header("Movement Speeds")] [SerializeField]
+    private float walkSpeed = 3.0f;
+
     [SerializeField] private float sprintMultiplier = 2.0f;
 
-    [Header("Jump Parameters")]
-    [SerializeField] private float jumpForce = 5.0f;
+    [Header("Jump Parameters")] [SerializeField]
+    private float jumpForce = 5.0f;
+
     [SerializeField] private float gravityMultiplier = 1.0f;
 
-    [Header("Look Parameters")]
-    [SerializeField] public float xMouseSensitivity = 1.5f;
+    [Header("Look Parameters")] [SerializeField]
+    public float xMouseSensitivity = 1.5f;
+
     [SerializeField] public float yMouseSensitivity = 1.5f;
     [SerializeField] private float upDownLookRange = 80f;
 
-    [Header("Footstep Parameters")]
-    [SerializeField] private float walkStepInterval = 0.5f;
+    [Header("Footstep Parameters")] [SerializeField]
+    private float walkStepInterval = 0.5f;
+
     [SerializeField] private float sprintStepInterval = 0.3f;
     [SerializeField] private float footstepVolume = 0.7f;
 
-    [Header("References")]
-    [SerializeField] private CharacterController characterController;
+    [Header("References")] [SerializeField]
+    private CharacterController characterController;
+
     [SerializeField] private PlayerInputHandler playerInputHandler;
     [SerializeField] private GameObject cameraHolder;
 
     [Header("Sonidos")] public SoundData pasosSFX;
 
+    //INTEGRAR CINEMACHINE
+    public CinemachineCamera mainCamera;
+
     private Vector2 alignedRotation;
     private Vector3 currentMovement;
-    private float verticalRotation;
     private float stepTimer;
+    private float verticalRotation;
     private bool wasGrounded;
 
     private float CurrentSpeed => walkSpeed * (playerInputHandler.SprintTriggered ? sprintMultiplier : 1);
     private float CurrentStepInterval => playerInputHandler.SprintTriggered ? sprintStepInterval : walkStepInterval;
 
-    //INTEGRAR CINEMACHINE
-    public CinemachineCamera mainCamera;
-
-    void Awake()
+    private void Awake()
     {
         alignedRotation = new Vector2(mainCamera.transform.position.x, mainCamera.transform.position.y);
         Cursor.lockState = CursorLockMode.Locked;
@@ -53,7 +54,7 @@ public class PlayerMovement : MonoBehaviour
         wasGrounded = characterController.isGrounded;
     }
 
-    void Update()
+    private void Update()
     {
         if (!Application.isPlaying || CombatManager.Instance.isCombat) return;
 
@@ -92,8 +93,8 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector3 CalculateWorldDirection()
     {
-        Vector3 inputDirection = new Vector3(playerInputHandler.MovementInput.x, 0f, playerInputHandler.MovementInput.y);
-        Vector3 worldDirection = transform.TransformDirection(inputDirection);
+        var inputDirection = new Vector3(playerInputHandler.MovementInput.x, 0f, playerInputHandler.MovementInput.y);
+        var worldDirection = transform.TransformDirection(inputDirection);
         return worldDirection.normalized;
     }
 
@@ -103,10 +104,7 @@ public class PlayerMovement : MonoBehaviour
         {
             currentMovement.y = -0.5f;
 
-            if (playerInputHandler.JumpTriggered)
-            {
-                currentMovement.y = jumpForce;
-            }
+            if (playerInputHandler.JumpTriggered) currentMovement.y = jumpForce;
         }
         else
         {
@@ -116,11 +114,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleMovement()
     {
-        Vector3 worldDirection = CalculateWorldDirection();
+        var worldDirection = CalculateWorldDirection();
         currentMovement.x = worldDirection.x * CurrentSpeed;
         currentMovement.z = worldDirection.z * CurrentSpeed;
 
-        HandleJumping();
+        //HandleJumping();
         characterController.Move(currentMovement * Time.deltaTime);
     }
 
@@ -137,8 +135,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleRotation()
     {
-        float mouseXRotation = playerInputHandler.RotationInput.x * xMouseSensitivity * Time.deltaTime;
-        float mouseYRotation = playerInputHandler.RotationInput.y * yMouseSensitivity * Time.deltaTime;
+        var mouseXRotation = playerInputHandler.RotationInput.x * xMouseSensitivity;
+        var mouseYRotation = playerInputHandler.RotationInput.y * yMouseSensitivity;
 
         ApplyHorizontalRotation(mouseXRotation);
         ApplyVerticalRotation(mouseYRotation);
