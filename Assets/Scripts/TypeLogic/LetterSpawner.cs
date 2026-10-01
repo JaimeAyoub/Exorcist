@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
@@ -32,7 +33,6 @@ public class LetterSpawner : MonoBehaviour
     public Canvas letterTyped;
 
     public GameObject prefabLetterInBook; //GameObject con el sprite renderer y shader dorado
-    [SerializeField] public int lettersInParagraph; //LEGACY: ya no hace daño por párrafo (daño = palabras + Enter)
     public int _letterCount; //Variable para saber cuantas letras hemos escrito.
     public GameObject SpawnVFXBarra;
 
@@ -51,11 +51,9 @@ public class LetterSpawner : MonoBehaviour
     public SoundData noMoreletters;
     public List<SoundData> letterTypedSound;
 
-    [Header("Gula: se come una letra por palabra")]
-    [Tooltip(
-        "Si el enemigo actual es Gula, devora una letra aleatoria por palabra. Esa letra no hay que teclearla: se auto-avanza y se muestra como '_' ocupando su espacio.")]
-    public bool devourOneLetterPerWord = true;
-
+    [Header("Gula: devora al mirar el libro")]
+    // Cada bajada de cabeza devora UNA letra interior al azar (animación + '_' + masticar).
+    // La letra devorada no hay que teclearla: se auto-avanza ocupando su espacio.
     [Tooltip("Palabras más cortas que esto no son devoradas (para no hacerlas imposibles de leer).")]
     public int minWordLengthToDevour = 3;
 
@@ -63,11 +61,24 @@ public class LetterSpawner : MonoBehaviour
         "Sprite de '_' para la letra devorada. Si se deja vacío se busca un sprite '_' en letterSpriteArray y, como fallback, se aplasta/tiñe el sprite real a modo de guión.")]
     public Sprite devouredSprite;
 
-    [Tooltip("Sonido opcional al devorar/auto-avanzar la letra comida.")]
+    [Tooltip("Sonido de masticar al devorar la letra.")]
     public SoundData gulaDevourSound;
 
     [Tooltip("Tinte aplicado a la letra devorada cuando no hay sprite '_' disponible.")]
     public Color devouredTint = new(0.25f, 0.25f, 0.25f, 1f);
+
+    [Tooltip("Prefab overlay (boca) con Animator que contiene el clip 'Comiendo_Letra'. Se instancia encima de la letra elegida. Si es null, se hace fallback con tween + swap directo.")]
+    public GameObject gulaMouthPrefab;
+    [Tooltip("Nombre del estado/clip a reproducir en el Animator del overlay.")]
+    public string gulaEatStateName = "Comiendo_Letra";
+    [Tooltip("Tiempo desde que empieza la animación hasta que el sprite tapa la letra y se cambia por '_'. Debe coincidir con el momento del mordisco en tu clip.")]
+    public float gulaBiteDelay = 0.5f;
+    [Tooltip("Tiempo extra tras el mordisco antes de destruir la boca (para que se vea masticar).")]
+    public float gulaChewTime = 0.3f;
+    [Tooltip("Orden de dibujado extra del overlay respecto a la letra (para que la tape).")]
+    public int gulaMouthSortingBoost = 10;
+    [Tooltip("Corrección de rotación de la boca en grados (espacio local). Si la boca sale girada, ajusta aquí sin tocar el prefab.")]
+    public Vector3 gulaMouthRotationOffset;
 
     // Índices globales (en textToCharList) devorados por Gula + cola paralela de índices para saber qué letra en pantalla está devorada.
     private readonly HashSet<int> _devouredIndices = new();
@@ -80,6 +91,10 @@ public class LetterSpawner : MonoBehaviour
     private string _typedBuffer = ""; //Texto tecleado desde el último Enter (case-sensitive)
     private int lastWordsTyped;
     public bool GulaActive { get; private set; }
+
+    // Secuencia de devorado por bajada de cabeza: solo una animación a la vez
+    // para no solapar bocas. Cada LookDown = 1 letra.
+    private bool _gulaDevourRunning;
 
     private void Awake()
     {
@@ -352,36 +367,148 @@ public class LetterSpawner : MonoBehaviour
     }
 
     /// <summary>
-    ///     Elige una letra aleatoria por palabra para que Gula se la coma.
-    ///     Se guarda por índice global en textToCharList. Las palabras cortas se respetan.
+    /// Marca el combate como Gula y limpia el set. NO pre-elige letras:
+    /// el texto entra completo y cada bajada de cabeza devora UNA letra
+    /// (ver TryDevourOnLookDown). Así la animación ocurre antes del guión.
     /// </summary>
     private void BuildDevouredSet()
     {
         _devouredIndices.Clear();
-        GulaActive = devourOneLetterPerWord && IsGulaCombat();
-        if (!GulaActive || textToCharList == null) return;
+        GulaActive = IsGulaCombat();
+    }
 
-        var i = 0;
-        while (i < textToCharList.Count)
+    /// <summary>
+    /// ¿El índice global es interior de su palabra (no primera/última)?
+    /// Replica el criterio "letra de enmedio" del sistema anterior.
+    /// </summary>
+    private bool IsInteriorLetter(int globalIndex)
+    {
+        if (textToCharList == null || globalIndex < 0 || globalIndex >= textToCharList.Count)
+            return false;
+        if (IsAutoSeparator(textToCharList[globalIndex])) return false;
+        if (_devouredIndices.Contains(globalIndex)) return false;
+
+        var start = globalIndex;
+        while (start > 0 && !IsAutoSeparator(textToCharList[start - 1])) start--;
+        var end = globalIndex;
+        while (end < textToCharList.Count && !IsAutoSeparator(textToCharList[end])) end++;
+        var len = end - start;
+        if (len < Mathf.Max(1, minWordLengthToDevour)) return false;
+        if (globalIndex == start || globalIndex == end - 1) return false; // bordes no
+        if (len <= 3) return globalIndex == start + len / 2; // len==3: solo la del medio
+        return true;
+    }
+
+    /// <summary>
+    /// Llama CombatManager al detectar flanco de bajada de cabeza (mirar al libro).
+    /// Elige una letra interior al azar de las visibles, reproduce el overlay
+    /// 'Comiendo_Letra' encima y, cuando el sprite tapa la letra (gulaBiteDelay),
+    /// la cambia por '_' + sonido de masticar. Devuelve true si arrancó secuencia.
+    /// </summary>
+    public bool TryDevourOnLookDown()
+    {
+        if (!GulaActive) return false;
+        if (_gulaDevourRunning) return false;
+        if (CombatManager.Instance == null || !CombatManager.Instance.isCombat) return false;
+        if (QueueTextToScreen.Count == 0 || _letterObjects.Count == 0) return false;
+
+        // Candidatas: letras en pantalla interiores de palabra, aún no devoradas.
+        var indices = _queueTextIndices.ToArray();
+        var candidates = new List<int>(); // posiciones en pantalla
+        var count = Mathf.Min(_letterObjects.Count, Mathf.Min(QueueTextToScreen.Count, indices.Length));
+        for (var s = 0; s < count; s++)
         {
-            if (IsAutoSeparator(textToCharList[i]))
-            {
-                i++;
-                continue;
-            }
-
-            var start = i;
-            while (i < textToCharList.Count && !IsAutoSeparator(textToCharList[i])) i++;
-            var len = i - start;
-            if (len < Mathf.Max(1, minWordLengthToDevour)) continue;
-
-            // Interior aleatorio para que la palabra siga legible (para len==3, la del medio).
-            int pick;
-            if (len <= 3) pick = start + len / 2;
-            else pick = Random.Range(start + 1, i - 1);
-            _devouredIndices.Add(pick);
-            Debug.Log($"[Gula] Devorada letra '{textToCharList[pick]}' índice {pick} de palabra len {len}");
+            var g = indices[s];
+            if (_letterObjects[s] == null) continue;
+            if (IsInteriorLetter(g)) candidates.Add(s);
         }
+        if (candidates.Count == 0) return false;
+
+        var screenPos = candidates[Random.Range(0, candidates.Count)];
+        var textIndex = indices[screenPos];
+        var letterObj = _letterObjects[screenPos];
+        if (letterObj == null) return false;
+
+        StartCoroutine(GulaDevourSequence(letterObj, textIndex));
+        return true;
+    }
+
+    private IEnumerator GulaDevourSequence(GameObject letterObj, int textIndex)
+    {
+        _gulaDevourRunning = true;
+        GameObject mouth = null;
+        Animator mouthAnimator = null;
+        float clipLength = Mathf.Max(gulaBiteDelay + gulaChewTime, 0.8f);
+
+        // 1. Overlay encima de la letra: hereda posición Y rotación de la letra
+        // (antes se usaba Quaternion.identity y la boca salía girada).
+        if (gulaMouthPrefab != null && letterObj != null)
+        {
+            var parent = letterObj.transform.parent;
+            mouth = Instantiate(gulaMouthPrefab, parent);
+            mouth.transform.position = letterObj.transform.position;
+            mouth.transform.rotation = letterObj.transform.rotation * Quaternion.Euler(gulaMouthRotationOffset);
+            mouth.transform.localScale = letterObj.transform.localScale;
+            // Asegurar que tape: boosting de sorting / posición Z.
+            var mouthSr = mouth.GetComponentInChildren<SpriteRenderer>();
+            var letterSr = letterObj.GetComponent<SpriteRenderer>();
+            if (mouthSr != null && letterSr != null)
+            {
+                mouthSr.sortingLayerID = letterSr.sortingLayerID;
+                mouthSr.sortingOrder = letterSr.sortingOrder + gulaMouthSortingBoost;
+            }
+            mouthAnimator = mouth.GetComponentInChildren<Animator>();
+            if (mouthAnimator != null && !string.IsNullOrEmpty(gulaEatStateName))
+            {
+                mouthAnimator.Play(gulaEatStateName, 0, 0f);
+                // Intentar leer duración real del clip para no cortar antes del mordisco.
+                yield return null; // dejar que el Animator entre al estado
+                var st = mouthAnimator.GetCurrentAnimatorStateInfo(0);
+                if (st.length > 0.01f) clipLength = st.length;
+            }
+            else
+            {
+                // Fallback si el prefab no tiene Animator: pop rápido para tapar.
+                Debug.LogWarning("[Gula] gulaMouthPrefab sin Animator con estado '" + gulaEatStateName + "'. Revisa BocaComiendoLetra.controller. Se usa fallback con escala.");
+                mouth.transform.DOScale(mouth.transform.localScale * 1.8f, Mathf.Max(0.05f, gulaBiteDelay));
+            }
+        }
+        else if (gulaMouthPrefab == null)
+        {
+            Debug.LogWarning("[Gula] Sin gulaMouthPrefab asignado: el devorado será swap directo tras gulaBiteDelay. Asigna un prefab con el clip Comiendo_Letra.");
+        }
+
+        // 2. Esperar al momento del mordisco (el sprite ya tapa la letra).
+        yield return new WaitForSeconds(Mathf.Min(gulaBiteDelay, clipLength));
+
+        // Si la letra ya se tecleó / el combate acabó, abortar sin swap.
+        if (letterObj == null || !_letterObjects.Contains(letterObj) || !GulaActive)
+        {
+            if (mouth != null) Destroy(mouth);
+            _gulaDevourRunning = false;
+            yield break;
+        }
+
+        // 3. Swap a guión + sonido de masticar (el flujo posterior no cambia:
+        // la letra devorada se auto-avanza con AutoSkipDevoured al teclear).
+        var sr = letterObj.GetComponent<SpriteRenderer>();
+        var realChar = (textIndex >= 0 && textIndex < textToCharList.Count) ? textToCharList[textIndex] : '?';
+        _devouredIndices.Add(textIndex);
+        ApplyDevouredVisualWorld(letterObj, sr, realChar);
+        RefreshWordPreview();
+        Debug.Log($"[Gula] Devorada letra '{realChar}' índice {textIndex} tras animación Comiendo_Letra.");
+        if (gulaDevourSound != null && gulaDevourSound.clip != null)
+            SoundManager.Instance.CreateSound().WithSoundData(gulaDevourSound).WithRandomPitch().Play();
+        else
+            Debug.LogWarning("[Gula] Sin gulaDevourSound (masticar) asignado en LetterSpawner.");
+
+        // 4. Dejar que termine el masticado y limpiar la boca.
+        var rest = Mathf.Max(0f, clipLength - gulaBiteDelay);
+        // No alargar de más si el clip es loop: limitar al chew configurado.
+        if (mouthAnimator != null) rest = Mathf.Min(rest, Mathf.Max(0.1f, gulaChewTime));
+        yield return new WaitForSeconds(rest);
+        if (mouth != null) Destroy(mouth);
+        _gulaDevourRunning = false;
     }
 
     private bool IsDevouredFront()
@@ -442,9 +569,8 @@ public class LetterSpawner : MonoBehaviour
             sr.color = Color.white;
             return;
         }
-
-        // Sin sprite de guión (no debería pasar): hueco vacío, nunca la letra real.
-        Debug.LogWarning("[Gula] No hay sprite de guión en letterSpriteArray ni en devouredSprite.");
+        // Sin sprite de guión: hueco vacío, nunca la letra real.
+        Debug.LogError("[Gula] No hay sprite de guión en letterSpriteArray ni en devouredSprite. Asigna devouredSprite.");
         sr.sprite = null;
         sr.color = devouredTint;
     }
@@ -463,7 +589,7 @@ public class LetterSpawner : MonoBehaviour
             img.color = Color.white;
             return;
         }
-
+        Debug.LogError("[Gula] No hay sprite de guión para el libro. Asigna devouredSprite.");
         img.sprite = null;
         img.color = devouredTint;
     }
@@ -792,6 +918,19 @@ public class LetterSpawner : MonoBehaviour
 
     public void EmptyAll()
     {
+        StopAllCoroutines();
+        _gulaDevourRunning = false;
+        // Limpiar posible boca overlay huérfana (hija del spawner que no está en _letterObjects).
+        // Se destruye por nombre de prefab si quedó colgada.
+        foreach (Transform child in transform)
+        {
+            if (child == null) continue;
+            // Las letras están registradas; lo no registrado es overlay/VFX: fuera.
+            bool conocida = _letterObjects.Contains(child.gameObject);
+            if (!conocida && gulaMouthPrefab != null && child.gameObject.name.StartsWith(gulaMouthPrefab.name))
+                Destroy(child.gameObject);
+        }
+
         foreach (var go in _letterObjects)
             if (go != null)
             {
