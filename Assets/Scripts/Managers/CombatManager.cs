@@ -69,6 +69,8 @@ public class CombatManager : Singleton<CombatManager>
 
     private bool _isPlayerAlive;
 
+    private PlayerHealth _playerHealth;
+
     // Flanco de bajada de cabeza: cada vez que se empieza a mirar al libro,
     // Gula devora UNA letra (ver LetterSpawner.TryDevourOnLookDown).
     private bool _wasLookingAtBook;
@@ -149,6 +151,10 @@ public class CombatManager : Singleton<CombatManager>
             _currentEnemyHealth.OnEnemyDeath += EnemyDeath;
         else
             Debug.LogWarning("El enemigo no tiene un EnemyHealthBase; EnemyDeath no se disparará.");
+        _playerHealth = player.GetComponentInChildren<PlayerHealth>();
+        if (_playerHealth)
+            _playerHealth.OnPlayerDeath += PlayerDeath;
+        _playerHealth?.EnterCombatVignette();
 
         SetUpCombat();
         isTransitioning = false;
@@ -165,6 +171,7 @@ public class CombatManager : Singleton<CombatManager>
 
     private IEnumerator EndCombatRoutine()
     {
+        isCombat = false;
         CameraHolder.transform.DOKill();
         if (OptionsScript.Instance.volumeProfile.TryGet(out OptionsScript.Instance._chromaticAberration))
             OptionsScript.Instance._chromaticAberration.intensity.value = _currentAberration;
@@ -222,12 +229,19 @@ public class CombatManager : Singleton<CombatManager>
 
         if (_isPlayerAlive)
         {
+            if (_playerHealth != null)
+            {
+                playerHealth.ResetHealth();
+                playerHealth.ExitCombatVignette();
+            }
+
             imageToFade.DOFade(0f, 0.5f).SetUpdate(true);
             yield return new WaitForSecondsRealtime(0.5f);
             isTransitioning = false;
         }
         else
         {
+            player.GetComponentInChildren<PlayerHealth>().OnPlayerDeath -= PlayerDeath;
             inputHandler.SetUI();
             var sceneChange = FindFirstObjectByType<ChangeScene>();
             if (sceneChange)
