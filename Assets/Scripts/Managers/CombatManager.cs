@@ -45,6 +45,12 @@ public class CombatManager : Singleton<CombatManager>
 
     [SerializeField] private float enemySpeedToApproach;
 
+    [Header("Castigo por fallo de tecla")]
+    [Tooltip("Distancia que se acerca el enemigo al jugador cada vez que falla una tecla.")]
+    public float missApproachDistance = 0.4f;
+    [Tooltip("Distancia mínima a la que se detiene el enemigo (no atraviesa al jugador).")]
+    public float missMinDistanceToPlayer = 1.2f;
+
     private float _currentAberration;
 
     // Referencia cacheada al componente de salud del enemigo actual,
@@ -354,6 +360,23 @@ public class CombatManager : Singleton<CombatManager>
                 TimelinesManager.instance.PlayTimeLine(TimelinesManager.instance.TakeDamageTimeline);
             }
         }
+    }
+
+    /// <summary>
+    /// Acerca al enemigo un paso cuando el jugador falla una tecla.
+    /// Si con el paso queda a rango (<= 2 m), el daño lo dispara el flujo
+    /// normal al mirar al libro (ApproachToPlayer).
+    /// </summary>
+    public void NudgeEnemyOnPlayerMiss()
+    {
+        if (enemy == null || player == null) return;
+        if (missApproachDistance <= 0f) return;
+        var toPlayer = player.transform.position - enemy.transform.position;
+        toPlayer.y = 0f;
+        var dist = toPlayer.magnitude;
+        if (dist <= missMinDistanceToPlayer) return;
+        var step = Mathf.Min(missApproachDistance, dist - missMinDistanceToPlayer);
+        enemy.transform.position += toPlayer.normalized * step;
     }
 
     public void ResetEnemyPosition()
